@@ -52,6 +52,8 @@ public class TankDrive extends OpMode{
     public DcMotor  rightDrive  = null;
     public DcMotor  HangArm = null;
 
+    double power = 0.0;
+
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -101,7 +103,6 @@ public class TankDrive extends OpMode{
     public void loop() {
         double left;
         double right;
-
         // Run wheels in tank mode (note: The joystick goes negative when pushed forward, so negate it)
         left = -gamepad1.left_stick_y;
         right = -gamepad1.right_stick_y;
@@ -110,16 +111,26 @@ public class TankDrive extends OpMode{
         rightDrive.setPower(right);
 
 //hang arm code
-        if (gamepad1.y) {
-            HangArm.setPower(1);
-        } else if (gamepad1.a) {
-            HangArm.setPower(-1);
-        } else {
-            HangArm.setPower(0.0);
+        if(gamepad1.a){
+            power +=.001;
+            HangArm.setPower(power);
+
+        }
+        else if(gamepad1.y){
+            power -=.001;
+            HangArm.setPower(power);
+        }
+        else if(gamepad1.a && gamepad1.y){
+            
+        }
+        else {
+            HangArm.setPower(0);
+            power = 0;
         }
         // Send telemetry message to signify robot running;
         telemetry.addData("left",  "%.2f", left);
         telemetry.addData("right", "%.2f", right);
+        telemetry.addData("HangArm: ","%.5f",power);
     }
 
     /*
