@@ -30,6 +30,7 @@ package org.firstinspires.ftc.teamcode;/* Copyright (c) 2017 FIRST. All rights r
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 /*
  * This OpMode executes a Tank Drive control TeleOp a direct drive robot
@@ -52,7 +53,10 @@ public class TankDrive extends OpMode{
     public DcMotor  rightDrive  = null;
     public DcMotor  HangArm = null;
 
+    public Servo Claw = null;
+
     double power = 0.0;
+    double offset = 0.0;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -63,6 +67,7 @@ public class TankDrive extends OpMode{
         leftDrive  = hardwareMap.get(DcMotor.class, "left_drive");
         rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
         HangArm = hardwareMap.get(DcMotor.class, "HangArm");
+        Claw = hardwareMap.get(Servo.class, "Claw");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left and right sticks forward MUST make robot go forward. So adjust these two lines based on your first test drive.
@@ -106,11 +111,18 @@ public class TankDrive extends OpMode{
         // Run wheels in tank mode (note: The joystick goes negative when pushed forward, so negate it)
         left = -gamepad1.left_stick_y;
         right = -gamepad1.right_stick_y;
-
+        HangArm.setPower(.1);
         leftDrive.setPower(left);
         rightDrive.setPower(right);
+//claw goes from .12 to .3
 
 //hang arm code
+        if(gamepad1.dpad_up){
+            Claw.setPosition(.3);
+        }
+        if(gamepad1.dpad_down){
+            Claw.setPosition(.105);
+        }
         if(gamepad1.a){
             power +=.001;
             HangArm.setPower(power);
@@ -127,10 +139,12 @@ public class TankDrive extends OpMode{
             HangArm.setPower(0);
             power = 0;
         }
+
         // Send telemetry message to signify robot running;
         telemetry.addData("left",  "%.2f", left);
         telemetry.addData("right", "%.2f", right);
         telemetry.addData("HangArm: ","%.5f",power);
+        telemetry.addData("Servo Pos: ", "%.7f", Claw.getPosition());
     }
 
     /*
