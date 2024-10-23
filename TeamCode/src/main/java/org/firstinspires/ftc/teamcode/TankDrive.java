@@ -67,6 +67,8 @@ public class TankDrive extends OpMode{
         leftDrive  = hardwareMap.get(DcMotor.class, "left_drive");
         rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
         HangArm = hardwareMap.get(DcMotor.class, "HangArm");
+        HangArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        HangArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Claw = hardwareMap.get(Servo.class, "Claw");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
@@ -111,7 +113,7 @@ public class TankDrive extends OpMode{
         // Run wheels in tank mode (note: The joystick goes negative when pushed forward, so negate it)
         left = -gamepad1.left_stick_y;
         right = -gamepad1.right_stick_y;
-        HangArm.setPower(.1);
+//        HangArm.setPower(.1);
         leftDrive.setPower(left);
         rightDrive.setPower(right);
 //claw goes from .12 to .3
@@ -124,13 +126,14 @@ public class TankDrive extends OpMode{
             Claw.setPosition(.105);
         }
         if(gamepad1.a){
-            power +=.001;
-            HangArm.setPower(power);
+//            HangArm.setTargetPosition();
+//            power +=.09;
+//            HangArm.setPower(Math.min(0.5, power));
 
         }
         else if(gamepad1.y){
-            power -=.001;
-            HangArm.setPower(power);
+//            power -=.09;
+//            HangArm.setPower(Math.max(-0.5, power));
         }
         else if(gamepad1.a && gamepad1.y){
             
@@ -143,7 +146,7 @@ public class TankDrive extends OpMode{
         // Send telemetry message to signify robot running;
         telemetry.addData("left",  "%.2f", left);
         telemetry.addData("right", "%.2f", right);
-        telemetry.addData("HangArm: ","%.5f",power);
+        telemetry.addData("HangArm: ","%.5f",HangArm.getCurrentPosition());
         telemetry.addData("Servo Pos: ", "%.7f", Claw.getPosition());
     }
 
