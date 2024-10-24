@@ -55,9 +55,6 @@ public class TankDrive extends OpMode{
 
     public Servo Claw = null;
 
-    double power = 0.0;
-    double offset = 0.0;
-
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -68,7 +65,9 @@ public class TankDrive extends OpMode{
         rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
         HangArm = hardwareMap.get(DcMotor.class, "HangArm");
         HangArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        HangArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        HangArm.setTargetPosition(0);
+        HangArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        HangArm.setPower(1);
         Claw = hardwareMap.get(Servo.class, "Claw");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
@@ -111,43 +110,37 @@ public class TankDrive extends OpMode{
         double left;
         double right;
         // Run wheels in tank mode (note: The joystick goes negative when pushed forward, so negate it)
-        left = -gamepad1.left_stick_y;
-        right = -gamepad1.right_stick_y;
+//        left = gamepad1.left_trigger;
+//        right = gamepad1.right_trigger;
 //        HangArm.setPower(.1);
+        //I didn't realize arcade mode drive was this easy lol
+        left = right = -gamepad1.right_stick_y;
+        left += gamepad1.right_stick_x;
+        right -= gamepad1.right_stick_x;
         leftDrive.setPower(left);
         rightDrive.setPower(right);
 //claw goes from .12 to .3
 
 //hang arm code
         if(gamepad1.dpad_up){
-            Claw.setPosition(.3);
+            Claw.setPosition(.28);
         }
-        if(gamepad1.dpad_down){
-            Claw.setPosition(.105);
+        else if(gamepad1.dpad_down){
+            Claw.setPosition(0.12);
         }
-        if(gamepad1.a){
-//            HangArm.setTargetPosition();
-//            power +=.09;
-//            HangArm.setPower(Math.min(0.5, power));
-
+        HangArm.setTargetPosition(HangArm.getCurrentPosition() -
+                (int) (gamepad1.left_stick_y/10 *( 100)));
+        if(gamepad1.x){//motor pos reset
+            HangArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            HangArm.setTargetPosition(0);
+            HangArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
-        else if(gamepad1.y){
-//            power -=.09;
-//            HangArm.setPower(Math.max(-0.5, power));
-        }
-        else if(gamepad1.a && gamepad1.y){
-            
-        }
-        else {
-            HangArm.setPower(0);
-            power = 0;
-        }
-
         // Send telemetry message to signify robot running;
         telemetry.addData("left",  "%.2f", left);
         telemetry.addData("right", "%.2f", right);
-        telemetry.addData("HangArm: ","%.5f",HangArm.getCurrentPosition());
+        telemetry.addData("HangArm: ",HangArm.getCurrentPosition()/10);
         telemetry.addData("Servo Pos: ", "%.7f", Claw.getPosition());
+        telemetry.addData("Current HangArm Speed", (int)(gamepad1.left_stick_y * 100));
     }
 
     /*
