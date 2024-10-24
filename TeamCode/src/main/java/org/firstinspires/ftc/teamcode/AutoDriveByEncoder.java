@@ -116,7 +116,7 @@ public class AutoDriveByEncoder extends LinearOpMode {
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        encoderDrive(DRIVE_SPEED,  22,  22, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
+        encoderDrive(DRIVE_SPEED,  22,  22, 5.0);  // S1: Forward 22 Inches with 5 Sec timeout
         encoderDrive(DRIVE_SPEED, -8, -8,5.0);
         encoderDrive(TURN_SPEED,   14, -14, 6);  // S2: Turn Right 12 Inches with 4 Sec timeout
         encoderDrive(DRIVE_SPEED, 40, 40, 6.0);  // S3: Reverse 24 Inches with 4 Sec timeout

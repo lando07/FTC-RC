@@ -61,6 +61,7 @@ public class TankDrive extends OpMode{
     @Override
     public void init() {
         // Define and Initialize Motors
+        // NO TOUCHY TOUCHY
         leftDrive  = hardwareMap.get(DcMotor.class, "left_drive");
         rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
         HangArm = hardwareMap.get(DcMotor.class, "HangArm");
@@ -73,6 +74,7 @@ public class TankDrive extends OpMode{
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left and right sticks forward MUST make robot go forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
+        // NO TOUCHY TOUCHY
         leftDrive.setDirection(DcMotor.Direction.REVERSE);
         rightDrive.setDirection(DcMotor.Direction.FORWARD);
         HangArm.setDirection(DcMotor.Direction.REVERSE);
@@ -107,37 +109,38 @@ public class TankDrive extends OpMode{
      */
     @Override
     public void loop() {
-        double left;
-        double right;
-        // Run wheels in tank mode (note: The joystick goes negative when pushed forward, so negate it)
-//        left = gamepad1.left_trigger;
-//        right = gamepad1.right_trigger;
-//        HangArm.setPower(.1);
-        //I didn't realize arcade mode drive was this easy lol
-        left = right = -gamepad1.right_stick_y;
-        left += gamepad1.right_stick_x;
-        right -= gamepad1.right_stick_x;
-        leftDrive.setPower(left);
-        rightDrive.setPower(right);
-//claw goes from .12 to .3
+        //Set to true if you want tank mode
+        //Set to false if you want arcade mode
+        double[] telem = doDriveTrain(false);
 
-//hang arm code
-        if(gamepad1.dpad_up){
+        //hang arm code
+        // IF YOU WANT TO CHANGE THE BUTTON MAPPING, remove the pink text after gamepad1 and the dot,
+        // then add a dot again, you're gonna see autocompletes with all the button mappings.
+        // use the arrow keys to highlight a button and press tab to select a button
+
+        //claw goes from .12 to .28
+        if(gamepad1.dpad_up){//open servo
+            //NO TOUCHY TOUCHY
             Claw.setPosition(.28);
         }
-        else if(gamepad1.dpad_down){
+        else if(gamepad1.dpad_down){// close servo
+            //NO TOUCHY TOUCHY
             Claw.setPosition(0.12);
         }
         HangArm.setTargetPosition(HangArm.getCurrentPosition() -
-                (int) (gamepad1.left_stick_y/10 *( 100)));
-        if(gamepad1.x){//motor pos reset
+                (int)(gamepad1.left_stick_y/10) * 100);// takes away any stick drift by limiting precision
+                                                       // and then converts joystick -1 to 1 input into
+                                                       // a larger change to the motor
+
+        if(gamepad1.x){// motor pos reset --> only do this when the robot arm is fully folded up
+            //NO TOUCHY TOUCHY
             HangArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             HangArm.setTargetPosition(0);
             HangArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
-        // Send telemetry message to signify robot running;
-        telemetry.addData("left",  "%.2f", left);
-        telemetry.addData("right", "%.2f", right);
+        // Send telemetry messages so we can see what tf the robot is up to
+        telemetry.addData("left",  "%.2f", telem[0]);
+        telemetry.addData("right", "%.2f", telem[1]);
         telemetry.addData("HangArm: ",HangArm.getCurrentPosition()/10);
         telemetry.addData("Servo Pos: ", "%.7f", Claw.getPosition());
         telemetry.addData("Current HangArm Speed", (int)(gamepad1.left_stick_y * 100));
@@ -148,5 +151,25 @@ public class TankDrive extends OpMode{
      */
     @Override
     public void stop() {
+    }
+
+    private double[] doDriveTrain(boolean tankMode){
+        //don't fw these - any tampering could throw an exception and y'all prolly don't know how to fix, idk
+        double left = 0;
+        double right = 0;
+
+        if(tankMode){
+            left = -gamepad1.left_stick_y;
+            right = -gamepad1.right_stick_y;
+        }
+        else{
+            //I didn't realize arcade mode drive was this easy lol
+            left = right = -gamepad1.right_stick_y;
+            left += gamepad1.right_stick_x;
+            right -= gamepad1.right_stick_x;
+            leftDrive.setPower(left);
+            rightDrive.setPower(right);
+        }
+        return  new double[] {left, right};
     }
 }
