@@ -52,8 +52,9 @@ public class TankDrive extends OpMode{
     public DcMotor  leftDrive   = null;
     public DcMotor  rightDrive  = null;
     public DcMotor  HangArm = null;
-
     public Servo Claw = null;
+
+    private boolean halfSpeed = false;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -109,9 +110,24 @@ public class TankDrive extends OpMode{
      */
     @Override
     public void loop() {
-        //Set to true if you want tank mode
-        //Set to false if you want arcade mode
-        double[] telem = doDriveTrain(false);
+        if(gamepad1.y){
+            halfSpeed = true;
+        }
+        if(gamepad1.a){
+            halfSpeed = false;
+        }
+        double left = 0;
+        double right = 0;
+            //I didn't realize arcade mode drive was this easy lol
+            //left = right = -gamepad1.left_stick_y;
+            //left += gamepad1.right_stick_x;
+            //right -= gamepad1.right_stick_x;
+            //leftDrive.setPower(left);
+            //rightDrive.setPower(right);
+            leftDrive.setPower(-gamepad1.left_stick_y);
+            rightDrive.setPower(-gamepad1.right_stick_y);
+
+
 
         //hang arm code
         // IF YOU WANT TO CHANGE THE BUTTON MAPPING, remove the pink text after gamepad1 and the dot,
@@ -119,21 +135,19 @@ public class TankDrive extends OpMode{
         // use the arrow keys to highlight a button and press tab to select a button
 
         //claw goes from .12 to .28
-        if(gamepad1.dpad_up){//open servo
+        if(gamepad1.dpad_right){//open servo
             //NO TOUCHY TOUCHY
             Claw.setPosition(.28);
         }
-        else if(gamepad1.dpad_down){// close servo
+        else if(gamepad1.dpad_left){// close servo
             //NO TOUCHY TOUCHY
             Claw.setPosition(0.12);
         }
-        if(gamepad1.left_stick_y > .10 || gamepad1.left_stick_y < -.10) {
-            // takes away any stick drift by limiting precision
-            // and then converts joystick -1 to 1 input into
-            // a larger change to the motor
-            //NO TOUCHY TOUCHY
-            HangArm.setTargetPosition(HangArm.getCurrentPosition() -
-                    (int) (gamepad1.left_stick_y / 10 * (700)));
+        if(gamepad1.dpad_up){
+            HangArm.setTargetPosition(HangArm.getCurrentPosition() - 100);
+        }
+        if(gamepad1.dpad_down){
+            HangArm.setTargetPosition(HangArm.getCurrentPosition() + 100);
         }
         HangArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
@@ -144,8 +158,8 @@ public class TankDrive extends OpMode{
             HangArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
         // Send telemetry messages so we can see what tf the robot is up to
-        telemetry.addData("left",  "%.2f", telem[0]);
-        telemetry.addData("right", "%.2f", telem[1]);
+        telemetry.addData("left",  "%.2f", left);
+        telemetry.addData("right", "%.2f", right);
         telemetry.addData("HangArm: ",HangArm.getCurrentPosition()/10);
         telemetry.addData("Servo Pos: ", "%.7f", Claw.getPosition());
         telemetry.addData("Current HangArm Speed", (int)(gamepad1.left_stick_y * 100));
@@ -156,25 +170,5 @@ public class TankDrive extends OpMode{
      */
     @Override
     public void stop() {
-    }
-
-    private double[] doDriveTrain(boolean tankMode){
-        //don't fw these - any tampering could throw an exception and y'all prolly don't know how to fix, idk
-        double left = 0;
-        double right = 0;
-
-        if(tankMode){
-            left = -gamepad1.left_stick_y;
-            right = -gamepad1.right_stick_y;
-        }
-        else{
-            //I didn't realize arcade mode drive was this easy lol
-            left = right = -gamepad1.right_stick_y;
-            left += gamepad1.right_stick_x;
-            right -= gamepad1.right_stick_x;
-            leftDrive.setPower(left);
-            rightDrive.setPower(right);
-        }
-        return  new double[] {left, right};
     }
 }

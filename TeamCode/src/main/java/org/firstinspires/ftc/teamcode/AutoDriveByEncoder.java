@@ -33,6 +33,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /*
@@ -92,7 +93,10 @@ public class AutoDriveByEncoder extends LinearOpMode {
         leftDrive  = hardwareMap.get(DcMotor.class, "left_drive");
         rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
         HangArm = hardwareMap.get(DcMotor.class, "HangArm");
-
+        HangArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        HangArm.setDirection(DcMotor.Direction.REVERSE);
+        HangArm.setTargetPosition(0);
+        HangArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
@@ -118,20 +122,18 @@ public class AutoDriveByEncoder extends LinearOpMode {
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
         encoderDrive(DRIVE_SPEED,  22,  22, 5.0);  // S1: Forward 22 Inches with 5 Sec timeout
         encoderDrive(DRIVE_SPEED, -8, -8,5.0);
-        encoderDrive(TURN_SPEED,   14, -14, 6);  // S2: Turn Right 12 Inches with 4 Sec timeout
+        encoderDrive(TURN_SPEED,   12, -12, 6);  // S2: Turn Right 12 Inches with 4 Sec timeout
         encoderDrive(DRIVE_SPEED, 40, 40, 6.0);  // S3: Reverse 24 Inches with 4 Sec timeout
-        encoderDrive(TURN_SPEED+0.2,   14, -14, 6.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
-        encoderDrive(DRIVE_SPEED,  12,  12, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
-        HangArm.setPower(0.6);
-        Thread.sleep(900);
-        HangArm.setPower(-0.3);
-        Thread.sleep(100);
-        HangArm.setPower(0);
-
+        encoderDrive(TURN_SPEED,   12, -12, 6.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
+        encoderDrive(DRIVE_SPEED,  9,  9, 6);  // S1: Forward 47 Inches with 5 Sec timeout
+        HangArm.setTargetPosition(-1150);
+        HangArm.setPower(0.5);
+        HangArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        while(HangArm.isBusy());
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
-        sleep(1000);  // pause to display final telemetry message.
+        sleep(3000);  // pause to display final telemetry message.
     }
 
     /*
