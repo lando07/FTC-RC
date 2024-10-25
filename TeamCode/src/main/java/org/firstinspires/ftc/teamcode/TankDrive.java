@@ -127,10 +127,15 @@ public class TankDrive extends OpMode{
             //NO TOUCHY TOUCHY
             Claw.setPosition(0.12);
         }
-        HangArm.setTargetPosition(HangArm.getCurrentPosition() -
-                (int)(gamepad1.left_stick_y/10) * 100);// takes away any stick drift by limiting precision
-                                                       // and then converts joystick -1 to 1 input into
-                                                       // a larger change to the motor
+        if(gamepad1.left_stick_y > .10 || gamepad1.left_stick_y < -.10) {
+            // takes away any stick drift by limiting precision
+            // and then converts joystick -1 to 1 input into
+            // a larger change to the motor
+            //NO TOUCHY TOUCHY
+            HangArm.setTargetPosition(HangArm.getCurrentPosition() -
+                    (int) (gamepad1.left_stick_y / 10 * (700)));
+        }
+        HangArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         if(gamepad1.x){// motor pos reset --> only do this when the robot arm is fully folded up
             //NO TOUCHY TOUCHY
