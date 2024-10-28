@@ -129,7 +129,7 @@ public class AutoDriveByEncoder extends LinearOpMode {
         HangArm.setTargetPosition(-1150);
         HangArm.setPower(0.5);
         HangArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        while(HangArm.isBusy());
+        while(HangArm.isBusy());//ensures that the HangArm is fully set to the position before proceeding
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
@@ -139,6 +139,7 @@ public class AutoDriveByEncoder extends LinearOpMode {
     /*
      *  Method to perform a relative move, based on encoder counts.
      *  Encoders are not reset as the move is based on the current position.
+     *  Add extra time if you have a low acceleration set, acceleration should be between 0 and speed.
      *  Move will stop if any of three conditions occur:
      *  1) Move gets to the desired position
      *  2) Move runs out of time
@@ -146,7 +147,7 @@ public class AutoDriveByEncoder extends LinearOpMode {
      */
     public void encoderDrive(double speed,
                              double leftInches, double rightInches,
-                             double timeoutS) {
+                             double timeoutS, double acceleration) {
         int newLeftTarget;
         int newRightTarget;
 
@@ -165,9 +166,13 @@ public class AutoDriveByEncoder extends LinearOpMode {
 
             // reset the timeout time and start motion.
             runtime.reset();
-            leftDrive.setPower(Math.abs(speed));
-            rightDrive.setPower(Math.abs(speed));
-
+//            leftDrive.setPower(Math.abs(speed));
+//            rightDrive.setPower(Math.abs(speed));
+            for(double i = 0; i <= Math.abs(speed); i += acceleration){//I made this so it can soft start, first at 0, then .01 power, .02 power, to speed amount of power
+                leftDrive.setPower(Math.abs(i));
+                rightDrive.setPower(Math.abs(i));
+                sleep(10);//modify this for more acceleration, but less accuracy due to wheel slip
+            }
             // keep looping while we are still active, and there is time left, and both motors are running.
             // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
             // its target position, the motion will stop.  This is "safer" in the event that the robot will
