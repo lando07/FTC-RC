@@ -28,8 +28,10 @@ package org.firstinspires.ftc.teamcode;/* Copyright (c) 2017 FIRST. All rights r
  */
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 /*
@@ -103,6 +105,8 @@ public class TankDrive extends OpMode{
      */
     @Override
     public void start() {
+        HangArm.setTargetPosition(HangArm.getCurrentPosition() - 50);
+        HangArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     /*
@@ -113,44 +117,12 @@ public class TankDrive extends OpMode{
         if(gamepad1.y){
             halfSpeed = true;
         }
-        if(gamepad1.a){
+        if(gamepad1.a) {
             halfSpeed = false;
         }
-        double left = 0;
-        double right = 0;
-            //I didn't realize arcade mode drive was this easy lol
-            //left = right = -gamepad1.left_stick_y;
-            //left += gamepad1.right_stick_x;
-            //right -= gamepad1.right_stick_x;
-            //leftDrive.setPower(left);
-            //rightDrive.setPower(right);
-            leftDrive.setPower(-gamepad1.left_stick_y);
-            rightDrive.setPower(-gamepad1.right_stick_y);
-
-
-
-        //hang arm code
-        // IF YOU WANT TO CHANGE THE BUTTON MAPPING, remove the pink text after gamepad1 and the dot,
-        // then add a dot again, you're gonna see autocompletes with all the button mappings.
-        // use the arrow keys to highlight a button and press tab to select a button
-
-        //claw goes from .12 to .28
-        if(gamepad1.dpad_right){//open servo
-            //NO TOUCHY TOUCHY
-            Claw.setPosition(.28);
-        }
-        else if(gamepad1.dpad_left){// close servo
-            //NO TOUCHY TOUCHY
-            Claw.setPosition(0.12);
-        }
-        if(gamepad1.dpad_up){
-            HangArm.setTargetPosition(HangArm.getCurrentPosition() - 100);
-        }
-        if(gamepad1.dpad_down){
-            HangArm.setTargetPosition(HangArm.getCurrentPosition() + 100);
-        }
-        HangArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
+        double[] telem = doDriveTrain();
+        doHangArm();
+        doClaw();
         if(gamepad1.x){// motor pos reset --> only do this when the robot arm is fully folded up
             //NO TOUCHY TOUCHY
             HangArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -158,11 +130,56 @@ public class TankDrive extends OpMode{
             HangArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
         // Send telemetry messages so we can see what tf the robot is up to
-        telemetry.addData("left",  "%.2f", left);
-        telemetry.addData("right", "%.2f", right);
-        telemetry.addData("HangArm: ",HangArm.getCurrentPosition()/10);
+        telemetry.addData("left",  "%.2f", telem[0]);
+        telemetry.addData("right", "%.2f", telem[1]);
+        telemetry.addData("HangArm: ",HangArm.getCurrentPosition());
         telemetry.addData("Servo Pos: ", "%.7f", Claw.getPosition());
         telemetry.addData("Current HangArm Speed", (int)(gamepad1.left_stick_y * 100));
+    }
+
+    double[] doDriveTrain(){
+        double left = 0;
+        double right = 0;
+        //I didn't realize arcade mode drive was this easy lol
+        left = right = -gamepad1.right_stick_y;
+        left += gamepad1.right_stick_x;
+        right -= gamepad1.right_stick_x;
+        if(halfSpeed){
+            leftDrive.setPower(left/2);
+            rightDrive.setPower(right/2);
+        } else {
+            leftDrive.setPower(left);
+            rightDrive.setPower(right);
+        }
+        return new double[] {left,right};
+    }
+    void doHangArm(){
+        //hang arm code
+        // IF YOU WANT TO CHANGE THE BUTTON MAPPING, remove the pink text after gamepad1 and the dot,
+        // then add a dot again, you're gonna see autocompletes with all the button mappings.
+        // use the arrow keys to highlight a button and press tab to select a button
+        int targetPos = 0;
+        if(gamepad1.left_stick_y > 0.1 || gamepad1.left_stick_y < -0.1) {
+            if (halfSpeed) {
+                targetPos = HangArm.getCurrentPosition() - (int) (gamepad1.left_stick_y * 50);
+            } else {
+                targetPos = HangArm.getCurrentPosition() - (int) (gamepad1.left_stick_y * 100);
+
+            }
+            HangArm.setTargetPosition(Math.max(Math.min(targetPos, -50), -2400));
+            HangArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+    }
+    void doClaw(){
+        //claw goes from .12 to .28
+        if(gamepad1.dpad_right){//close servo
+            //NO TOUCHY TOUCHY
+            Claw.setPosition(.45);
+        }
+        else if(gamepad1.dpad_left){// open servo
+            //NO TOUCHY TOUCHY
+            Claw.setPosition(0.12);
+        }
     }
 
     /*
