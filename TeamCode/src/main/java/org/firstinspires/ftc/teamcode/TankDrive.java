@@ -47,16 +47,18 @@ import com.qualcomm.robotcore.hardware.Servo;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Test Tank Drive", group="Robot")
-public class TankDrive extends OpMode{
+@TeleOp(name = "Test Tank Drive", group = "Robot")
+public class TankDrive extends OpMode {
 
     /* Declare OpMode members. */
-    public DcMotor  leftDrive   = null;
-    public DcMotor  rightDrive  = null;
-    public DcMotor  HangArm = null;
+    public DcMotor leftDrive = null;
+    public DcMotor rightDrive = null;
+    public DcMotor HangArm = null;
     public Servo Claw = null;
 
     private boolean halfSpeed = false;
+
+    private boolean reverse = false;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -65,7 +67,7 @@ public class TankDrive extends OpMode{
     public void init() {
         // Define and Initialize Motors
         // NO TOUCHY TOUCHY
-        leftDrive  = hardwareMap.get(DcMotor.class, "left_drive");
+        leftDrive = hardwareMap.get(DcMotor.class, "left_drive");
         rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
         HangArm = hardwareMap.get(DcMotor.class, "HangArm");
         HangArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -81,8 +83,6 @@ public class TankDrive extends OpMode{
         leftDrive.setDirection(DcMotor.Direction.REVERSE);
         rightDrive.setDirection(DcMotor.Direction.FORWARD);
         HangArm.setDirection(DcMotor.Direction.REVERSE);
-
-
 
 
         // If there are encoders connected, switch to RUN_USING_ENCODER mode for greater accuracy
@@ -114,69 +114,100 @@ public class TankDrive extends OpMode{
      */
     @Override
     public void loop() {
-        if(gamepad1.y){
+        if (gamepad1.y) {
             halfSpeed = true;
         }
-        if(gamepad1.a) {
+        if (gamepad1.a) {
             halfSpeed = false;
+        }
+        if (gamepad1.dpad_up) {//the phone camera is the robot foreward
+            leftDrive.setDirection(DcMotor.Direction.REVERSE);
+            rightDrive.setDirection(DcMotor.Direction.FORWARD);
+            HangArm.setDirection(DcMotor.Direction.REVERSE);
+            reverse = false;
+        }
+        if (gamepad1.dpad_down) {//reverse direction
+            leftDrive.setDirection(DcMotor.Direction.FORWARD);
+            rightDrive.setDirection(DcMotor.Direction.REVERSE);
+            reverse = true;
         }
         double[] telem = doDriveTrain();
         doHangArm();
         doClaw();
-        if(gamepad1.x){// motor pos reset --> only do this when the robot arm is fully folded up
+        if (gamepad1.x) {// motor pos reset --> only do this when the robot arm is fully folded up
             //NO TOUCHY TOUCHY
             HangArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             HangArm.setTargetPosition(0);
             HangArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
         // Send telemetry messages so we can see what tf the robot is up to
-        telemetry.addData("left",  "%.2f", telem[0]);
+        telemetry.addData("left", "%.2f", telem[0]);
         telemetry.addData("right", "%.2f", telem[1]);
-        telemetry.addData("HangArm: ",HangArm.getCurrentPosition());
+        telemetry.addData("HangArm: ", HangArm.getCurrentPosition());
         telemetry.addData("Servo Pos: ", "%.7f", Claw.getPosition());
-        telemetry.addData("Current HangArm Speed", (int)(gamepad1.left_stick_y * 100));
+        telemetry.addData("Current HangArm Speed", (int) (gamepad1.left_stick_y * 100));
     }
 
-    double[] doDriveTrain(){
+    double[] doDriveTrain() {
         double left = 0;
         double right = 0;
         //I didn't realize arcade mode drive was this easy lol
         left = right = -gamepad1.right_stick_y;
-        left += gamepad1.right_stick_x;
-        right -= gamepad1.right_stick_x;
-        if(halfSpeed){
-            leftDrive.setPower(left/2);
-            rightDrive.setPower(right/2);
+        if (reverse) {//reverse direction
+            right += gamepad1.right_stick_x;
+            left -= gamepad1.right_stick_x;
+        }
+        else {
+            left += gamepad1.right_stick_x;
+            right -= gamepad1.right_stick_x;
+        }
+        if (halfSpeed) {
+            leftDrive.setPower(left / 2);
+            rightDrive.setPower(right / 2);
         } else {
             leftDrive.setPower(left);
             rightDrive.setPower(right);
         }
-        return new double[] {left,right};
+        return new double[]{left, right};
     }
-    void doHangArm(){
+
+    void doHangArm() {
         //hang arm code
         // IF YOU WANT TO CHANGE THE BUTTON MAPPING, remove the pink text after gamepad1 and the dot,
         // then add a dot again, you're gonna see autocompletes with all the button mappings.
         // use the arrow keys to highlight a button and press tab to select a button
         int targetPos = 0;
-        if(gamepad1.left_stick_y > 0.1 || gamepad1.left_stick_y < -0.1) {
-            if (halfSpeed) {
-                targetPos = HangArm.getCurrentPosition() - (int) (gamepad1.left_stick_y * 50);
+        if (gamepad1.left_stick_y > 0.1 || gamepad1.left_stick_y < -0.1) {
+            if (reverse) {
+                if (halfSpeed) {
+                    targetPos = HangArm.getCurrentPosition() + (int) (gamepad1.left_stick_y * 50);
+                } else {
+                    targetPos = HangArm.getCurrentPosition() + (int) (gamepad1.left_stick_y * 100);
+                }
             } else {
-                targetPos = HangArm.getCurrentPosition() - (int) (gamepad1.left_stick_y * 100);
-
+                if (halfSpeed) {
+                    targetPos = HangArm.getCurrentPosition() - (int) (gamepad1.left_stick_y * 50);
+                } else {
+                    targetPos = HangArm.getCurrentPosition() - (int) (gamepad1.left_stick_y * 100);
+                }
             }
-            HangArm.setTargetPosition(Math.max(Math.min(targetPos, -50), -2400));
+            HangArm.setTargetPosition(Math.max(Math.min(targetPos, -50), -2620));
+            HangArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+
+
+        if (gamepad1.b) {
+            HangArm.setTargetPosition(HangArm.getCurrentPosition() - 300);
             HangArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
     }
-    void doClaw(){
+
+    void doClaw() {
         //claw goes from .12 to .28
-        if(gamepad1.dpad_right){//close servo
+        if (gamepad1.dpad_right) {//close servo
             //NO TOUCHY TOUCHY
             Claw.setPosition(.45);
-        }
-        else if(gamepad1.dpad_left){// open servo
+        } else if (gamepad1.dpad_left) {// open servo
             //NO TOUCHY TOUCHY
             Claw.setPosition(0.12);
         }

@@ -120,12 +120,12 @@ public class AutoDriveByEncoder extends LinearOpMode {
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        encoderDrive(DRIVE_SPEED,  22,  22, 5.0);  // S1: Forward 22 Inches with 5 Sec timeout
-        encoderDrive(DRIVE_SPEED, -8, -8,5.0);
-        encoderDrive(TURN_SPEED,   12, -12, 6);  // S2: Turn Right 12 Inches with 4 Sec timeout
-        encoderDrive(DRIVE_SPEED, 40, 40, 6.0);  // S3: Reverse 24 Inches with 4 Sec timeout
-        encoderDrive(TURN_SPEED,   12, -12, 6.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
-        encoderDrive(DRIVE_SPEED,  9,  9, 6);  // S1: Forward 47 Inches with 5 Sec timeout
+        encoderDrive(DRIVE_SPEED,  22,  22, 5.0, 0.2);  // S1: Forward 22 Inches with 5 Sec timeout
+        encoderDrive(DRIVE_SPEED, -8, -8,5.0, 0.2);
+        encoderDrive(TURN_SPEED,   12, -12, 6, 0.2);  // S2: Turn Right 12 Inches with 4 Sec timeout
+        encoderDrive(DRIVE_SPEED, 40, 40, 6.0, 0.2);  // S3: Reverse 24 Inches with 4 Sec timeout
+        encoderDrive(TURN_SPEED,   12, -12, 6.0, 0.2);  // S2: Turn Right 12 Inches with 4 Sec timeout
+        encoderDrive(DRIVE_SPEED,  9,  9, 6, 0.2);  // S1: Forward 47 Inches with 5 Sec timeout
         HangArm.setTargetPosition(-1150);
         HangArm.setPower(0.5);
         HangArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -171,7 +171,7 @@ public class AutoDriveByEncoder extends LinearOpMode {
             for(double i = 0; i <= Math.abs(speed); i += acceleration){//I made this so it can soft start, first at 0, then .01 power, .02 power, to speed amount of power
                 leftDrive.setPower(Math.abs(i));
                 rightDrive.setPower(Math.abs(i));
-                sleep(10);//modify this for more acceleration, but less accuracy due to wheel slip
+                sleep(100);//modify this for more acceleration, but less accuracy due to wheel slip
             }
             // keep looping while we are still active, and there is time left, and both motors are running.
             // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
