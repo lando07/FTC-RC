@@ -152,14 +152,12 @@ public class TankDrive extends OpMode {
         double left = 0;
         double right = 0;
         //I didn't realize arcade mode drive was this easy lol
-        left = right = -gamepad1.right_stick_y;
         if (reverse) {//reverse direction
-            right += gamepad1.right_stick_x;
-            left -= gamepad1.right_stick_x;
-        }
-        else {
-            left += gamepad1.right_stick_x;
-            right -= gamepad1.right_stick_x;
+            right += gamepad1.right_stick_y;
+            left += gamepad1.left_stick_y;
+        } else {
+            left -= gamepad1.left_stick_y;
+            right -= gamepad1.right_stick_y;
         }
         if (halfSpeed) {
             leftDrive.setPower(left / 2);
@@ -177,23 +175,22 @@ public class TankDrive extends OpMode {
         // then add a dot again, you're gonna see autocompletes with all the button mappings.
         // use the arrow keys to highlight a button and press tab to select a button
         int targetPos = 0;
-        if (gamepad1.left_stick_y > 0.1 || gamepad1.left_stick_y < -0.1) {
-            if (reverse) {
-                if (halfSpeed) {
-                    targetPos = HangArm.getCurrentPosition() + (int) (gamepad1.left_stick_y * 50);
-                } else {
-                    targetPos = HangArm.getCurrentPosition() + (int) (gamepad1.left_stick_y * 100);
-                }
+
+        if (reverse) {
+            if (halfSpeed) {
+                targetPos = HangArm.getCurrentPosition() + (int) ((gamepad1.left_trigger - gamepad1.right_trigger) * 50);
             } else {
-                if (halfSpeed) {
-                    targetPos = HangArm.getCurrentPosition() - (int) (gamepad1.left_stick_y * 50);
-                } else {
-                    targetPos = HangArm.getCurrentPosition() - (int) (gamepad1.left_stick_y * 100);
-                }
+                targetPos = HangArm.getCurrentPosition() + (int) ((gamepad1.left_trigger - gamepad1.right_trigger) * 100);
             }
-            HangArm.setTargetPosition(Math.max(Math.min(targetPos, -50), -2620));
-            HangArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        } else {
+            if (halfSpeed) {
+                targetPos = HangArm.getCurrentPosition() - (int) ((gamepad1.left_trigger - gamepad1.right_trigger) * 50);
+            } else {
+                targetPos = HangArm.getCurrentPosition() - (int) ((gamepad1.left_trigger - gamepad1.right_trigger) * 100);
+            }
         }
+        HangArm.setTargetPosition(Math.max(Math.min(targetPos, -50), -2620));
+        HangArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
 
         if (gamepad1.b) {
