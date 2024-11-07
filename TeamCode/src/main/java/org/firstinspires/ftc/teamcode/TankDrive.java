@@ -26,7 +26,7 @@ package org.firstinspires.ftc.teamcode;/* Copyright (c) 2017 FIRST. All rights r
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
+//MISSION CRITICAL IMPORTS, DON'T TOUCH EVER!
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -47,18 +47,20 @@ import com.qualcomm.robotcore.hardware.Servo;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
+
+//UNLESS I SAY SO, DON'T MODIFY ANYTHING IF YOU DON'T KNOW ***EXACTLY*** WHAT YOU'RE DOING!
+//REMEMBER, CHANGES WILL ***NOT*** TAKE EFFECT UNTIL THE CODE IS PUSHED TO THE PHONE!
 @TeleOp(name = "Test Tank Drive", group = "Robot")
 public class TankDrive extends OpMode {
-
     /* Declare OpMode members. */
     public DcMotor leftDrive = null;
     public DcMotor rightDrive = null;
     public DcMotor HangArm = null;
     public Servo Claw = null;
 
-    private boolean halfSpeed = false;
+    private boolean halfSpeed = false;//change this to true if you want it to start in half-speed mode
 
-    private boolean reverse = false;
+    private boolean reverse = false;//change this to true if you want it to start in reverse mode
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -66,9 +68,11 @@ public class TankDrive extends OpMode {
     @Override
     public void init() {
         // Define and Initialize Motors
-        // NO TOUCHY TOUCHY
+        // DON'T TOUCH ANY OF THIS CODE IN THIS METHOD, THE ROBOT WILL BREAK IF EVEN A SINGLE CHARACTER IS MISSING
         leftDrive = hardwareMap.get(DcMotor.class, "left_drive");
         rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
+
+        //the hang arm is initialized to use the encoder to hold it's position, hence the extra init lines
         HangArm = hardwareMap.get(DcMotor.class, "HangArm");
         HangArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         HangArm.setTargetPosition(0);
@@ -76,15 +80,13 @@ public class TankDrive extends OpMode {
         HangArm.setPower(1);
         Claw = hardwareMap.get(Servo.class, "Claw");
 
-        // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
-        // Pushing the left and right sticks forward MUST make robot go forward. So adjust these two lines based on your first test drive.
-        // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
+        // To drive forward, our robot needs the motor on one side to be reversed, because the axles point in opposite directions.
         // NO TOUCHY TOUCHY
         leftDrive.setDirection(DcMotor.Direction.REVERSE);
         rightDrive.setDirection(DcMotor.Direction.FORWARD);
         HangArm.setDirection(DcMotor.Direction.REVERSE);
 
-
+        //DO NOT UNCOMMENT THIS CODE AS OF RIGHT NOW
         // If there are encoders connected, switch to RUN_USING_ENCODER mode for greater accuracy
         // leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         // rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -98,13 +100,14 @@ public class TankDrive extends OpMode {
      */
     @Override
     public void init_loop() {
+             // NOTHING, AS OF RIGHT NOW GOES HERE, LEAVE BLANK
     }
 
     /*
      * Code to run ONCE when the driver hits PLAY
      */
     @Override
-    public void start() {
+    public void start() {//this lifts the claw up so it's not dragging on the ground
         HangArm.setTargetPosition(HangArm.getCurrentPosition() - 50);
         HangArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
@@ -114,26 +117,27 @@ public class TankDrive extends OpMode {
      */
     @Override
     public void loop() {
-        if (gamepad1.y) {
+        if (gamepad1.y) {//half-speed button, not for analog input, remap it to any button not in use
             halfSpeed = true;
         }
-        if (gamepad1.a) {
+        if (gamepad1.a) {//full-speed button, not for analog input, remap it to any button not in use
             halfSpeed = false;
         }
-        if (gamepad1.dpad_up) {//the phone camera is the robot foreward
+        if (gamepad1.dpad_up) {//The drive wheels are facing forward, remap this button to any other button not in use
             leftDrive.setDirection(DcMotor.Direction.REVERSE);
             rightDrive.setDirection(DcMotor.Direction.FORWARD);
             HangArm.setDirection(DcMotor.Direction.REVERSE);
             reverse = false;
         }
-        if (gamepad1.dpad_down) {//reverse direction
+        if (gamepad1.dpad_down) {//the idle wheels are facing forward, remap this button to any other button not in use
             leftDrive.setDirection(DcMotor.Direction.FORWARD);
             rightDrive.setDirection(DcMotor.Direction.REVERSE);
-            reverse = true;
+            reverse = true;//I can't set the claw motor to reverse or the algorithm controlling it's position freaks out
         }
-        double[] telem = doDriveTrain();
-        doHangArm();
-        doClaw();
+        //ctrl + click on any of these 3 methods to go to their code
+        double[] telem = doDriveTrain();//the array is for telemetry only, NO TOUCH!
+        doHangArm();//NO TOUCH!
+        doClaw();//NO TOUCH!
         if (gamepad1.x) {// motor pos reset --> only do this when the robot arm is fully folded up
             //NO TOUCHY TOUCHY
             HangArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -149,10 +153,11 @@ public class TankDrive extends OpMode {
     }
 
     double[] doDriveTrain() {
-        double left = 0;
-        double right = 0;
-        //I didn't realize arcade mode drive was this easy lol
-        if (reverse) {//reverse direction
+        double left = 0;//used to store the calculated power of the left motor
+        double right = 0;//same, but for the right
+        //the joysticks go negative as you push them foreward, so I used double-negatives to get it to add power, rather than subtract
+        //the reverse keeps the value intact, which makes it go negative as the joystick goes negative
+        if (reverse) {
             right += gamepad1.right_stick_y;
             left += gamepad1.left_stick_y;
         } else {
@@ -171,31 +176,35 @@ public class TankDrive extends OpMode {
 
     void doHangArm() {
         //hang arm code
-        // IF YOU WANT TO CHANGE THE BUTTON MAPPING, remove the pink text after gamepad1 and the dot,
-        // then add a dot again, you're gonna see autocompletes with all the button mappings.
-        // use the arrow keys to highlight a button and press tab to select a button
-        int targetPos = 0;
-
-        if (reverse) {
-            if (halfSpeed) {
-                targetPos = HangArm.getCurrentPosition() + (int) ((gamepad1.left_trigger - gamepad1.right_trigger) * 50);
+        //left_trigger and right_trigger are analog triggers, DO NOT MODIFY ANYTHING BELOW UNLESS NOTED OTHERWISE
+        int targetPos = 0;//this is the variable used to store the new calculated position of the motor, in reference to the old point
+        //the formula is as follows
+        //current position + (left trigger(positive direction) - right trigger(negative direction) * increment var for sensitivity)
+        if (gamepad1.left_trigger - gamepad1.right_trigger > 0.01 || gamepad1.left_trigger - gamepad1.right_trigger < -0.01) {//compensates for trigger drift
+            if (reverse) {
+                if (halfSpeed) {
+                    targetPos = HangArm.getCurrentPosition() + (int) ((gamepad1.left_trigger - gamepad1.right_trigger) * 50);//this is half speed +
+                    // reversed polarity
+                } else {
+                    targetPos = HangArm.getCurrentPosition() + (int) ((gamepad1.left_trigger - gamepad1.right_trigger) * 100);//this is full speed +
+                    // reversed polarity
+                }
             } else {
-                targetPos = HangArm.getCurrentPosition() + (int) ((gamepad1.left_trigger - gamepad1.right_trigger) * 100);
+                if (halfSpeed) {
+                    targetPos = HangArm.getCurrentPosition() - (int) ((gamepad1.left_trigger - gamepad1.right_trigger) * 50);//this is half speed +
+                    // normal polarity
+                } else {
+                    targetPos = HangArm.getCurrentPosition() - (int) ((gamepad1.left_trigger - gamepad1.right_trigger) * 100);//this if full speed +
+                    //normal polarity
+                }
             }
-        } else {
-            if (halfSpeed) {
-                targetPos = HangArm.getCurrentPosition() - (int) ((gamepad1.left_trigger - gamepad1.right_trigger) * 50);
-            } else {
-                targetPos = HangArm.getCurrentPosition() - (int) ((gamepad1.left_trigger - gamepad1.right_trigger) * 100);
-            }
+            HangArm.setTargetPosition(Math.max(Math.min(targetPos, -50), -2620));//upper and lower limit for claw position so it doesn't drag on the ground
+            HangArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);//NO TOUCH!
         }
-        HangArm.setTargetPosition(Math.max(Math.min(targetPos, -50), -2620));
-        HangArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
 
         if (gamepad1.b) {
-            HangArm.setTargetPosition(HangArm.getCurrentPosition() - 300);
-            HangArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            HangArm.setTargetPosition(HangArm.getCurrentPosition() - 300);//on hang, if the triggers can't get the motor to move, this will help
+            HangArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);//NO TOUCH!
         }
     }
 
