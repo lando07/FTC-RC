@@ -251,7 +251,7 @@ public class TankDrive extends OpMode {
         if (halfSpeed)
         {
             left = left / 2; //halves the computed speed
-            left = left / 2; //
+            right = right / 2; //
         }
 
 
@@ -302,7 +302,7 @@ public class TankDrive extends OpMode {
                     targetPos = HangArm.getCurrentPosition() - (int) (arm_direction * 100);
                 }
             }
-            HangArm.setTargetPosition(Math.max(Math.min(targetPos, -50), -2620));//upper and lower limit for claw position so it doesn't drag on the ground
+            HangArm.setTargetPosition(Math.max(Math.min(targetPos, -50), -2355));//upper and lower limit for claw position so it doesn't drag on the ground
             HangArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);//Do not remove, this must go after every
             //instance of HangArm.setTargetPosition()
         }
