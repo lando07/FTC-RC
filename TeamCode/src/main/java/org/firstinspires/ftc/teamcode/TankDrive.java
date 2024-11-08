@@ -72,7 +72,7 @@ public class TankDrive extends OpMode {
     /**
      * True starts it in half speed mode, false starts it in full speed mode
      */
-    private boolean halfSpeed = false;
+    private volatile boolean halfSpeed = false;
     /**
      * True starts the robot in reverse mode, false starts it in forward mode
      */
@@ -80,57 +80,56 @@ public class TankDrive extends OpMode {
     /**
      * Stores the value of the button used to open the claw
      */
-    private boolean open_claw;
+    private volatile boolean open_claw;
     /**
      * Stores the value of the button used to close the claw
      */
-    private boolean close_claw;
+    private volatile boolean close_claw;
     /**
      * Stores the value of the button used to boost the hangarm motor power to help suspend during
      * a hang
      */
-    private boolean hangBoost;
+    private volatile boolean hangBoost;
     /**
      * Stores the value of the joystick that controls left motor.
      * Works on a range of 0 - 1
      */
-    private double left_drive_joystick;
+    private volatile double left_drive_joystick;
     /**
      * Stores the computed value of the joystick or formula to determine the power of the right motor.
      * Works on a range of 0 - 1
      */
-    private double right_drive_joystick;
+    private volatile double right_drive_joystick;
     /**
      * Stores the computed value of the formula to determine whether the claw is turning clockwise
      * or counterclockwise
      */
-    private double arm_direction;
+    private volatile double arm_direction;
 
     /**
      * Stores the value of the button to enable half speed
      */
-    private boolean halfSpeedButton;
+    private volatile boolean halfSpeedButton;
 
     /**
      * Stores the value of the button to enable full speed
      */
-    private boolean fullSpeedButton;
+    private volatile boolean fullSpeedButton;
 
     /**
      * Stores the value of the button to reset the motor
      */
-    private boolean motorPosResetButton;
+    private volatile boolean motorPosResetButton;
 
     /**
      * Stores the value of the button to put the robot in forward mode
      */
-    private boolean forwardButton;
+    private volatile boolean forwardButton;
 
     /**
      * Stores the value of the button to put the robot in reverse mode
      */
-
-    private boolean reverseButton;
+    private volatile boolean reverseButton;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -187,7 +186,7 @@ public class TankDrive extends OpMode {
      */
     @Override
     public void loop() {
-
+        getControllerData();
         if (halfSpeedButton) {//half-speed button, not for analog input, remap it to any button not in use
             halfSpeed = true;
         }
@@ -325,7 +324,6 @@ public class TankDrive extends OpMode {
             Claw.setPosition(.45);//do not change value unless claw design is changed
         } else if (open_claw)
         {// open servo
-            //NO TOUCHY TOUCHY
             Claw.setPosition(0.12);//do not change value unless claw design is changed
         }
     }
