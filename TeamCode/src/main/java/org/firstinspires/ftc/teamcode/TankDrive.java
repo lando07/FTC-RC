@@ -140,7 +140,7 @@ public class TankDrive extends OpMode {
 
 
         //here's some weird ass boolean logic for ya, I do not recommend changing anything here,
-        //or you might get really wierd behavior
+        //or you might get really weird behavior
         chad.setHalfSpeed(halfSpeedButton || !fullSpeedButton);
         chad.setDriveDirection(forwardButton || !reverseButton);
 
@@ -207,6 +207,7 @@ public class TankDrive extends OpMode {
         fullSpeedButton = gamepad1.a;//this is meant to be any digital button
         forwardButton = gamepad1.dpad_up;//this is meant to be any digital button
         reverseButton = gamepad1.dpad_down;//this is meant to be any digital button
+        motorPosResetButton = gamepad1.x;//this is meant to be any digital button
 
     }
 
