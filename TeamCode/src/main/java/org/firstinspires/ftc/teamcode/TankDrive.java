@@ -161,6 +161,7 @@ public class TankDrive extends OpMode {
         telemetry.addData("Current HangArm Speed", arm_direction);
     }
 
+<<<<<<< HEAD
     /**
      * I isolated this out to reduce complexity in the main method, so it's easier to read.
      * The only thing special in this method is the stick drift compensation.
@@ -172,6 +173,90 @@ public class TankDrive extends OpMode {
             chad.setNewHangArmPosition((int) (arm_direction * 100));//the argument computes the new
                                                                     // position of the hang arm.
                                                                     //Reverse and half speed are handled in the Robot class, and set in the main method
+=======
+    double[] doDriveTrain()
+    {
+        double left = 0;//used to store the calculated power of the left motor
+        double right = 0;//same, but for the right
+        //the joysticks go negative as you push them forward, so I used double-negatives to get it to add power, rather than subtract
+        //the reverse keeps the value intact, which makes it go negative as the joystick goes negative
+        if (reverse)
+        {
+            right += right_drive_joystick;
+            left += left_drive_joystick;
+        }
+        else
+        {
+            left -= left_drive_joystick;
+            right -= right_drive_joystick;
+        }
+
+
+        if (halfSpeed)
+        {
+            left = left / 2; //halves the computed speed
+            left = left / 2; //
+        }
+
+
+        leftDrive.setPower(left);
+        rightDrive.setPower(right);
+
+
+        return new double[]
+                {left, right};
+    }
+
+    void doHangArm()
+    {
+        //hang arm code
+        //left_trigger and right_trigger are analog triggers, DO NOT MODIFY ANYTHING BELOW UNLESS NOTED OTHERWISE
+        int targetPos = 0;//this is the variable used to store the new calculated position of the motor, in reference to the old point
+        //the formula is as follows
+        //current position + (arm_direction * increment var (for sensitivity))
+        if (arm_direction > 0.01 || arm_direction < -0.01)
+        {//compensates for trigger drift
+            if (reverse)
+            {
+                if (halfSpeed)
+                {
+                    //this is half speed +
+                    // reversed polarity
+                    targetPos = HangArm.getCurrentPosition() + (int) (arm_direction * 50);
+                }
+                else
+                {
+                    //this is full speed +
+                    // reversed polarity
+                    targetPos = HangArm.getCurrentPosition() + (int) (arm_direction * 100);
+                }
+            }
+            else
+            {
+                if (halfSpeed)
+                {
+                    //this is half speed +
+                    // normal polarity
+                    targetPos = HangArm.getCurrentPosition() - (int) (arm_direction * 50);
+                }
+                else
+                {
+                    //this if full speed +
+                    //normal polarity
+                    targetPos = HangArm.getCurrentPosition() - (int) (arm_direction * 100);
+                }
+            }
+            HangArm.setTargetPosition(Math.max(Math.min(targetPos, -50), -2620));//upper and lower limit for claw position so it doesn't drag on the ground
+            HangArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);//Do not remove, this must go after every
+            //instance of HangArm.setTargetPosition()
+        }
+
+        if (motorPosResetButton)
+        {
+            HangArm.setTargetPosition(HangArm.getCurrentPosition() - 300);//on hang, if the triggers can't get the motor to move, this will help
+            HangArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);//Do not remove, this must go after every
+            //instance of HangArm.setTargetPosition()
+>>>>>>> parent of 9ecc472 (Fixed bug)
         }
     }
 
