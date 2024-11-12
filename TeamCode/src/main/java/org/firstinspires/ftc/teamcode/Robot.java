@@ -137,7 +137,7 @@ public class Robot {
         if (reverse)//yes, this works, this is normal
             newHangArmPosition *= -1;
         int targetPos = halfSpeed ? HangArm.getCurrentPosition() + newHangArmPosition / 2 : (HangArm.getCurrentPosition() + newHangArmPosition);
-        HangArm.setTargetPosition(Math.max(Math.min(targetPos, -50), -2355));//upper and lower limit for claw position so it doesn't drag on the ground
+        HangArm.setTargetPosition(Math.max(Math.min(targetPos, -50), -2353));//upper and lower limit for claw position so it doesn't drag on the ground
         HangArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
