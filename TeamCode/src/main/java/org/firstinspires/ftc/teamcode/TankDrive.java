@@ -1,4 +1,6 @@
-package org.firstinspires.ftc.teamcode;/* Copyright (c) 2017 FIRST. All rights reserved.
+package org.firstinspires.ftc.teamcode;
+
+/* Copyright (c) 2017 FIRST. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted (subject to the limitations in the disclaimer below) provided that
@@ -32,6 +34,7 @@ package org.firstinspires.ftc.teamcode;/* Copyright (c) 2017 FIRST. All rights r
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -52,7 +55,35 @@ import com.qualcomm.robotcore.hardware.Servo;
 //REMEMBER, CHANGES WILL ***NOT*** TAKE EFFECT UNTIL THE CODE IS PUSHED TO THE PHONE!
 @TeleOp(name = "Test Tank Drive", group = "Robot")
 public class TankDrive extends OpMode {
-    private Robot chad; //michael murray
+    /* Declare OpMode members. */
+    private CRServo crServo = null;
+    /**
+     * The left motor
+     */
+    public DcMotor leftDrive = null;
+    /**
+     * The right motor
+     */
+    public DcMotor rightDrive = null;
+    /**
+     * The Hang Arm Motor
+     */
+    public DcMotor HangArm = null;
+    /**
+     * The claw
+     */
+    public Servo Claw = null;
+    /**
+     * True starts it in half speed mode, false starts it in full speed mode
+     */
+    private volatile boolean halfSpeed = false;
+    /**
+     * True starts the robot in reverse mode, false starts it in forward mode
+     */
+    private boolean reverse = false;
+    /**
+     * Stores the value of the button used to open the claw
+     */
     private volatile boolean open_claw;
     /**
      * Stores the value of the button used to close the claw
@@ -109,7 +140,34 @@ public class TankDrive extends OpMode {
      */
     @Override
     public void init() {
-        this.chad = new Robot();
+        // Define and Initialize Motors
+        // this initializes all motors in the program, should never need to be edited
+        leftDrive = hardwareMap.get(DcMotor.class, "left_drive");
+        rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
+        crServo = hardwareMap.get(CRServo.class, "crServo");
+
+
+        //the hang arm is initialized to use the encoder to hold it's position, hence the extra init lines
+        HangArm = hardwareMap.get(DcMotor.class, "HangArm");//adds the hangArm motor to the hangArm object
+        HangArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);//Resets the encoder
+        HangArm.setTargetPosition(0);//initializes the hangarm position, THIS IS REQUIRED OR THE PROGRAM WILL CRASH
+        HangArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);//starts the motor
+        HangArm.setPower(1);//max strength so the motor holds it position with all available torque
+
+
+        Claw = hardwareMap.get(Servo.class, "Claw");//initializes and stores the claw servo in Claw
+        Claw.setPosition(.45);//start the claw as closed
+
+
+        // To drive forward, our robot needs the motor on one side to be reversed, because the axles point in opposite directions.
+        //The HangArm is reversed as it's pointed the same direction as the left drive
+        leftDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightDrive.setDirection(DcMotor.Direction.FORWARD);
+        HangArm.setDirection(DcMotor.Direction.REVERSE);
+
+
+        // Send telemetry message to signify robot waiting;
+        telemetry.addData(">", "Robot Ready.  Press Play.");    //
     }
 
     /*
@@ -124,7 +182,8 @@ public class TankDrive extends OpMode {
      */
     @Override
     public void start() {//this lifts the claw up so it's not dragging on the ground
-        chad.setNewHangArmPosition(-50);
+        HangArm.setTargetPosition(HangArm.getCurrentPosition() - 50);
+        HangArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     /*
@@ -132,48 +191,60 @@ public class TankDrive extends OpMode {
      */
     @Override
     public void loop() {
-        //If you're confused about anything, hover over any variable(usually in purple) or
-        //any method() to get an explanation on what it does
-
-        //Go to this method to change button mappings and joystick mappings
-        getControllerData();
-
-
-        //here's some weird ass boolean logic for ya, I do not recommend changing anything here,
-        //or you might get really weird behavior
-        chad.setHalfSpeed(halfSpeedButton || !fullSpeedButton);
-        chad.setDriveDirection(forwardButton || !reverseButton);
-
-
-        chad.setMotorPower(left_drive_joystick, right_drive_joystick);//Do I really have to explain what this does?
-        doHangArm();//runs the hang arm code and the HangArm will not work if removed!
-        doClaw();//runs the claw code and the claw will not work if removed!
-
-        if(motorPosResetButton){//Pretty self explanatory?
-            chad.resetHangArmEncoder();
+        if(gamepad1.x){
+            crServo.setPower(0);
+        }
+        else if(gamepad1.left_bumper){
+            crServo.setPower(1);
+        }
+        else if(gamepad1.right_bumper){
+            crServo.setPower(-1);
         }
 
+        getControllerData();
+        if (halfSpeedButton) {//half-speed button, not for analog input, remap it to any button not in use
+            halfSpeed = true;
+        }
+        else if (fullSpeedButton) {//full-speed button, not for analog input, remap it to any button not in use
+            halfSpeed = false;
+        }
+
+
+        if (forwardButton) {//The drive wheels are facing forward, remap this button to any other button not in use
+            leftDrive.setDirection(DcMotor.Direction.REVERSE);
+            rightDrive.setDirection(DcMotor.Direction.FORWARD);
+            HangArm.setDirection(DcMotor.Direction.REVERSE);
+            reverse = false;
+        }
+        else if (reverseButton) {//the idle wheels are facing forward, remap this button to any other button not in use
+            leftDrive.setDirection(DcMotor.Direction.FORWARD);
+            rightDrive.setDirection(DcMotor.Direction.REVERSE);
+            reverse = true;//I can't set the claw motor to reverse or the algorithm controlling it's position freaks out
+        }
+
+
+        //ctrl + click on any of these 3 methods-anything with () behind it - to go to their code
+        double[] telem = doDriveTrain();//the array is for telemetry only, NO TOUCH!
+        doHangArm();//NO TOUCH, runs the hang arm code and the hangarm will not work if removed
+        doClaw();//NO TOUCH, runs the claw code and the claw will not work if removed!
+
+
+        if (motorPosResetButton) {// motor pos reset --> only do this when the robot arm is fully folded up
+            //NO TOUCHY TOUCHY
+            HangArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            HangArm.setTargetPosition(0);
+            HangArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+
+
         // Send telemetry messages so we can see what tf the robot is up to
-        telemetry.addData("left", "%.2f", chad.getLeftDrive().getPower());
-        telemetry.addData("right", "%.2f", chad.getRightDrive().getPower());
-        telemetry.addData("HangArm: ", chad.getHangArm().getCurrentPosition());
-        telemetry.addData("Servo Pos: ", "%.7f", chad.getClaw().getPosition());
+        telemetry.addData("left", "%.2f", telem[0]);
+        telemetry.addData("right", "%.2f", telem[1]);
+        telemetry.addData("HangArm: ", HangArm.getCurrentPosition());
+        telemetry.addData("Servo Pos: ", "%.7f", Claw.getPosition());
         telemetry.addData("Current HangArm Speed", arm_direction);
     }
 
-<<<<<<< HEAD
-    /**
-     * I isolated this out to reduce complexity in the main method, so it's easier to read.
-     * The only thing special in this method is the stick drift compensation.
-     */
-    void doHangArm()
-    {
-        //hang arm code
-        if (arm_direction > 0.01 || arm_direction < -0.01) {//compensates for trigger drift
-            chad.setNewHangArmPosition((int) (arm_direction * 100));//the argument computes the new
-                                                                    // position of the hang arm.
-                                                                    //Reverse and half speed are handled in the Robot class, and set in the main method
-=======
     double[] doDriveTrain()
     {
         double left = 0;//used to store the calculated power of the left motor
@@ -195,7 +266,7 @@ public class TankDrive extends OpMode {
         if (halfSpeed)
         {
             left = left / 2; //halves the computed speed
-            left = left / 2; //
+            right = right / 2; //
         }
 
 
@@ -246,7 +317,7 @@ public class TankDrive extends OpMode {
                     targetPos = HangArm.getCurrentPosition() - (int) (arm_direction * 100);
                 }
             }
-            HangArm.setTargetPosition(Math.max(Math.min(targetPos, -50), -2620));//upper and lower limit for claw position so it doesn't drag on the ground
+            HangArm.setTargetPosition(Math.max(Math.min(targetPos, -50), -2355));//upper and lower limit for claw position so it doesn't drag on the ground
             HangArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);//Do not remove, this must go after every
             //instance of HangArm.setTargetPosition()
         }
@@ -256,28 +327,22 @@ public class TankDrive extends OpMode {
             HangArm.setTargetPosition(HangArm.getCurrentPosition() - 300);//on hang, if the triggers can't get the motor to move, this will help
             HangArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);//Do not remove, this must go after every
             //instance of HangArm.setTargetPosition()
->>>>>>> parent of 9ecc472 (Fixed bug)
         }
     }
 
-    /**
-     * I also isolated this method to reduce complexity in the main method, specifically since I currently
-     * do not want to put in the time to make
-     */
     void doClaw()
     {
         //claw goes from .12 (open) to .45 (closed)
-        if (close_claw) {
-            chad.closeClaw();
-        } else if(open_claw){
-            chad.openClaw();
+        if (close_claw)
+        {//close servo
+
+            Claw.setPosition(.45);//do not change value unless claw design is changed
+        } else if (open_claw)
+        {// open servo
+            Claw.setPosition(0.12);//do not change value unless claw design is changed
         }
     }
 
-    /**
-     * This method grabs all of the controller data and stores it in the appropriate variables. This method
-     * contains all of the button mappings and joystick mappings.
-     */
     void getControllerData()
     {
         //Here are the button mappings, change them as you please
@@ -292,7 +357,6 @@ public class TankDrive extends OpMode {
         fullSpeedButton = gamepad1.a;//this is meant to be any digital button
         forwardButton = gamepad1.dpad_up;//this is meant to be any digital button
         reverseButton = gamepad1.dpad_down;//this is meant to be any digital button
-        motorPosResetButton = gamepad1.x;//this is meant to be any digital button
 
     }
 
