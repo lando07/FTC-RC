@@ -56,7 +56,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 @TeleOp(name = "Test Tank Drive", group = "Robot")
 public class TankDrive extends OpMode {
     /* Declare OpMode members. */
-    private CRServo crServo = null;
     /**
      * The left motor
      */
@@ -144,7 +143,6 @@ public class TankDrive extends OpMode {
         // this initializes all motors in the program, should never need to be edited
         leftDrive = hardwareMap.get(DcMotor.class, "left_drive");
         rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
-        crServo = hardwareMap.get(CRServo.class, "crServo");
 
 
         //the hang arm is initialized to use the encoder to hold it's position, hence the extra init lines
@@ -191,15 +189,6 @@ public class TankDrive extends OpMode {
      */
     @Override
     public void loop() {
-        if(gamepad1.x){
-            crServo.setPower(0);
-        }
-        else if(gamepad1.left_bumper){
-            crServo.setPower(1);
-        }
-        else if(gamepad1.right_bumper){
-            crServo.setPower(-1);
-        }
 
         getControllerData();
         if (halfSpeedButton) {//half-speed button, not for analog input, remap it to any button not in use
