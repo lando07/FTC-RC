@@ -5,64 +5,89 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
+/**
+ * Ok, so this is our omega be-all-end-all class.
+ * Here's the button mappings:
+ * Gamepad 1:
+ * left stick: translational movement
+ * right stick: rotational movement, only by tilting it left or right
+ * A: Toggle speed setting
+ * Gamepad 2:
+ * Left stick: raise and lower slide assembly
+ * Right Stick: rotate arm
+ * A: toggle open/close claw
+ * Left+right D-Pad: CW/CCW claw yaw
+ * Up+down D-Pad: CW/CCW claw pitch
+ */
 @TeleOp(name = "XDrive", group = "Robot")
 public class XDrive extends OpMode {
     /**
      * The front-left motor for mecanum drive
      */
-    public DcMotor frontleft;
+    private DcMotor frontleft;
     /**
      * The front-right motor for mecanum drive
      */
-    public DcMotor frontright;
+    private DcMotor frontright;
     /**
      * The back-left motor for mecanum drive
      */
-    public DcMotor backleft;
+    private DcMotor backleft;
     /**
      * The back-right motor for mecanum drive
      */
-    public DcMotor backright;
+    private DcMotor backright;
     /**
-     * The arm motor for arm control and pivot
+     * The arm servo motor for arm control and pivot
      */
-    public DcMotor arm;
+    private DcMotor arm;
     /**
      * The motor for raising the arm
      */
-    public DcMotor raiseArmSlider;
+    private DcMotor raiseArmSlider;
     /**
      * The claw motor for claw control
      */
-    public Servo claw;
+    private Servo claw;
+    /**
+     * The claw motor for claw pitch control
+     */
+    private Servo clawPitch;
+    /**
+     * The claw motor for claw yaw control
+     */
+    private Servo clawYaw;
+    /**
+     * The touch sensor to stop the slider motor from retracting after it has been fully retracted
+     */
+    private TouchSensor touchSensor;
+    /**
+     * Stores the computed value of the joystick used to control the arm rotation/pitch
+     */
+    private volatile double arm_direction;
+    /**
+     * Stores the slider button state
+     */
+    private volatile boolean sliderButton;
+    /**
+     * Stores the claw toggle button state
+     */
+    private volatile boolean clawToggleButton;
+    /**
+     * True if the touch sensor is pressed, false if it is not
+     */
+    private boolean touchSensorState;
     /**
      * True starts it in half speed mode, false starts it in full speed mode
      */
     private boolean halfSpeed = false;
     /**
-     * True starts the robot in reverse mode, false starts it in forward mode
+     * Stores the button state for toggling speed
      */
-    private volatile boolean toggleClawPosition;
-    private boolean clawPosition;
-    /**
-     * Stores the computed value of the formula to determine whether the claw is turning clockwise
-     * or counterclockwise
-     */
-    private volatile double arm_direction;
-    /**
-     * Stores the computed values of the triggers to raise the arm to a set position
-     */
-    private volatile double raiseArmSpeed;
-    private volatile boolean arm_CW;
-    private volatile boolean arm_CCW;
     private volatile boolean speedToggleButton;
-    private volatile boolean currentSpeed;
 
-    /**
-     * Stores the value of the button to reset the motor
-     */
-    private volatile boolean motorPosResetButton;
 
     /**
      * Code to run ONCE when the driver hits INIT
@@ -73,14 +98,11 @@ public class XDrive extends OpMode {
         frontright = hardwareMap.get(DcMotor.class, "frontRight");
         backleft = hardwareMap.get(DcMotor.class, "backLeft");
         backright = hardwareMap.get(DcMotor.class, "backRight");
-        //this is commented out because we currently don't have the right hubs to house more than 4 motors
-//        arm = hardwareMap.get(DcMotor.class, "arm");
-//        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        arm.setTargetPosition(0);
-//        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        arm.setPower(1);
+        raiseArmSlider = hardwareMap.get(DcMotor.class, "raiseArmSlider");
+        clawPitch = hardwareMap.get(Servo.class, "clawPitch");
+        clawYaw = hardwareMap.get(Servo.class, "clawYaw");
         claw = hardwareMap.get(Servo.class, "claw");
-
+        touchSensor = hardwareMap.get(TouchSensor.class, "touchSensor");
         telemetry.addData("Status", "Initialized");
         telemetry.update();
     }
@@ -97,23 +119,12 @@ public class XDrive extends OpMode {
     @Override
     public void loop() {
         getControllerData();
-        if (toggleClawPosition) {
-            clawPosition = !clawPosition;
-        }
-
-        if (clawPosition) {
-            //claw.setPosition(0.45);
-            claw.setPosition(1);
-        } else {
-            //claw.setPosition(0.12);
-            claw.setPosition(0);
-        }
-
-        if(speedToggleButton){
+        if(speedToggleButton) {
             halfSpeed = !halfSpeed;
         }
         doXDrive();
-
+        doSlider();
+        doClaw();
 
 
     }
@@ -155,20 +166,17 @@ public class XDrive extends OpMode {
         frontleft.setPower(leftFrontPower);
         frontright.setPower(rightFrontPower);
         backleft.setPower(leftBackPower);
-        backleft.setPower(rightBackPower);
+        backright.setPower(rightBackPower);
 
     }
+    void doSlider(){
 
-    void getControllerData() {
-        //Here are the button mappings, change them as you please
-        arm_CW = gamepad1.dpad_left;//this is meant to be any digital button, leftie loosy
-        arm_CCW = gamepad1.dpad_right;//this is meant to be any digital button, rightie tighty
-        arm_direction = gamepad1.left_trigger - gamepad1.right_trigger;//this is meant for the joysticks or the triggers
-        //the bumpers are currently not used, but are digital buttons
-        toggleClawPosition = gamepad1.x;//this is meant to be any digital button
-        speedToggleButton = gamepad1.a;//this is meant to be any digital button
-        raiseArmSpeed = gamepad1.right_trigger - gamepad1.left_trigger;//this dictates how fast the arm should be raised and lowered, using the analog triggers
+    }
+    void doClaw() {//this will handle pitch, yaw, and claw position
 
+    }
+    void getControllerData() {//drivetrain and gamepad1's joysticks are handled in doXDrive, every thing else is handled here
+        speedToggleButton = gamepad1.a;
 
     }
 }
