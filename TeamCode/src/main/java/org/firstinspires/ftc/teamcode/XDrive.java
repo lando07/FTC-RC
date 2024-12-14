@@ -102,9 +102,11 @@ public class XDrive extends OpMode {
         }
 
         if (clawPosition) {
-            claw.setPosition(0.45);
+            //claw.setPosition(0.45);
+            claw.setPosition(1);
         } else {
-            claw.setPosition(0.12);
+            //claw.setPosition(0.12);
+            claw.setPosition(0);
         }
 
         if(speedToggleButton){

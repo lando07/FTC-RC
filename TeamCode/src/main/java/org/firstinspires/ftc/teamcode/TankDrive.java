@@ -325,10 +325,12 @@ public class TankDrive extends OpMode {
         if (close_claw)
         {//close servo
 
-            Claw.setPosition(.45);//do not change value unless claw design is changed
+            //Claw.setPosition(.45);//do not change value unless claw design is changed
+            Claw.setPosition(1);
         } else if (open_claw)
         {// open servo
-            Claw.setPosition(0.12);//do not change value unless claw design is changed
+            //Claw.setPosition(0.12);//do not change value unless claw design is changed
+            Claw.setPosition(0);
         }
     }
 
@@ -349,7 +351,7 @@ public class TankDrive extends OpMode {
 
     }
 
-    /*
+    /*c
      * Code to run ONCE after the driver hits STOP
      */
     @Override
