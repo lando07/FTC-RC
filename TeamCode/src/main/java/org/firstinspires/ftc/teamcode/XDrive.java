@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 /**
@@ -15,9 +14,11 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
  * right stick: rotational movement, only by tilting it left or right
  * A: Toggle speed setting
  * Gamepad 2:
- * Left stick: raise and lower slide assembly
+ * Right Bumper: Reset secondary claw orientation
+ * Y: Raise Slider
+ * X: Lower Slider
  * Right Stick: rotate arm
- * A: toggle open/close claw
+ * B: toggle open/close claw
  * Left+right D-Pad: CW/CCW claw yaw
  * Up+down D-Pad: CW/CCW claw pitch
  */
@@ -40,25 +41,29 @@ public class XDrive extends OpMode {
      */
     private DcMotor backright;
     /**
-     * The arm servo motor for arm control and pivot
+     * The arm motor for secondary claw to grab pieces out of the submersible
      */
     private DcMotor arm;
     /**
-     * The motor for raising the arm
+     * The motor for raising the slider with static claw
      */
     private DcMotor raiseArmSlider;
     /**
-     * The claw motor for claw control
+     * The claw servo for the static claw
      */
-    private Servo claw;
+    private Servo primaryClaw;
     /**
-     * The claw motor for claw pitch control
+     * The claw servo for the secondary claw
      */
-    private Servo clawPitch;
+    private Servo secondaryClaw;
     /**
-     * The claw motor for claw yaw control
+     * The claw motor for secondary claw pitch control
      */
-    private Servo clawYaw;
+    private Servo secondaryClawPitch;
+    /**
+     * The claw motor for secondary claw yaw control
+     */
+    private Servo secondaryClawYaw;
     /**
      * The touch sensor to stop the slider motor from retracting after it has been fully retracted
      */
@@ -68,13 +73,25 @@ public class XDrive extends OpMode {
      */
     private volatile double arm_direction;
     /**
+     * Stores the claw pitch state
+     */
+    private volatile int clawPitchState;
+    /**
+     * Stores the claw yaw state
+     */
+    private volatile int clawYawState;
+    /**
      * Stores the slider button state
      */
-    private volatile boolean sliderButton;
+    private volatile int sliderState;
     /**
      * Stores the claw toggle button state
      */
     private volatile boolean clawToggleButton;
+    /**
+     * Resets the orientation of the secondary claw
+     */
+    private volatile boolean resetServoOrientation;
     /**
      * True if the touch sensor is pressed, false if it is not
      */
@@ -87,6 +104,10 @@ public class XDrive extends OpMode {
      * Stores the button state for toggling speed
      */
     private volatile boolean speedToggleButton;
+    /**
+     * True if open, false if closed, starts false
+     */
+    private boolean clawState = false;
 
 
     /**
@@ -94,16 +115,19 @@ public class XDrive extends OpMode {
      */
     @Override
     public void init() {
+        //Mecanum drive init, these 4 motors go on the control hub
         frontleft = hardwareMap.get(DcMotor.class, "frontLeft");
         frontright = hardwareMap.get(DcMotor.class, "frontRight");
         backleft = hardwareMap.get(DcMotor.class, "backLeft");
         backright = hardwareMap.get(DcMotor.class, "backRight");
+        //Arm and slider init, the slider motor and secondary claw servos go on the expansion hub, touch sensor on control hub
         raiseArmSlider = hardwareMap.get(DcMotor.class, "raiseArmSlider");
-        clawPitch = hardwareMap.get(Servo.class, "clawPitch");
-        clawYaw = hardwareMap.get(Servo.class, "clawYaw");
-        claw = hardwareMap.get(Servo.class, "claw");
+        arm = hardwareMap.get(DcMotor.class, "arm");
+        primaryClaw = hardwareMap.get(Servo.class, "primaryClaw");
+        secondaryClaw = hardwareMap.get(Servo.class, "secondaryClaw");
+        raiseArmSlider = hardwareMap.get(DcMotor.class, "raiseArmSlider");
         touchSensor = hardwareMap.get(TouchSensor.class, "touchSensor");
-        telemetry.addData("Status", "Initialized");
+        telemetry.addData("Status:", "Initialized");
         telemetry.update();
     }
 
@@ -113,13 +137,28 @@ public class XDrive extends OpMode {
     }
 
     @Override
-    public void start() {//not used as of right now
+    public void start() {
+        //Initialize arm to zero position
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        arm.setTargetPosition(0);
+        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        arm.setPower(1);
+
+        primaryClaw.setPosition(0);//TODO: Actually get the true servo measurement to close the claw
+        secondaryClaw.setPosition(0);//TODO: Actually get the true servo measurement to close the claw
+        secondaryClawPitch.setPosition(0);//this will reset the pitch to pointing straight backward
+        secondaryClawYaw.setPosition(0);//this will set the claw to hold a specimen vertically
+
+        raiseArmSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        raiseArmSlider.setTargetPosition(0);
+        raiseArmSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        raiseArmSlider.setPower(1);
     }
 
     @Override
     public void loop() {
         getControllerData();
-        if(speedToggleButton) {
+        if (speedToggleButton) {
             halfSpeed = !halfSpeed;
         }
         doXDrive();
@@ -129,6 +168,9 @@ public class XDrive extends OpMode {
 
     }
 
+    /**
+     * Runs Mecanum drive
+     */
     void doXDrive() {//oh boy this is gonna get fun
         double max;
         // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
@@ -169,14 +211,117 @@ public class XDrive extends OpMode {
         backright.setPower(rightBackPower);
 
     }
-    void doSlider(){
+
+    /**
+     * Does slider motor logic, such as protecting the slide from over-retraction
+     */
+    void doSlider() {
+        if (touchSensorState && sliderState == -1) {//this stops the motor from going any further down, but still allows it to go upward
+            sliderState = 0;
+            raiseArmSlider.setTargetPosition(raiseArmSlider.getCurrentPosition() + 50);//so the motor doesn't get stuck on a encoder increment lower than the slider's full retraction
+            raiseArmSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+        switch (sliderState) {
+            case -1:
+                raiseArmSlider.setTargetPosition(raiseArmSlider.getCurrentPosition() - 100);
+                raiseArmSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                break;
+            case 1:
+                raiseArmSlider.setTargetPosition(raiseArmSlider.getCurrentPosition() + 100);//TODO: Get max slider height for high clip
+                raiseArmSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                break;
+            default://do nothing, hold position with 100% power
+                break;
+        }
+    }
+
+    /**
+     * Controls both claws, pitch, and yaw
+     */
+    void doClaw() {//this will handle pitch, yaw, and claw position, and claw arm
+        //TODO: Possible retractable secondary arm? Another dc motor would be needed, but would work, and be very beneficial
+        switch (clawYawState) {//does the claw yaw
+            case -1:
+                secondaryClawYaw.setPosition(secondaryClawYaw.getPosition() - .1);//TODO: Get actual rotate measurements
+                break;
+            case 1:
+                secondaryClawYaw.setPosition(secondaryClawYaw.getPosition() + .1);//TODO: Get actual rotate measurements
+                break;
+            default:
+                break;
+        }
+
+        switch (clawPitchState) {
+            case -1:
+                secondaryClawPitch.setPosition(secondaryClawPitch.getPosition() - .1);//TODO: Get actual pitch measurements
+                break;
+            case 1:
+                secondaryClawPitch.setPosition(secondaryClawPitch.getPosition() + 1);//TODO: Get actual pitch measurements
+                break;
+            default:
+                break;
+        }
+
+        if (clawToggleButton) {//Toggles claw state, then does servo toggling
+            clawState = !clawState;
+
+            if (clawState) {//opens both claws
+                primaryClaw.setPosition(1);//TODO: Get actual close/open measurements
+                secondaryClaw.setPosition(1);//TODO: Get actual close/open measurements
+            } else {
+                primaryClaw.setPosition(0);//TODO: Get actual close/open measurements
+                secondaryClaw.setPosition(0);//TODO: Get actual close/open measurements
+            }
+        }
+
 
     }
-    void doClaw() {//this will handle pitch, yaw, and claw position
 
+    void doArm() {
+        int targetPos = 0;
+        if (arm_direction > 0.01 || arm_direction < -0.01) {
+            if (halfSpeed) {
+                targetPos = arm.getCurrentPosition() + (int) (arm_direction * 50);
+            } else {
+                targetPos = arm.getCurrentPosition() + (int) (arm_direction * 100);
+            }
+
+            arm.setTargetPosition(Math.max(Math.min(targetPos, 50), -2355));//TODO: Get measurements for arm min and max
+            arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
     }
+
+    /**
+     * Grabs all controller data, then stores that shit for methods or whatever
+     */
     void getControllerData() {//drivetrain and gamepad1's joysticks are handled in doXDrive, every thing else is handled here
-        speedToggleButton = gamepad1.a;
+        if (gamepad2.y) {//slider goes up
+            sliderState = 1;
+        } else if (gamepad2.x) {//slider goes down
+            sliderState = -1;
+        } else {
+            sliderState = 0;
+        }
 
+        if (gamepad2.dpad_left) {//yaw left, or ccw
+            clawYawState = -1;
+        } else if (gamepad2.dpad_right) {//yaw right, or cw
+            clawYawState = 1;
+        } else {
+            clawYawState = 0;
+        }
+
+        if (gamepad2.dpad_up) {
+            clawPitchState = 1;
+        } else if (gamepad2.dpad_down) {
+            clawPitchState = -1;
+        } else {
+            clawPitchState = 0;
+        }
+
+        arm_direction = -gamepad2.right_stick_y;
+        clawToggleButton = gamepad2.b;
+        resetServoOrientation = gamepad2.right_bumper;
+        touchSensorState = touchSensor.isPressed();
     }
 }
