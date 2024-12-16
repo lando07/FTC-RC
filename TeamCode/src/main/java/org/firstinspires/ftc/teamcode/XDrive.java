@@ -45,6 +45,10 @@ public class XDrive extends OpMode {
      */
     private DcMotor arm;
     /**
+     * Provides arm extension for the claw
+     */
+    private DcMotor armExtender;
+    /**
      * The motor for raising the slider with static claw
      */
     private DcMotor raiseArmSlider;
@@ -85,6 +89,10 @@ public class XDrive extends OpMode {
      */
     private volatile int sliderState;
     /**
+     * Stores the extender's state on whether to extend or retract
+     */
+    private volatile double extenderState;
+    /**
      * Stores the claw toggle button state
      */
     private volatile boolean clawToggleButton;
@@ -120,13 +128,19 @@ public class XDrive extends OpMode {
         frontright = hardwareMap.get(DcMotor.class, "frontRight");
         backleft = hardwareMap.get(DcMotor.class, "backLeft");
         backright = hardwareMap.get(DcMotor.class, "backRight");
+
         //Arm and slider init, the slider motor and secondary claw servos go on the expansion hub, touch sensor on control hub
         raiseArmSlider = hardwareMap.get(DcMotor.class, "raiseArmSlider");
         arm = hardwareMap.get(DcMotor.class, "arm");
+        armExtender = hardwareMap.get(DcMotor.class, "armSlider");
+
         primaryClaw = hardwareMap.get(Servo.class, "primaryClaw");
         secondaryClaw = hardwareMap.get(Servo.class, "secondaryClaw");
-        raiseArmSlider = hardwareMap.get(DcMotor.class, "raiseArmSlider");
+        secondaryClawPitch = hardwareMap.get(Servo.class, "pitch");
+        secondaryClawYaw = hardwareMap.get(Servo.class, "yaw");
         touchSensor = hardwareMap.get(TouchSensor.class, "touchSensor");
+
+
         telemetry.addData("Status:", "Initialized");
         telemetry.update();
     }
@@ -218,7 +232,7 @@ public class XDrive extends OpMode {
     void doSlider() {
         if (touchSensorState && sliderState == -1) {//this stops the motor from going any further down, but still allows it to go upward
             sliderState = 0;
-            raiseArmSlider.setTargetPosition(raiseArmSlider.getCurrentPosition() + 50);//so the motor doesn't get stuck on a encoder increment lower than the slider's full retraction
+            raiseArmSlider.setTargetPosition(raiseArmSlider.getCurrentPosition() + 10);//so the motor doesn't get stuck on a encoder increment lower than the slider's full retraction
             raiseArmSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
         switch (sliderState) {
@@ -236,21 +250,20 @@ public class XDrive extends OpMode {
     }
 
     /**
-     * Controls both claws, pitch, and yaw
+     * Controls both claws, pitch, and yaw, and arm extension
      */
     void doClaw() {//this will handle pitch, yaw, and claw position, and claw arm
-        //TODO: Possible retractable secondary arm? Another dc motor would be needed, but would work, and be very beneficial
-        switch (clawYawState) {//does the claw yaw
-            case -1:
-                secondaryClawYaw.setPosition(secondaryClawYaw.getPosition() - .1);//TODO: Get actual rotate measurements
-                break;
-            case 1:
-                secondaryClawYaw.setPosition(secondaryClawYaw.getPosition() + .1);//TODO: Get actual rotate measurements
-                break;
-            default:
-                break;
-        }
+        doArmExtension();
+        doArm();
+        doSecondaryClawPitch();
+        doSecondaryClawYaw();
+        doClawStateToggle();
+    }
 
+    /**
+     * Calculates new pitch of secondary claw
+     */
+    void doSecondaryClawPitch(){
         switch (clawPitchState) {
             case -1:
                 secondaryClawPitch.setPosition(secondaryClawPitch.getPosition() - .1);//TODO: Get actual pitch measurements
@@ -261,7 +274,43 @@ public class XDrive extends OpMode {
             default:
                 break;
         }
+    }
 
+    /**
+     * Calculates new yaw of secondary claw
+     */
+    void doSecondaryClawYaw(){
+        switch (clawYawState) {//does the claw yaw
+            case -1:
+                secondaryClawYaw.setPosition(secondaryClawYaw.getPosition() - .1);//TODO: Get actual rotate measurements
+                break;
+            case 1:
+                secondaryClawYaw.setPosition(secondaryClawYaw.getPosition() + .1);//TODO: Get actual rotate measurements
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Calculates the speed at which the arm extends
+     */
+    void doArmExtension(){
+        if (extenderState > 0.01 || extenderState < -0.01) {//extends or retracts the arm for the secondary claw
+            int targetpos = 0;
+            if (halfSpeed) {
+                targetpos = armExtender.getCurrentPosition() + (int) (extenderState * 50);
+            } else {
+                targetpos = armExtender.getCurrentPosition() + (int) (extenderState * 100);
+            }
+            armExtender.setTargetPosition(Math.min(Math.max(targetpos, 0),2000));//TODO: Get measurements for extender min and max
+        }
+    }
+
+    /**
+     * Handles the state of both claws
+     */
+    void doClawStateToggle(){
         if (clawToggleButton) {//Toggles claw state, then does servo toggling
             clawState = !clawState;
 
@@ -273,10 +322,11 @@ public class XDrive extends OpMode {
                 secondaryClaw.setPosition(0);//TODO: Get actual close/open measurements
             }
         }
-
-
     }
 
+    /**
+     * Handles the entire arm which the secondary claw resides on
+     */
     void doArm() {
         int targetPos = 0;
         if (arm_direction > 0.01 || arm_direction < -0.01) {
@@ -318,7 +368,7 @@ public class XDrive extends OpMode {
         } else {
             clawPitchState = 0;
         }
-
+        extenderState = -gamepad2.left_stick_y;
         arm_direction = -gamepad2.right_stick_y;
         clawToggleButton = gamepad2.b;
         resetServoOrientation = gamepad2.right_bumper;
