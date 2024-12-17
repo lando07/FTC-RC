@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
@@ -103,7 +104,7 @@ public class XDrive extends OpMode {
     /**
      * True if the touch sensor is pressed, false if it is not
      */
-    private boolean touchSensorState;
+    private volatile boolean touchSensorState;
     /**
      * True starts it in half speed mode, false starts it in full speed mode
      */
@@ -128,11 +129,13 @@ public class XDrive extends OpMode {
         frontright = hardwareMap.get(DcMotor.class, "frontRight");
         backleft = hardwareMap.get(DcMotor.class, "backLeft");
         backright = hardwareMap.get(DcMotor.class, "backRight");
-
+        frontleft.setDirection(DcMotorSimple.Direction.REVERSE);
+        backleft.setDirection(DcMotorSimple.Direction.REVERSE);
         //Arm and slider init, the slider motor and secondary claw servos go on the expansion hub, touch sensor on control hub
         raiseArmSlider = hardwareMap.get(DcMotor.class, "raiseArmSlider");
         arm = hardwareMap.get(DcMotor.class, "arm");
         armExtender = hardwareMap.get(DcMotor.class, "armSlider");
+        armExtender.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         primaryClaw = hardwareMap.get(Servo.class, "primaryClaw");
         secondaryClaw = hardwareMap.get(Servo.class, "secondaryClaw");
@@ -163,6 +166,7 @@ public class XDrive extends OpMode {
         secondaryClawPitch.setPosition(0);//this will reset the pitch to pointing straight backward
         secondaryClawYaw.setPosition(0);//this will set the claw to hold a specimen vertically
 
+        raiseArmSlider.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         raiseArmSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         raiseArmSlider.setTargetPosition(0);
         raiseArmSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -178,8 +182,7 @@ public class XDrive extends OpMode {
         doXDrive();
         doSlider();
         doClaw();
-
-
+        telemetry.addData("SliderCurrentPos: ", raiseArmSlider.getCurrentPosition());
     }
 
     /**
@@ -230,18 +233,22 @@ public class XDrive extends OpMode {
      * Does slider motor logic, such as protecting the slide from over-retraction
      */
     void doSlider() {
-        if (touchSensorState && sliderState == -1) {//this stops the motor from going any further down, but still allows it to go upward
-            sliderState = 0;
-            raiseArmSlider.setTargetPosition(raiseArmSlider.getCurrentPosition() + 10);//so the motor doesn't get stuck on a encoder increment lower than the slider's full retraction
-            raiseArmSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        if (touchSensorState && !gamepad2.y) {//this stops the motor from going any further down, but still allows it to go upward
+            raiseArmSlider.setPower(0);
+            if(sliderState == -1) {
+                sliderState = 0;
+            }
         }
         switch (sliderState) {
             case -1:
-                raiseArmSlider.setTargetPosition(raiseArmSlider.getCurrentPosition() - 100);
+                raiseArmSlider.setPower(1);
+                raiseArmSlider.setTargetPosition(raiseArmSlider.getCurrentPosition() + 100);
                 raiseArmSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 break;
             case 1:
-                raiseArmSlider.setTargetPosition(raiseArmSlider.getCurrentPosition() + 100);//TODO: Get max slider height for high clip
+                raiseArmSlider.setPower(1);
+                raiseArmSlider.setTargetPosition(raiseArmSlider.getCurrentPosition() - 100);//TODO: Get max slider height for high clip
                 raiseArmSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 break;
             default://do nothing, hold position with 100% power
@@ -296,14 +303,20 @@ public class XDrive extends OpMode {
      * Calculates the speed at which the arm extends
      */
     void doArmExtension(){
-        if (extenderState > 0.01 || extenderState < -0.01) {//extends or retracts the arm for the secondary claw
-            int targetpos = 0;
-            if (halfSpeed) {
-                targetpos = armExtender.getCurrentPosition() + (int) (extenderState * 50);
-            } else {
-                targetpos = armExtender.getCurrentPosition() + (int) (extenderState * 100);
-            }
-            armExtender.setTargetPosition(Math.min(Math.max(targetpos, 0),2000));//TODO: Get measurements for extender min and max
+//        if (extenderState > 0.01 || extenderState < -0.01) {//extends or retracts the arm for the secondary claw
+//            int targetpos = 0;
+//            if (halfSpeed) {
+//                targetpos = armExtender.getCurrentPosition() + (int) (extenderState * 50);
+//            } else {
+//                targetpos = armExtender.getCurrentPosition() + (int) (extenderState * 100);
+//            }
+//            armExtender.setTargetPosition(Math.min(Math.max(targetpos, 0),2000));//TODO: Get measurements for extender min and max
+//
+//        }
+        if (halfSpeed) {
+            armExtender.setPower(extenderState * 0.5);
+        }else {
+            armExtender.setPower(extenderState);
         }
     }
 
@@ -336,7 +349,7 @@ public class XDrive extends OpMode {
                 targetPos = arm.getCurrentPosition() + (int) (arm_direction * 100);
             }
 
-            arm.setTargetPosition(Math.max(Math.min(targetPos, 50), -2355));//TODO: Get measurements for arm min and max
+            arm.setTargetPosition(Math.max(Math.min(targetPos, 0), -4025));
             arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
     }
@@ -368,6 +381,7 @@ public class XDrive extends OpMode {
         } else {
             clawPitchState = 0;
         }
+        speedToggleButton = gamepad1.b;
         extenderState = -gamepad2.left_stick_y;
         arm_direction = -gamepad2.right_stick_y;
         clawToggleButton = gamepad2.b;
