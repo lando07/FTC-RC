@@ -89,9 +89,9 @@ public class DriveConstants {
      
      */
     public static RevHubOrientationOnRobot.LogoFacingDirection LOGO_FACING_DIR =
-            RevHubOrientationOnRobot.LogoFacingDirection.UP;
+            RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
     public static RevHubOrientationOnRobot.UsbFacingDirection USB_FACING_DIR =
-            RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
+            RevHubOrientationOnRobot.UsbFacingDirection.UP;
     public static double MAX_VEL = 26.914317478618088;
     public static double MAX_ACCEL = 26.914317478618088;
     public static double MAX_ANG_VEL = Math.toRadians(85.67093333333331);

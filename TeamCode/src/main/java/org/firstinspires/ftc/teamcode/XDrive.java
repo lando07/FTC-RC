@@ -117,7 +117,10 @@ public class XDrive extends OpMode {
      * True if open, false if closed, starts false
      */
     private boolean clawState = false;
-
+    /**
+     *
+     */
+    private boolean clawToggleButtonHeld = false;
 
     /**
      * Code to run ONCE when the driver hits INIT
@@ -236,24 +239,26 @@ public class XDrive extends OpMode {
 
         if (touchSensorState && !gamepad2.y) {//this stops the motor from going any further down, but still allows it to go upward
             raiseArmSlider.setPower(0);
-            if(sliderState == -1) {
+            if (sliderState == -1) {
                 sliderState = 0;
             }
         }
-        switch (sliderState) {
-            case -1:
+        if(sliderState != 0) {
+            int targetpos;
+            if (sliderState == -1) {
                 raiseArmSlider.setPower(1);
                 raiseArmSlider.setTargetPosition(raiseArmSlider.getCurrentPosition() + 100);
                 raiseArmSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                break;
-            case 1:
+            } else if (sliderState == 1) {
                 raiseArmSlider.setPower(1);
                 raiseArmSlider.setTargetPosition(raiseArmSlider.getCurrentPosition() - 100);//TODO: Get max slider height for high clip
                 raiseArmSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                break;
-            default://do nothing, hold position with 100% power
-                break;
+            }
+
         }
+
+
+
     }
 
     /**
@@ -270,7 +275,7 @@ public class XDrive extends OpMode {
     /**
      * Calculates new pitch of secondary claw
      */
-    void doSecondaryClawPitch(){
+    void doSecondaryClawPitch() {
         switch (clawPitchState) {
             case -1:
                 secondaryClawPitch.setPosition(secondaryClawPitch.getPosition() - .1);//TODO: Get actual pitch measurements
@@ -286,7 +291,7 @@ public class XDrive extends OpMode {
     /**
      * Calculates new yaw of secondary claw
      */
-    void doSecondaryClawYaw(){
+    void doSecondaryClawYaw() {
         switch (clawYawState) {//does the claw yaw
             case -1:
                 secondaryClawYaw.setPosition(secondaryClawYaw.getPosition() - .1);//TODO: Get actual rotate measurements
@@ -302,7 +307,7 @@ public class XDrive extends OpMode {
     /**
      * Calculates the speed at which the arm extends
      */
-    void doArmExtension(){
+    void doArmExtension() {
 //        if (extenderState > 0.01 || extenderState < -0.01) {//extends or retracts the arm for the secondary claw
 //            int targetpos = 0;
 //            if (halfSpeed) {
@@ -315,7 +320,7 @@ public class XDrive extends OpMode {
 //        }
         if (halfSpeed) {
             armExtender.setPower(extenderState * 0.5);
-        }else {
+        } else {
             armExtender.setPower(extenderState);
         }
     }
@@ -323,9 +328,10 @@ public class XDrive extends OpMode {
     /**
      * Handles the state of both claws
      */
-    void doClawStateToggle(){
-        if (clawToggleButton) {//Toggles claw state, then does servo toggling
+    void doClawStateToggle() {
+        if (clawToggleButton && !clawToggleButtonHeld) {//Toggles claw state, then does servo toggling
             clawState = !clawState;
+            clawToggleButtonHeld = true;
 
             if (clawState) {//opens both claws
                 primaryClaw.setPosition(1);//TODO: Get actual close/open measurements
@@ -334,6 +340,9 @@ public class XDrive extends OpMode {
                 primaryClaw.setPosition(0);//TODO: Get actual close/open measurements
                 secondaryClaw.setPosition(0);//TODO: Get actual close/open measurements
             }
+        }
+        else{
+            clawToggleButtonHeld = clawToggleButton;
         }
     }
 
@@ -349,7 +358,7 @@ public class XDrive extends OpMode {
                 targetPos = arm.getCurrentPosition() + (int) (arm_direction * 100);
             }
 
-            arm.setTargetPosition(Math.max(Math.min(targetPos, 0), -4025));
+            arm.setTargetPosition(Math.min(Math.max(targetPos, 0), 1000));
             arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
     }
