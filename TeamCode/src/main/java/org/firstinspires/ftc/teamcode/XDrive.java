@@ -62,10 +62,6 @@ public class XDrive extends OpMode {
      */
     private Servo secondaryClaw;
     /**
-     * The claw motor for secondary claw pitch control
-     */
-    private Servo secondaryClawPitch;
-    /**
      * The claw motor for secondary claw yaw control
      */
     private Servo secondaryClawYaw;
@@ -77,6 +73,10 @@ public class XDrive extends OpMode {
      * Stores the computed value of the joystick used to control the arm rotation/pitch
      */
     private volatile double arm_direction;
+    /**
+     * Stores the extender's state on whether to extend or retract
+     */
+    private volatile double extenderState;
     /**
      * Stores the claw pitch state
      */
@@ -90,17 +90,13 @@ public class XDrive extends OpMode {
      */
     private volatile int sliderState;
     /**
-     * Stores the extender's state on whether to extend or retract
-     */
-    private volatile double extenderState;
-    /**
      * Stores the claw toggle button state
      */
     private volatile boolean clawToggleButton;
     /**
      * Resets the orientation of the secondary claw
      */
-    private volatile boolean resetServoOrientation;
+    private volatile boolean resetServoOrientationButton;
     /**
      * True if the touch sensor is pressed, false if it is not
      */
@@ -142,7 +138,6 @@ public class XDrive extends OpMode {
 
         primaryClaw = hardwareMap.get(Servo.class, "primaryClaw");
         secondaryClaw = hardwareMap.get(Servo.class, "secondaryClaw");
-        secondaryClawPitch = hardwareMap.get(Servo.class, "pitch");
         secondaryClawYaw = hardwareMap.get(Servo.class, "yaw");
         touchSensor = hardwareMap.get(TouchSensor.class, "touchSensor");
 
@@ -166,7 +161,6 @@ public class XDrive extends OpMode {
 
         primaryClaw.setPosition(0);//TODO: Actually get the true servo measurement to close the claw
         secondaryClaw.setPosition(0);//TODO: Actually get the true servo measurement to close the claw
-        secondaryClawPitch.setPosition(0);//this will reset the pitch to pointing straight backward
         secondaryClawYaw.setPosition(0);//this will set the claw to hold a specimen vertically
 
         raiseArmSlider.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -267,25 +261,8 @@ public class XDrive extends OpMode {
     void doClaw() {//this will handle pitch, yaw, and claw position, and claw arm
         doArmExtension();
         doArm();
-        doSecondaryClawPitch();
         doSecondaryClawYaw();
         doClawStateToggle();
-    }
-
-    /**
-     * Calculates new pitch of secondary claw
-     */
-    void doSecondaryClawPitch() {
-        switch (clawPitchState) {
-            case -1:
-                secondaryClawPitch.setPosition(secondaryClawPitch.getPosition() - .1);//TODO: Get actual pitch measurements
-                break;
-            case 1:
-                secondaryClawPitch.setPosition(secondaryClawPitch.getPosition() + 1);//TODO: Get actual pitch measurements
-                break;
-            default:
-                break;
-        }
     }
 
     /**
@@ -394,7 +371,7 @@ public class XDrive extends OpMode {
         extenderState = -gamepad2.left_stick_y;
         arm_direction = -gamepad2.right_stick_y;
         clawToggleButton = gamepad2.b;
-        resetServoOrientation = gamepad2.right_bumper;
+        resetServoOrientationButton = gamepad2.right_bumper;
         touchSensorState = touchSensor.isPressed();
     }
 }
