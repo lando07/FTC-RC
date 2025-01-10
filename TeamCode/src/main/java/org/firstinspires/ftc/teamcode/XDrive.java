@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
@@ -124,12 +125,16 @@ public class XDrive extends OpMode {
     @Override
     public void init() {
         //Mecanum drive init, these 4 motors go on the control hub
-        frontleft = hardwareMap.get(DcMotor.class, "frontLeft");
-        frontright = hardwareMap.get(DcMotor.class, "frontRight");
-        backleft = hardwareMap.get(DcMotor.class, "backLeft");
-        backright = hardwareMap.get(DcMotor.class, "backRight");
+        frontleft   = hardwareMap.get(DcMotorEx.class, "leftFront");
+        frontright  = hardwareMap.get(DcMotorEx.class, "rightFront");
+        backleft    = hardwareMap.get(DcMotorEx.class, "leftBack");
+        backright   = hardwareMap.get(DcMotorEx.class, "rightBack");
         frontleft.setDirection(DcMotorSimple.Direction.REVERSE);
         backleft.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontleft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backleft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontright.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backright.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //Arm and slider init, the slider motor and secondary claw servos go on the expansion hub, touch sensor on control hub
         raiseArmSlider = hardwareMap.get(DcMotor.class, "raiseArmSlider");
         arm = hardwareMap.get(DcMotor.class, "arm");
