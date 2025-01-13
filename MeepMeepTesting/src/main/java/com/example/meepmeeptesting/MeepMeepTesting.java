@@ -30,9 +30,9 @@ public class MeepMeepTesting {
                 .strafeToSplineHeading(new Vector2d(-48, 20), Math.toRadians(0))
                 .strafeTo(new Vector2d(-58, 20))
                 .strafeTo(new Vector2d(-58, 25))
-                        .strafeToSplineHeading(new Vector2d(-54,52),Math.toRadians(270))
-                        .strafeTo(new Vector2d(-54,48))
-                        .strafeToSplineHeading(new Vector2d(-48,52),Math.toRadians(90))
+                .strafeToSplineHeading(new Vector2d(-54,52),Math.toRadians(270))
+                .strafeTo(new Vector2d(-54,48))
+                .strafeToSplineHeading(new Vector2d(-48,52),Math.toRadians(90))
                 
                 .build());
 
