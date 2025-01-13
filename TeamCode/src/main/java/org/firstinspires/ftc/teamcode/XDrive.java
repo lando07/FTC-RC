@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
+import static java.lang.Thread.sleep;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -42,10 +45,6 @@ public class XDrive extends OpMode {
      * The back-right motor for mecanum drive
      */
     private DcMotor backright;
-    /**
-     * The arm motor for secondary claw to grab pieces out of the submersible
-     */
-    private DcMotor arm;
     /**
      * Provides arm extension for the claw
      */
@@ -140,9 +139,8 @@ public class XDrive extends OpMode {
         backright   .setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //Arm and slider init, the slider motor and secondary claw servos go on the expansion hub, touch sensor on control hub
         raiseArmSlider = hardwareMap.get(DcMotor.class, "raiseArmSlider");
-        arm = hardwareMap.get(DcMotor.class, "arm");
         armExtender = hardwareMap.get(DcMotor.class, "armSlider");
-        armExtender.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
 
         primaryClaw = hardwareMap.get(Servo.class, "primaryClaw");
         secondaryClaw = hardwareMap.get(Servo.class, "secondaryClaw");
@@ -160,13 +158,7 @@ public class XDrive extends OpMode {
     }
 
     @Override
-    public void start() {
-        //Initialize arm to zero position
-        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        arm.setTargetPosition(0);
-        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        arm.setPower(1);
-
+    public void start(){
         primaryClaw.setPosition(1);
         secondaryClaw.setPosition(1);
         secondaryClawYaw.setPosition(0);//this will set the claw to hold a specimen parallel to the main claw
@@ -176,6 +168,16 @@ public class XDrive extends OpMode {
         raiseArmSlider.setTargetPosition(0);
         raiseArmSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         raiseArmSlider.setPower(1);
+
+        armExtender.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        armExtender.setPower(0.5);
+        try {
+            sleep(500);
+        }
+        catch (InterruptedException e){
+            Thread.currentThread().interrupt();
+        }
+        armExtender.setPower(0);
     }
 
     @Override
@@ -187,7 +189,9 @@ public class XDrive extends OpMode {
         doXDrive();
         doSlider();
         doClaw();
+        goToPresetHeight();
         telemetry.addData("SliderCurrentPos: ", raiseArmSlider.getCurrentPosition());
+        telemetry.addData("ExtCurrPos:", armExtender.getCurrentPosition());
         telemetry.addData("PrimaryClaw Pos:", primaryClaw.getPosition());
         telemetry.addData("SecondaryClaw pos", secondaryClaw.getPosition());
     }
@@ -242,6 +246,9 @@ public class XDrive extends OpMode {
     void doSlider() {
         if (touchSensorState && !gamepad2.y) {//this stops the motor from going any further down, but still allows it to go upward
             raiseArmSlider.setPower(0);//The zero power behavior set to float is because the arm has so much resistance it can hold it's own weight
+            raiseArmSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            raiseArmSlider.setTargetPosition(0);
+            raiseArmSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             if (sliderState == -1) {
                 sliderState = 0;
             }
@@ -255,7 +262,7 @@ public class XDrive extends OpMode {
                 raiseArmSlider.setPower(1);
                 targetpos = raiseArmSlider.getCurrentPosition() - 100;
             }
-            raiseArmSlider.setTargetPosition(Math.min(Math.max(0,targetpos), 3000));//TODO: Get max slider height for high clip
+            raiseArmSlider.setTargetPosition(Math.max(Math.min(15,targetpos), -3000));
             raiseArmSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         }
@@ -267,9 +274,8 @@ public class XDrive extends OpMode {
     /**
      * Controls both claws, pitch, and yaw, and arm extension
      */
-    void doClaw() {//this will handle pitch, yaw, and claw position, and claw arm
+    void doClaw() {//this will handle extension, yaw, and claw state
         doArmExtension();
-        doArm();
         doSecondaryClawYaw();
         doClawStateToggle();
     }
@@ -280,10 +286,10 @@ public class XDrive extends OpMode {
     void doSecondaryClawYaw() {
         switch (clawYawState) {//does the claw yaw
             case -1:
-                secondaryClawYaw.setPosition(secondaryClawYaw.getPosition() - .05);//TODO: Get actual rotate measurements
+                secondaryClawYaw.setPosition(secondaryClawYaw.getPosition() - .01);//TODO: Get actual rotate measurements
                 break;
             case 1:
-                secondaryClawYaw.setPosition(secondaryClawYaw.getPosition() + .05);//TODO: Get actual rotate measurements
+                secondaryClawYaw.setPosition(secondaryClawYaw.getPosition() + .01);//TODO: Get actual rotate measurements
                 break;
             default:
                 break;
@@ -295,21 +301,7 @@ public class XDrive extends OpMode {
      * Calculates the speed at which the arm extends
      */
     void doArmExtension() {
-//        if (extenderState > 0.01 || extenderState < -0.01) {//extends or retracts the arm for the secondary claw
-//            int targetpos = 0;
-//            if (halfSpeed) {
-//                targetpos = armExtender.getCurrentPosition() + (int) (extenderState * 50);
-//            } else {
-//                targetpos = armExtender.getCurrentPosition() + (int) (extenderState * 100);
-//            }
-//            armExtender.setTargetPosition(Math.min(Math.max(targetpos, 0),2000));//TODO: Get measurements for extender min and max
-//
-//        }
-        if (halfSpeed) {
-            armExtender.setPower(extenderState * 0.5);
-        } else {
-            armExtender.setPower(extenderState);
-        }
+
     }
 
     /**
@@ -333,21 +325,14 @@ public class XDrive extends OpMode {
         }
     }
 
-    /**
-     * Handles the entire arm which the secondary claw resides on
-     */
-    void doArm() {
-        int targetPos = 0;
-        if (arm_direction > 0.01 || arm_direction < -0.01) {
-            if (halfSpeed) {
-                targetPos = arm.getCurrentPosition() + (int) (arm_direction * 50);
-            } else {
-                targetPos = arm.getCurrentPosition() + (int) (arm_direction * 100);
-            }
-
-            arm.setTargetPosition(Math.min(Math.max(targetPos, 0), 1000));
-            arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    void goToPresetHeight(){
+        if(firstHeightSpecimenButton){
+            raiseArmSlider.setTargetPosition(-1400);
         }
+        else if(secondHeightSpecimenButton){
+            raiseArmSlider.setTargetPosition(-3000);
+        }
+        raiseArmSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     /**
