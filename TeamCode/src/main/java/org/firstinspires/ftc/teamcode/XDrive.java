@@ -4,7 +4,6 @@ import static java.lang.Thread.sleep;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -32,19 +31,19 @@ public class XDrive extends OpMode {
     /**
      * The front-left motor for mecanum drive
      */
-    private DcMotor frontleft;
+    private DcMotor frontLeft;
     /**
      * The front-right motor for mecanum drive
      */
-    private DcMotor frontright;
+    private DcMotor frontRight;
     /**
-     * The back-left motor for mecanum drive
+     * The back-left motor for Mecanum drive
      */
-    private DcMotor backleft;
+    private DcMotor backLeft;
     /**
-     * The back-right motor for mecanum drive
+     * The back-right motor for Mecanum drive
      */
-    private DcMotor backright;
+    private DcMotor backRight;
     /**
      * Provides arm extension for the claw
      */
@@ -69,10 +68,6 @@ public class XDrive extends OpMode {
      * The touch sensor to stop the slider motor from retracting after it has been fully retracted
      */
     private TouchSensor touchSensor;
-    /**
-     * Stores the computed value of the joystick used to control the arm rotation/pitch
-     */
-    private volatile double arm_direction;
     /**
      * Stores the extender's state on whether to extend or retract
      */
@@ -110,33 +105,35 @@ public class XDrive extends OpMode {
      */
     private boolean clawState = false;
     /**
-     *  Stores held button state for de-bouncing and anti-infinite loop stuff
+     * Stores held button state for de-bouncing and anti-infinite loop stuff
      */
     private boolean clawToggleButtonHeld = false;
     /**
      * Stores button/bumper state to raise arm to preset height for the first specimen hook
      */
-    private volatile boolean secondHeightSpecimenButton;
+    private volatile boolean highSpecimenLowBasketButton;
     /**
      * Stores button/bumper state to raise arm to second specimen hook
      */
-    private volatile boolean firstHeightSpecimenButton;
+    private volatile boolean lowSpecimenButton;
+
+
     /**
      * Code to run ONCE when the driver hits INIT
      */
     @Override
     public void init() {
         //Mecanum drive init, these 4 motors go on the control hub
-        frontleft   = hardwareMap.get(DcMotorEx.class, "leftFront");
-        frontright  = hardwareMap.get(DcMotorEx.class, "rightFront");
-        backleft    = hardwareMap.get(DcMotorEx.class, "leftBack");
-        backright   = hardwareMap.get(DcMotorEx.class, "rightBack");
-        frontleft   .setDirection(DcMotorSimple.Direction.REVERSE);
-        backleft    .setDirection(DcMotorSimple.Direction.REVERSE);
-        frontleft   .setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backleft    .setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontright  .setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backright   .setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontLeft   = hardwareMap.get(DcMotorEx.class, "leftFront");
+        frontRight  = hardwareMap.get(DcMotorEx.class, "rightFront");
+        backLeft    = hardwareMap.get(DcMotorEx.class, "leftBack");
+        backRight   = hardwareMap.get(DcMotorEx.class, "rightBack");
+        frontLeft   .setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeft    .setDirection(DcMotorSimple.Direction.REVERSE);
+        frontLeft   .setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeft    .setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRight  .setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRight   .setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //Arm and slider init, the slider motor and secondary claw servos go on the expansion hub, touch sensor on control hub
         raiseArmSlider = hardwareMap.get(DcMotor.class, "raiseArmSlider");
         armExtender = hardwareMap.get(DcMotor.class, "armSlider");
@@ -152,13 +149,19 @@ public class XDrive extends OpMode {
         telemetry.update();
     }
 
+    /**
+     * Code to run continuously before start but after init
+     */
     @Override
     public void init_loop() {//not used as of right now
 
     }
 
+    /**
+     * Code to run once when the driver presses Start
+     */
     @Override
-    public void start(){
+    public void start() {
         primaryClaw.setPosition(1);
         secondaryClaw.setPosition(1);
         secondaryClawYaw.setPosition(0);//this will set the claw to hold a specimen parallel to the main claw
@@ -173,13 +176,15 @@ public class XDrive extends OpMode {
         armExtender.setPower(0.5);
         try {
             sleep(500);
-        }
-        catch (InterruptedException e){
+        } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
         armExtender.setPower(0);
     }
 
+    /**
+     * Code to run continuously when the driver hits Start
+     */
     @Override
     public void loop() {
         getControllerData();
@@ -233,10 +238,10 @@ public class XDrive extends OpMode {
             rightBackPower *= 0.5;
         }
 
-        frontleft.setPower(leftFrontPower);
-        frontright.setPower(rightFrontPower);
-        backleft.setPower(leftBackPower);
-        backright.setPower(rightBackPower);
+        frontLeft.setPower(leftFrontPower);
+        frontRight.setPower(rightFrontPower);
+        backLeft.setPower(leftBackPower);
+        backRight.setPower(rightBackPower);
 
     }
 
@@ -253,26 +258,37 @@ public class XDrive extends OpMode {
                 sliderState = 0;
             }
         }
-        if(sliderState != 0) {
-            int targetpos = raiseArmSlider.getCurrentPosition();
+        if (sliderState != 0) {
+            int targetPos = raiseArmSlider.getCurrentPosition();
             if (sliderState == -1) {
                 raiseArmSlider.setPower(1);
-                targetpos = raiseArmSlider.getCurrentPosition() + 100;
+                targetPos = raiseArmSlider.getCurrentPosition() + 100;
             } else if (sliderState == 1) {
                 raiseArmSlider.setPower(1);
-                targetpos = raiseArmSlider.getCurrentPosition() - 100;
+                targetPos = raiseArmSlider.getCurrentPosition() - 100;
             }
-            raiseArmSlider.setTargetPosition(Math.max(Math.min(15,targetpos), -3000));
+            raiseArmSlider.setTargetPosition(Math.max(Math.min(15, targetPos), -3000));
             raiseArmSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         }
-
+        if (raiseArmSlider.getCurrentPosition() < -100) {//when the arm is raised, the robot's CG gets very high, which can cause the robot to easily roll over
+            //The FLOAT value set below allows the motors to coast, reducing negative acceleration and reducing a roll over risk
+            frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        } else {//When the robot's slider is fully retracted, the CG is very low, so braking will be enabled to increase responsiveness and accuracy
+            frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
 
 
     }
 
     /**
-     * Controls both claws, pitch, and yaw, and arm extension
+     * Controls both claws, pitch, and arm extension
      */
     void doClaw() {//this will handle extension, yaw, and claw state
         doArmExtension();
@@ -284,12 +300,15 @@ public class XDrive extends OpMode {
      * Calculates new yaw of secondary claw
      */
     void doSecondaryClawYaw() {
+        if(resetServoOrientationButton){
+            secondaryClawYaw.setPosition(0);
+        }
         switch (clawYawState) {//does the claw yaw
             case -1:
-                secondaryClawYaw.setPosition(secondaryClawYaw.getPosition() - .01);//TODO: Get actual rotate measurements
+                secondaryClawYaw.setPosition(secondaryClawYaw.getPosition() - .01);
                 break;
             case 1:
-                secondaryClawYaw.setPosition(secondaryClawYaw.getPosition() + .01);//TODO: Get actual rotate measurements
+                secondaryClawYaw.setPosition(secondaryClawYaw.getPosition() + .01);
                 break;
             default:
                 break;
@@ -301,7 +320,11 @@ public class XDrive extends OpMode {
      * Calculates the speed at which the arm extends
      */
     void doArmExtension() {
-
+        if(halfSpeed){
+            armExtender.setPower(0.5 * extenderState);
+        }else{
+            armExtender.setPower(extenderState);
+        }
     }
 
     /**
@@ -319,17 +342,15 @@ public class XDrive extends OpMode {
                 primaryClaw.setPosition(1);
                 secondaryClaw.setPosition(1);
             }
-        }
-        else{
+        } else {
             clawToggleButtonHeld = clawToggleButton;
         }
     }
 
-    void goToPresetHeight(){
-        if(firstHeightSpecimenButton){
+    void goToPresetHeight() {
+        if (lowSpecimenButton) {
             raiseArmSlider.setTargetPosition(-1400);
-        }
-        else if(secondHeightSpecimenButton){
+        } else if (highSpecimenLowBasketButton) {
             raiseArmSlider.setTargetPosition(-3000);
         }
         raiseArmSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -357,11 +378,10 @@ public class XDrive extends OpMode {
 
         speedToggleButton = gamepad1.b;
         extenderState = -gamepad2.left_stick_y;
-        arm_direction = -gamepad2.right_stick_y;
         clawToggleButton = gamepad2.b;
-        resetServoOrientationButton = gamepad2.right_bumper;
+        resetServoOrientationButton = gamepad2.dpad_up;
         touchSensorState = touchSensor.isPressed();
-        firstHeightSpecimenButton = gamepad2.left_bumper;
-        secondHeightSpecimenButton = gamepad2.right_bumper;
+        lowSpecimenButton = gamepad2.left_bumper;
+        highSpecimenLowBasketButton = gamepad2.right_bumper;
     }
 }
