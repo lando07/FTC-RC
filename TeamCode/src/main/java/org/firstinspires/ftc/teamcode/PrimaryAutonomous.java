@@ -6,45 +6,94 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
 import org.firstinspires.ftc.teamcode.subsystems.*;
 
 @Config
 @Autonomous(name = "PrimaryAuto", group = "autonomous")
-public class PrimaryAutonomous extends LinearOpMode{
+public class PrimaryAutonomous extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        Pose2d startingPose = new Pose2d(-17.2,62,Math.toRadians(279));
+        Pose2d startingPose = new Pose2d(-17.2, 62, Math.toRadians(279));
         MecanumDrive drive = new MecanumDrive(hardwareMap, startingPose);
+        RaiseArmSlider slider = new RaiseArmSlider(this, "raiseArmSlider");
+        Claw primaryClaw = new Claw(this, "primaryClaw");
 
+        Pose2d pose1 = new Pose2d(0, 33, Math.toRadians(270));
+        Pose2d pose2 = new Pose2d(3, 33, Math.toRadians(270));
+        Pose2d pose3 = new Pose2d(0, 35, Math.toRadians(270));
+        Pose2d pose4 = new Pose2d(3,33,Math.toRadians(270));
+        Pose2d pose5 = new Pose2d(-48, 52, Math.toRadians(90));
+        Pose2d pose6 = new Pose2d(-48, 52, Math.toRadians(90));
+        Pose2d pose7 = new Pose2d(-3,33,Math.toRadians(270));
+        Pose2d pose8 = new Pose2d(-3, 33, Math.toRadians(270));
 
-        while(!opModeIsActive() && !isStopRequested()){
-
+        primaryClaw.closeClaw();
+        while (!opModeIsActive() && !isStopRequested()) {
         }
         waitForStart();
-        if(opModeIsActive()){
-            Actions.runBlocking(
-                    drive.actionBuilder(startingPose)
-                            .splineToConstantHeading(new Vector2d(0, 32), Math.toRadians(270))
-                            .strafeTo(new Vector2d(0, 41))
-                            .strafeTo(new Vector2d(-48, 41))
-                            .strafeTo(new Vector2d(-48, 36))
-                            .strafeToSplineHeading(new Vector2d(-48, 52), Math.toRadians(90))
-                            .strafeToSplineHeading(new Vector2d(-58, 45), Math.toRadians(270))
-                            .strafeTo(new Vector2d(-58, 36))
-                            .strafeToSplineHeading(new Vector2d(-58, 52), Math.toRadians(90))
-                            .strafeToSplineHeading(new Vector2d(-3,41), Math.toRadians(270))
-                            .strafeTo(new Vector2d(-3,32))
-                            .strafeToSplineHeading(new Vector2d(-48, 52), Math.toRadians(90))
-                            .strafeToSplineHeading(new Vector2d(-3,41), Math.toRadians(270))
-                            .strafeTo(new Vector2d(-3,32))
-                            .strafeTo(new Vector2d(-55,56))
-//                .strafeToSplineHeading(new Vector2d(-48, 20), Math.toRadians(0))
-//                .strafeTo(new Vector2d(-58, 20))
-//                .strafeTo(new Vector2d(-58, 25))
-//                .strafeToSplineHeading(new Vector2d(-54,52),Math.toRadians(270))
-//                .strafeTo(new Vector2d(-54,48))
-//                .strafeToSplineHeading(new Vector2d(-48,52),Math.toRadians(90))
-                            .build());
+        if (opModeIsActive()) {
+            //Clip first specimen
+            slider.doHighSpecimenLowBasket();
+            Actions.runBlocking(drive.actionBuilder(startingPose)
+                    .splineToConstantHeading(new Vector2d(0, 33), Math.toRadians(270))
+                    .build());
+            //release first specimen
+            primaryClaw.openClaw();
+            sleep(50);
+            Actions.runBlocking(drive.actionBuilder(pose1)
+                    .strafeTo(new Vector2d(0, 36))
+                    .build());
+            //strafe to second specimen on the field
+            slider.resetHeight();
+            Actions.runBlocking(drive.actionBuilder(pose2)
+                    .strafeTo(new Vector2d(-35, 34))
+                    .strafeTo(new Vector2d(-35, 13))
+                    .strafeTo(new Vector2d(-48, 13))
+                    //Push second into observation zone
+                    .strafeTo(new Vector2d(-48, 52))
+
+                    .turnTo(Math.toRadians(90))
+                    .build());
+            //grab third specimen
+            primaryClaw.openClaw();
+            sleep(400);
+            primaryClaw.closeClaw();
+            slider.doHighSpecimenLowBasket();
+            Actions.runBlocking(drive.actionBuilder(pose3)
+                    .strafeToLinearHeading(new Vector2d(3, 36), Math.toRadians(270))
+                    .strafeTo(new Vector2d(3, 33))
+                    .build());
+            //release clipped third specimen, and RTB
+            sleep(50);
+            primaryClaw.openClaw();
+            Actions.runBlocking(drive.actionBuilder(pose4)
+                    .strafeTo(new Vector2d(3, 36))
+                    .build());
+            slider.resetHeight();
+            Actions.runBlocking(drive.actionBuilder(pose5)
+                    .strafeToLinearHeading(new Vector2d(-48, 52), Math.toRadians(90))
+                    .build());
+
+            //Grab second specimen and clip
+            primaryClaw.openClaw();
+            sleep(400);
+            primaryClaw.closeClaw();
+            slider.doHighSpecimenLowBasket();
+            Actions.runBlocking(drive.actionBuilder(pose6)
+                    .strafeToLinearHeading(new Vector2d(-3, 36), Math.toRadians(270))
+                    .strafeTo(new Vector2d(-3, 33))
+                    .build());
+            primaryClaw.openClaw();
+            sleep(50);
+            Actions.runBlocking(drive.actionBuilder(pose7)
+                    .strafeTo(new Vector2d(-3, 36))
+                    .build());
+            //Park in observation zone
+            slider.resetHeight();
+            Actions.runBlocking(drive.actionBuilder(pose8)
+                    .strafeTo(new Vector2d(-48, 54))
+                    .build());
         }
     }
 }
