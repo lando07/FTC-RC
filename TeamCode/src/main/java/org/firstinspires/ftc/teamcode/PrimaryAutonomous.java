@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.subsystems.*;
 
@@ -18,12 +19,15 @@ public class PrimaryAutonomous extends LinearOpMode {
         MecanumDrive drive = new MecanumDrive(hardwareMap, startingPose);
         RaiseArmSlider slider = new RaiseArmSlider(this, "raiseArmSlider");
         Claw primaryClaw = new Claw(this, "primaryClaw");
+        hardwareMap.get(DcMotor.class, "armSlider").setPower(0.5);
+        sleep(1200);
+        hardwareMap.get(DcMotor.class, "armSlider").setPower(0);
 
         Pose2d pose1 = new Pose2d(0, 33, Math.toRadians(270));
         Pose2d pose2 = new Pose2d(3, 33, Math.toRadians(270));
         Pose2d pose3 = new Pose2d(0, 35, Math.toRadians(270));
         Pose2d pose4 = new Pose2d(3,33,Math.toRadians(270));
-        Pose2d pose5 = new Pose2d(-48, 52, Math.toRadians(90));
+        Pose2d pose5 = new Pose2d(3, 36, Math.toRadians(270));
         Pose2d pose6 = new Pose2d(-48, 52, Math.toRadians(90));
         Pose2d pose7 = new Pose2d(-3,33,Math.toRadians(270));
         Pose2d pose8 = new Pose2d(-3, 33, Math.toRadians(270));
