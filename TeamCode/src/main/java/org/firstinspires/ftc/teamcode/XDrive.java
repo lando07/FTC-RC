@@ -207,9 +207,9 @@ public class XDrive extends OpMode {
     void doXDrive() {//oh boy this is gonna get fun
         double max;
         // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-        double axial = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
-        double lateral = gamepad1.left_stick_x;
-        double yaw = gamepad1.right_stick_x;
+        double axial = -gamepad1.right_stick_y;  // Note: pushing stick forward gives negative value
+        double lateral = gamepad1.right_stick_x;
+        double yaw = gamepad1.left_stick_x;
         //these are the magic 4 statements right here
         // Combine the joystick requests for each axis-motion to determine each wheel's power.
         // Set up a variable for each drive wheel to save the power level for telemetry.
@@ -350,8 +350,10 @@ public class XDrive extends OpMode {
     void goToPresetHeight() {
         if (lowSpecimenButton) {
             raiseArmSlider.setTargetPosition(-1400);
+            raiseArmSlider.setPower(1);
         } else if (highSpecimenLowBasketButton) {
-            raiseArmSlider.setTargetPosition(-3000);
+            raiseArmSlider.setTargetPosition(-2900);
+            raiseArmSlider.setPower(1);
         }
         raiseArmSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }

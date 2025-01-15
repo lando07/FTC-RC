@@ -11,7 +11,7 @@ import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 public class MeepMeepTesting {
     public static void main(String[] args) {
         System.setProperty("sun.java2d.opengl", "true");
-        MeepMeep meepMeep = new MeepMeep(800);
+        MeepMeep meepMeep = new MeepMeep(700);
 
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
@@ -27,12 +27,18 @@ public class MeepMeepTesting {
                 .strafeToSplineHeading(new Vector2d(-58, 45), Math.toRadians(270))
                 .strafeTo(new Vector2d(-58, 36))
                 .strafeToSplineHeading(new Vector2d(-58, 52), Math.toRadians(90))
-                .strafeToSplineHeading(new Vector2d(-48, 20), Math.toRadians(0))
-                .strafeTo(new Vector2d(-58, 20))
-                .strafeTo(new Vector2d(-58, 25))
-                .strafeToSplineHeading(new Vector2d(-54,52),Math.toRadians(270))
-                .strafeTo(new Vector2d(-54,48))
-                .strafeToSplineHeading(new Vector2d(-48,52),Math.toRadians(90))
+                .strafeToSplineHeading(new Vector2d(-3,41), Math.toRadians(270))
+                .strafeTo(new Vector2d(-3,32))
+                .strafeToSplineHeading(new Vector2d(-48, 52), Math.toRadians(90))
+                .strafeToSplineHeading(new Vector2d(-3,41), Math.toRadians(270))
+                .strafeTo(new Vector2d(-3,32))
+                .strafeTo(new Vector2d(-55,56))
+//                .strafeToSplineHeading(new Vector2d(-48, 20), Math.toRadians(0))
+//                .strafeTo(new Vector2d(-58, 20))
+//                .strafeTo(new Vector2d(-58, 25))
+//                .strafeToSplineHeading(new Vector2d(-54,52),Math.toRadians(270))
+//                .strafeTo(new Vector2d(-54,48))
+//                .strafeToSplineHeading(new Vector2d(-48,52),Math.toRadians(90))
                 
                 .build());
 
