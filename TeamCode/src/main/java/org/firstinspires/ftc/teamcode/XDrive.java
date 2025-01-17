@@ -305,10 +305,10 @@ public class XDrive extends OpMode {
         }
         switch (clawYawState) {//does the claw yaw
             case -1:
-                secondaryClawYaw.setPosition(secondaryClawYaw.getPosition() - .05);
+                secondaryClawYaw.setPosition(secondaryClawYaw.getPosition() - .01);
                 break;
             case 1:
-                secondaryClawYaw.setPosition(secondaryClawYaw.getPosition() + .05);
+                secondaryClawYaw.setPosition(secondaryClawYaw.getPosition() + .01);
                 break;
             default:
                 break;
