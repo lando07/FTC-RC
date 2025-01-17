@@ -27,6 +27,10 @@ public class RaiseArmSlider {
         raiseArmSlider.setTargetPosition(highSpecimenLowBasket);
     }
 
+    public void clipSpecimen(){
+        raiseArmSlider.setTargetPosition(highSpecimenLowBasket + 100);
+    }
+
     public void resetHeight(){
         raiseArmSlider.setPower(1);
         raiseArmSlider.setTargetPosition(0);

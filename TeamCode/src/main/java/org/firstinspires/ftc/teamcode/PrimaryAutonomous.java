@@ -47,7 +47,6 @@ public class PrimaryAutonomous extends LinearOpMode {
                     .strafeTo(new Vector2d(-35, 34))
                     .strafeTo(new Vector2d(-35, 13))
                     .strafeTo(new Vector2d(-48, 13))
-                    //Push second into observation zone
                     .strafeTo(new Vector2d(-48, 52))
                     .build());
             //Wait 300ms for human to grab sample, then rotate to show primary claw to human
