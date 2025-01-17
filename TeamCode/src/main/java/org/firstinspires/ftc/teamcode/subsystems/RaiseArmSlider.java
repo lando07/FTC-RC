@@ -27,6 +27,9 @@ public class RaiseArmSlider {
         raiseArmSlider.setTargetPosition(highSpecimenLowBasket);
     }
 
+    public void clipSpecimen(){
+        raiseArmSlider.setTargetPosition(highSpecimenLowBasket + 50);//TODO: Get actual clip measurements
+    }
     public void resetHeight(){
         raiseArmSlider.setPower(1);
         raiseArmSlider.setTargetPosition(0);
