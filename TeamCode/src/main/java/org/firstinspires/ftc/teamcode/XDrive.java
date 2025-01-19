@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.subsystems.RaiseArmSlider.highSpecimenLowBasket;
+import static org.firstinspires.ftc.teamcode.subsystems.RaiseArmSlider.lowSpecimen;
+import static org.firstinspires.ftc.teamcode.subsystems.RaiseArmSlider.clipSpecimenOffSet;
 import static java.lang.Thread.sleep;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -124,8 +127,6 @@ public class XDrive extends OpMode {
      * Stores button/bumper state to raise arm to second specimen hook
      */
     private volatile boolean lowSpecimenButton;
-    private final int lowSpecimen = -1300;
-    private final int highSpecimenLowBasket = -2700;
 
     /**
      * Code to run ONCE when the driver hits INIT
@@ -218,7 +219,8 @@ public class XDrive extends OpMode {
      */
     void doXDrive() {//oh boy this is gonna get fun
         double max;
-        // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
+        // Omni Mode uses right joystick to go forward & strafe, and left joystick to rotate.
+        //Just like a drone
         double axial = -gamepad1.right_stick_y;  // Note: pushing stick forward gives negative value
         double lateral = gamepad1.right_stick_x;
         double yaw = gamepad1.left_stick_x;
@@ -274,10 +276,10 @@ public class XDrive extends OpMode {
             int targetPos = raiseArmSlider.getCurrentPosition();
             if (sliderState == -1) {
                 raiseArmSlider.setPower(1);
-                targetPos = raiseArmSlider.getCurrentPosition() + 100;
+                targetPos = raiseArmSlider.getCurrentPosition() + 200;
             } else if (sliderState == 1) {
                 raiseArmSlider.setPower(1);
-                targetPos = raiseArmSlider.getCurrentPosition() - 100;
+                targetPos = raiseArmSlider.getCurrentPosition() - 200;
             }
             raiseArmSlider.setTargetPosition(Math.max(Math.min(15, targetPos), -3000));
             raiseArmSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -367,7 +369,7 @@ public class XDrive extends OpMode {
             raiseArmSlider.setTargetPosition(highSpecimenLowBasket);
             raiseArmSlider.setPower(1);
         } else if (clipSpecimen) {
-            raiseArmSlider.setTargetPosition(raiseArmSlider.getCurrentPosition() + 220);
+            raiseArmSlider.setTargetPosition(raiseArmSlider.getCurrentPosition() + clipSpecimenOffSet);
         }
         raiseArmSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }

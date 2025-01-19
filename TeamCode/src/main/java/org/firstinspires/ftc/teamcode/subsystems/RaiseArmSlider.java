@@ -2,13 +2,15 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import androidx.annotation.NonNull;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-
+@Config
 public class RaiseArmSlider {
     private DcMotor raiseArmSlider;
-    private final int lowSpecimen = -1300;
-    private final int highSpecimenLowBasket = -2700;
+    public static int lowSpecimen = -1300;
+    public static int highSpecimenLowBasket = -2700;
+    public static int clipSpecimenOffSet = 220;
 
     public RaiseArmSlider(@NonNull OpMode opMode, String hwName) {
         raiseArmSlider = opMode.hardwareMap.get(DcMotor.class, hwName);
@@ -28,7 +30,7 @@ public class RaiseArmSlider {
     }
 
     public void clipSpecimen() {
-        raiseArmSlider.setTargetPosition(highSpecimenLowBasket + 220);
+        raiseArmSlider.setTargetPosition(highSpecimenLowBasket + clipSpecimenOffSet);
     }
 
     public void resetHeight() {
