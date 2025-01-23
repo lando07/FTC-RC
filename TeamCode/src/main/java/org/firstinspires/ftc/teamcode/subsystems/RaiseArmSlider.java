@@ -9,8 +9,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 public class RaiseArmSlider {
     private DcMotor raiseArmSlider;
     public static int lowSpecimen = -1300;
-    public static int highSpecimenLowBasket = -2700;
-    public static int clipSpecimenOffSet = 220;
+    public static int highSpecimenLowBasket = -2600;
+    public static int clipSpecimenOffSet = 300;
 
     public RaiseArmSlider(@NonNull OpMode opMode, String hwName) {
         raiseArmSlider = opMode.hardwareMap.get(DcMotor.class, hwName);
