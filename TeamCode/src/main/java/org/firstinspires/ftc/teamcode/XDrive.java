@@ -183,13 +183,6 @@ public class XDrive extends OpMode {
         raiseArmSlider.setPower(1);
 
         armExtender.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        armExtender.setPower(0.5);
-        try {
-            sleep(500);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-        armExtender.setPower(0);
     }
 
     /**

@@ -6,6 +6,8 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.subsystems.*;
 import org.opencv.core.Mat;
@@ -15,6 +17,7 @@ import org.opencv.core.Mat;
 public class PrimaryAutonomous extends LinearOpMode {
     public static int humanDelayTime = 400;
     public static int clawReleaseDelay = 500;
+    public static int testYvalue = 56;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -22,18 +25,24 @@ public class PrimaryAutonomous extends LinearOpMode {
         MecanumDrive drive = new MecanumDrive(hardwareMap, startingPose);
         RaiseArmSlider slider = new RaiseArmSlider(this, "raiseArmSlider");
         Claw primaryClaw = new Claw(this, "primaryClaw");
+        DcMotor secondarySlider = hardwareMap.get(DcMotor.class, "armSlider");
+        secondarySlider.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         primaryClaw.closeClaw();
         while (!opModeIsActive() && !isStopRequested()) {
         }
         waitForStart();
         if (opModeIsActive()) {
+            //Even though secondarySlider is not extended, the claw is closed so clearance is ok
             slider.doHighSpecimenLowBasket();
             //Clip first specimen
             Actions.runBlocking(drive.actionBuilder(startingPose)
                     .strafeTo(new Vector2d(0, 32))
                     .build());
             slider.clipSpecimen();
+            secondarySlider.setPower(1);
+            sleep(500);
+            secondarySlider.setPower(0);
             sleep(clawReleaseDelay);
             //Release specimen
             primaryClaw.openClaw();
@@ -44,66 +53,25 @@ public class PrimaryAutonomous extends LinearOpMode {
             //Lower slider and push first field sample to observation zone
             slider.resetHeight();
             Actions.runBlocking(drive.actionBuilder(new Pose2d(0, 40, Math.toRadians(270)))
-                            .strafeTo(new Vector2d(-52,40))
-//                    .strafeTo(new Vector2d(-35, 34))
-//                    .strafeTo(new Vector2d(-35, 13))
-//                    .strafeTo(new Vector2d(-56, 13))
-//                    .strafeTo(new Vector2d(-48, 52))
+                    .strafeTo(new Vector2d(-52, 40))
                     .build());
             primaryClaw.openClaw();
-            Actions.runBlocking(drive.actionBuilder(new Pose2d(-52,40,Math.toRadians(270)))
-                    .strafeTo(new Vector2d(-52,33))
+            Actions.runBlocking(drive.actionBuilder(new Pose2d(-52, 40, Math.toRadians(270)))
+                    .strafeTo(new Vector2d(-52, 33))
                     .build());
             sleep(clawReleaseDelay);
             primaryClaw.closeClaw();
-            Actions.runBlocking(drive.actionBuilder(new Pose2d(-52,33,Math.toRadians(270)))
-                    .strafeToLinearHeading(new Vector2d(-52,40),Math.toRadians(90))
-                            .strafeTo(new Vector2d(-52,52))
+            Actions.runBlocking(drive.actionBuilder(new Pose2d(-52, 33, Math.toRadians(270)))
+                    .strafeToLinearHeading(new Vector2d(-52, 40), Math.toRadians(90))
+                    .strafeTo(new Vector2d(-52, 52))
                     .build());
-
-//            //Wait 300ms for human to grab sample, then rotate to show primary claw to human
-//            Actions.runBlocking(drive.actionBuilder(new Pose2d(-48, 52, Math.toRadians(270)))
-//                    .strafeTo(new Vector2d(-48,40))
-//                    .turnTo(Math.toRadians(90))
-//                    .strafeTo(new Vector2d(-48,52))
-//                    .build());
-//            primaryClaw.openClaw();
-//            sleep(humanDelayTime);
-//            primaryClaw.closeClaw();
-//            //Clip 2nd specimen
-//            slider.doHighSpecimenLowBasket();
-//            Actions.runBlocking(drive.actionBuilder(new Pose2d(-48,40,Math.toRadians(90)))
-//                    .strafeToLinearHeading(new Vector2d(-3, 33), Math.toRadians(270))
-//                    .build());
-//            slider.clipSpecimen();
-//            sleep(clawReleaseDelay);
-//            primaryClaw.openClaw();
-//            //Grab third specimen
-//            Actions.runBlocking(drive.actionBuilder(new Pose2d(-3,33,Math.toRadians(270)))
-//                    .strafeTo(new Vector2d(-3, 40))
-//                    .build());
-//            slider.resetHeight();
-//            Actions.runBlocking(drive.actionBuilder(new Pose2d(-3,40, Math.toRadians(270)))
-//                    .strafeToLinearHeading(new Vector2d(-48, 52), Math.toRadians(90))
-//                    .build());
-//            sleep(humanDelayTime);//Note: claw has already been opened on line 68
-//            primaryClaw.closeClaw();
-//            slider.doHighSpecimenLowBasket();
-//            //Clip third specimen
-//            Actions.runBlocking(drive.actionBuilder(new Pose2d(-48,52,Math.toRadians(90)))
-//                    .strafeToLinearHeading(new Vector2d(3, 33), Math.toRadians(270))
-//                    .build());
-//            slider.clipSpecimen();
-//            sleep(clawReleaseDelay);
-//            primaryClaw.openClaw();
-//            //Now RTB
-//            Actions.runBlocking(drive.actionBuilder(new Pose2d(3,33,Math.toRadians(270)))
-//                    .strafeTo(new Vector2d(3, 40))
-//                    .build());
-//            slider.resetHeight();
-//            Actions.runBlocking(drive.actionBuilder(new Pose2d(-48,58,Math.toRadians(270)))
-//                    .strafeTo(new Vector2d(-46,58))
-//                    .build());
+            primaryClaw.openClaw();
+            Actions.runBlocking(drive.actionBuilder(new Pose2d(-52, 52, Math.toRadians(90)))
+                    .strafeTo(new Vector2d(-52, 40))
+                    .waitSeconds(humanDelayTime/1000.0)
+                    .strafeTo(new Vector2d(-52,testYvalue))
+                    .build());
+            primaryClaw.closeClaw();
         }
     }
 }
