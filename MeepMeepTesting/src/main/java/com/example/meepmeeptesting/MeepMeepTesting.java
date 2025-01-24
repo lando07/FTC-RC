@@ -9,7 +9,7 @@ import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 public class MeepMeepTesting {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         System.setProperty("sun.java2d.opengl", "true");
         MeepMeep meepMeep = new MeepMeep(700);
 
@@ -19,19 +19,18 @@ public class MeepMeepTesting {
                 .build();
 
         myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(-17.2, 62, Math.toRadians(270)))
-                .splineToConstantHeading(new Vector2d(0, 33), Math.toRadians(270))
+                .strafeTo(new Vector2d(0, 32))
+                .waitSeconds(1)
                 .strafeTo(new Vector2d(0, 40))
-                .strafeTo(new Vector2d(-35, 34))
-                .strafeTo(new Vector2d(-35, 13))
-                .strafeTo(new Vector2d(-48, 13))
-                .strafeTo(new Vector2d(-48, 52))
-                .turnTo(Math.toRadians(90))
-                .strafeToLinearHeading(new Vector2d(-3, 33), Math.toRadians(270))
-                .strafeTo(new Vector2d(-3, 40))
-                .strafeToLinearHeading(new Vector2d(-48, 52), Math.toRadians(90))
-                .strafeToLinearHeading(new Vector2d(3, 33), Math.toRadians(270))
-                .strafeTo(new Vector2d(3, 40))
-                .strafeTo(new Vector2d(-46,58))
+                .strafeTo(new Vector2d(-52, 40))
+                .strafeTo(new Vector2d(-52, 33))
+                .strafeToLinearHeading(new Vector2d(-52, 40), Math.toRadians(90))
+                .strafeTo(new Vector2d(-52, 52))
+                .strafeTo(new Vector2d(-52, 65))
+                .waitSeconds(.5)
+                .strafeTo(new Vector2d(-52, 60))
+                .strafeToLinearHeading(new Vector2d(0, 32), Math.toRadians(270))
+
                 .build());
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_INTO_THE_DEEP_JUICE_DARK)

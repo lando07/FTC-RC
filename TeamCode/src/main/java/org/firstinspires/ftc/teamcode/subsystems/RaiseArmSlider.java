@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 @Config
 public class RaiseArmSlider {
-    private DcMotor raiseArmSlider;
+    private final DcMotor raiseArmSlider;
     public static int lowSpecimen = -1300;
     public static int highSpecimenLowBasket = -2600;
     public static int clipSpecimenOffSet = 300;

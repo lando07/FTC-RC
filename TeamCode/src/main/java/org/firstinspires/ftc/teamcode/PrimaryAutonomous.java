@@ -50,7 +50,7 @@ public class PrimaryAutonomous extends LinearOpMode {
             Actions.runBlocking(drive.actionBuilder(new Pose2d(0, 32, Math.toRadians(270)))
                     .strafeTo(new Vector2d(0, 40))
                     .build());
-            //Lower slider and push first field sample to observation zone
+            //Lower slider and take first field sample to observation zone
             slider.resetHeight();
             Actions.runBlocking(drive.actionBuilder(new Pose2d(0, 40, Math.toRadians(270)))
                     .strafeTo(new Vector2d(-52, 40))
@@ -61,17 +61,33 @@ public class PrimaryAutonomous extends LinearOpMode {
                     .build());
             sleep(clawReleaseDelay);
             primaryClaw.closeClaw();
+            //Turn around and take sample to observation zone
             Actions.runBlocking(drive.actionBuilder(new Pose2d(-52, 33, Math.toRadians(270)))
                     .strafeToLinearHeading(new Vector2d(-52, 40), Math.toRadians(90))
                     .strafeTo(new Vector2d(-52, 52))
                     .build());
+            //Release sample, back out of observation zone, wait for human, then grab new specimen
             primaryClaw.openClaw();
             Actions.runBlocking(drive.actionBuilder(new Pose2d(-52, 52, Math.toRadians(90)))
                     .strafeTo(new Vector2d(-52, 40))
-                    .waitSeconds(humanDelayTime/1000.0)
-                    .strafeTo(new Vector2d(-52,testYvalue))
+                    .waitSeconds(humanDelayTime / 1000.0)
+                    .strafeTo(new Vector2d(-52, 55))
                     .build());
+            //Take specimen to submersible
             primaryClaw.closeClaw();
+            slider.doHighSpecimenLowBasket();
+            Actions.runBlocking(drive.actionBuilder(new Pose2d(-52, 55, Math.toRadians(90)))
+                    .strafeToLinearHeading(new Vector2d(-3, 32), Math.toRadians(270))
+                    .build());
+            slider.clipSpecimen();
+            sleep(clawReleaseDelay);
+            primaryClaw.openClaw();
+            sleep(clawReleaseDelay);
+            Actions.runBlocking(drive.actionBuilder(new Pose2d(-3, 32, Math.toRadians(270)))
+                    .strafeTo(new Vector2d(-3, 40))
+                    .build());
+            slider.resetHeight();
+            
         }
     }
 }
