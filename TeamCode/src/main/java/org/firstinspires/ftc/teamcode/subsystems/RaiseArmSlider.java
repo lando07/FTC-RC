@@ -8,9 +8,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 @Config
 public class RaiseArmSlider {
     private final DcMotor raiseArmSlider;
-    public static int lowSpecimen = -1300;
-    public static int highSpecimenLowBasket = -2600;
-    public static int clipSpecimenOffSet = 300;
+    public static int lowSpecimen = -1400;
+    public static int highSpecimenLowBasket = -2900;
+    public static int clipSpecimenOffSet = 700;
 
     public RaiseArmSlider(@NonNull OpMode opMode, String hwName) {
         raiseArmSlider = opMode.hardwareMap.get(DcMotor.class, hwName);
@@ -28,9 +28,21 @@ public class RaiseArmSlider {
         raiseArmSlider.setPower(1);
         raiseArmSlider.setTargetPosition(highSpecimenLowBasket);
     }
+    public void doHighSpecimenLowBasket(double power){
+        raiseArmSlider.setPower(power);
+        raiseArmSlider.setTargetPosition(highSpecimenLowBasket);
+    }
 
     public void clipSpecimen() {
         raiseArmSlider.setTargetPosition(highSpecimenLowBasket + clipSpecimenOffSet);
+    }
+    /**
+     * Special method for autonomous
+     * @param offSet extra offset needed if clip doesn't work with default
+     */
+    public void clipSpecimen(int offSet){
+        raiseArmSlider.setTargetPosition(highSpecimenLowBasket + clipSpecimenOffSet + offSet);
+
     }
 
     public void resetHeight() {

@@ -214,9 +214,9 @@ public class XDrive extends OpMode {
         double max;
         // Omni Mode uses right joystick to go forward & strafe, and left joystick to rotate.
         //Just like a drone
-        double axial = -gamepad1.right_stick_y;  // Note: pushing stick forward gives negative value
-        double lateral = gamepad1.right_stick_x;
-        double yaw = gamepad1.left_stick_x;
+        double axial = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
+        double lateral = gamepad1.left_stick_x;
+        double yaw = gamepad1.right_stick_x;
         //these are the magic 4 statements right here
         // Combine the joystick requests for each axis-motion to determine each wheel's power.
         // Set up a variable for each drive wheel to save the power level for telemetry.
@@ -274,7 +274,7 @@ public class XDrive extends OpMode {
                 raiseArmSlider.setPower(1);
                 targetPos = raiseArmSlider.getCurrentPosition() - 200;
             }
-            raiseArmSlider.setTargetPosition(Math.max(Math.min(15, targetPos), -3000));
+            raiseArmSlider.setTargetPosition(Math.max(Math.min(2000, targetPos), -3000));
             raiseArmSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         }

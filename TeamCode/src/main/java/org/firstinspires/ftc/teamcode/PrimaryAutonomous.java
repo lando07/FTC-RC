@@ -15,9 +15,11 @@ import org.opencv.core.Mat;
 @Config
 @Autonomous(name = "PrimaryAuto", group = "autonomous")
 public class PrimaryAutonomous extends LinearOpMode {
-    public static int humanDelayTime = 400;
-    public static int clawReleaseDelay = 500;
-    public static int testYvalue = 56;
+    public static int humanDelayTime = 100;
+    public static int clawReleaseDelay = 300;
+    public static double testYvalue = 60.5;
+
+    public static double testXvalue = -39;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -64,30 +66,47 @@ public class PrimaryAutonomous extends LinearOpMode {
             //Turn around and take sample to observation zone
             Actions.runBlocking(drive.actionBuilder(new Pose2d(-52, 33, Math.toRadians(270)))
                     .strafeToLinearHeading(new Vector2d(-52, 40), Math.toRadians(90))
+                    .waitSeconds(humanDelayTime / 1000.0)
                     .strafeTo(new Vector2d(-52, 52))
                     .build());
-            //Release sample, back out of observation zone, wait for human, then grab new specimen
+            //Release sample, then grab new specimen
             primaryClaw.openClaw();
             Actions.runBlocking(drive.actionBuilder(new Pose2d(-52, 52, Math.toRadians(90)))
-                    .strafeTo(new Vector2d(-52, 40))
-                    .waitSeconds(humanDelayTime / 1000.0)
-                    .strafeTo(new Vector2d(-52, 55))
+                    .strafeTo(new Vector2d(-52, 56.5))
                     .build());
             //Take specimen to submersible
             primaryClaw.closeClaw();
+            sleep(humanDelayTime);
             slider.doHighSpecimenLowBasket();
-            Actions.runBlocking(drive.actionBuilder(new Pose2d(-52, 55, Math.toRadians(90)))
-                    .strafeToLinearHeading(new Vector2d(-3, 32), Math.toRadians(270))
+            Actions.runBlocking(drive.actionBuilder(new Pose2d(-52, 56.5, Math.toRadians(90)))
+                    .strafeTo(new Vector2d(-52, 40))
+                    .strafeToLinearHeading(new Vector2d(5, 30), Math.toRadians(270))
                     .build());
             slider.clipSpecimen();
             sleep(clawReleaseDelay);
             primaryClaw.openClaw();
-            sleep(clawReleaseDelay);
-            Actions.runBlocking(drive.actionBuilder(new Pose2d(-3, 32, Math.toRadians(270)))
-                    .strafeTo(new Vector2d(-3, 40))
+            Actions.runBlocking(drive.actionBuilder(new Pose2d(5, 30, Math.toRadians(270)))
+                    .strafeTo(new Vector2d(5, 35))
                     .build());
             slider.resetHeight();
-            
+            Actions.runBlocking(drive.actionBuilder(new Pose2d(5, 35, Math.toRadians(270)))
+                    .strafeToLinearHeading(new Vector2d(-39,59.5), Math.toRadians(180))
+                    .build());
+            primaryClaw.closeClaw();
+            sleep(clawReleaseDelay);
+            slider.doHighSpecimenLowBasket();
+            Actions.runBlocking(drive.actionBuilder(new Pose2d(-39, 59.5, Math.toRadians(180)))
+                    .strafeToLinearHeading(new Vector2d(-3, 31), Math.toRadians(270))
+                    .build());
+            slider.clipSpecimen();
+            sleep(clawReleaseDelay);
+            primaryClaw.openClaw();
+            secondarySlider.setPower(-1);
+            sleep(300);
+            secondarySlider.setPower(0);
+            Actions.runBlocking(drive.actionBuilder(new Pose2d(-3,31, Math.toRadians(270)))
+                    .strafeTo(new Vector2d(-46,60))
+                    .build());
         }
     }
 }
