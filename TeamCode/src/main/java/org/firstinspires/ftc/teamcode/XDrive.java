@@ -105,12 +105,7 @@ public class XDrive extends OpMode {
     /**
      * True starts it in half speed mode, false starts it in full speed mode
      */
-    private boolean halfSpeed = false;
-    /**
-     * Stores the button state for toggling speed
-     */
-    private volatile boolean speedToggleButton;
-    private boolean speedToggleButtonHeld = false;
+    private volatile boolean halfSpeed = false;
     /**
      * True if open, false if closed, starts false
      */
@@ -191,12 +186,6 @@ public class XDrive extends OpMode {
     @Override
     public void loop() {
         getControllerData();
-        if (speedToggleButton && !speedToggleButtonHeld) {
-            halfSpeed = !halfSpeed;
-            clawToggleButtonHeld = true;
-        } else {
-            speedToggleButtonHeld = speedToggleButton;
-        }
         doXDrive();
         doSlider();
         doClaw();
@@ -274,7 +263,7 @@ public class XDrive extends OpMode {
                 raiseArmSlider.setPower(1);
                 targetPos = raiseArmSlider.getCurrentPosition() - 200;
             }
-            raiseArmSlider.setTargetPosition(Math.max(Math.min(2000, targetPos), -3000));
+            raiseArmSlider.setTargetPosition(Math.max(Math.min(2000, targetPos), -4050));
             raiseArmSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         }
@@ -387,7 +376,7 @@ public class XDrive extends OpMode {
             clawYawState = 0;
         }
 
-        speedToggleButton = gamepad1.b;
+        halfSpeed = gamepad1.right_bumper;
         extenderState = -gamepad2.left_stick_y;
         clawToggleButton = gamepad2.b;
         resetServoOrientationButton = gamepad2.dpad_up;
