@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import static org.firstinspires.ftc.teamcode.subsystems.RaiseArmSlider.highSpecimenLowBasket;
 import static org.firstinspires.ftc.teamcode.subsystems.RaiseArmSlider.lowSpecimen;
 import static org.firstinspires.ftc.teamcode.subsystems.RaiseArmSlider.clipSpecimenOffSet;
+import static org.firstinspires.ftc.teamcode.subsystems.Claw.*;
 import static java.lang.Thread.sleep;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -167,7 +168,7 @@ public class XDrive extends OpMode {
      */
     @Override
     public void start() {
-        primaryClaw.setPosition(1);
+        primaryClaw.setPosition(OPEN);
         secondaryClaw.setPosition(1);
         secondaryClawYaw.setPosition(0);//this will set the claw to hold a specimen parallel to the main claw
 
@@ -332,10 +333,10 @@ public class XDrive extends OpMode {
             clawToggleButtonHeld = true;
 
             if (clawState) {//opens both claws
-                primaryClaw.setPosition(0.1);
-                secondaryClaw.setPosition(0);
+                primaryClaw.setPosition(OPEN);
+                secondaryClaw.setPosition(0.7);
             } else {//closes claws
-                primaryClaw.setPosition(1);
+                primaryClaw.setPosition(CLOSED);
                 secondaryClaw.setPosition(1);
             }
         } else {
