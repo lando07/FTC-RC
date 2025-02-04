@@ -23,10 +23,9 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
  * right stick: rotational movement, only by tilting it left or right
  * A: Toggle speed setting
  * Gamepad 2:
- * Right Bumper: Reset secondary claw orientation
  * Y: Raise Slider
  * X: Lower Slider
- * Right Stick: rotate arm
+ * Left Stick Vertical: Extend secondary arm
  * B: toggle open/close claw
  * Left+right D-Pad: CW/CCW claw yaw
  * Up+down D-Pad: CW/CCW claw pitch
@@ -72,9 +71,21 @@ public class XDrive extends OpMode {
      */
     private Servo secondaryClawYaw;
     /**
+     * The servo for controlling the pitch of the secondary claw
+     */
+    private Servo secondaryClawPitch;
+    /**
+     * The static claw mounted to the front - grabs field specimens
+     */
+    private Servo tertiaryClaw;
+    /**
      * The touch sensor to stop the slider motor from retracting after it has been fully retracted
      */
     private TouchSensor touchSensor;
+    /**
+     * Stores the joystick state to compute the pitch of the secondary claw
+     */
+    private volatile double pitchState;
     /**
      * Stores the extender's state on whether to extend or retract
      */
@@ -82,7 +93,7 @@ public class XDrive extends OpMode {
     /**
      * Stores the claw yaw state
      */
-    private volatile int clawYawState;
+    private volatile double clawYawState;
     /**
      * Stores the slider button state
      */
@@ -148,6 +159,8 @@ public class XDrive extends OpMode {
         primaryClaw = hardwareMap.get(Servo.class, "primaryClaw");
         secondaryClaw = hardwareMap.get(Servo.class, "secondaryClaw");
         secondaryClawYaw = hardwareMap.get(Servo.class, "yaw");
+        secondaryClawPitch = hardwareMap.get(Servo.class, "pitch");
+        tertiaryClaw = hardwareMap.get(Servo.class, "fieldClaw");
         touchSensor = hardwareMap.get(TouchSensor.class, "touchSensor");
 
 
@@ -170,8 +183,8 @@ public class XDrive extends OpMode {
     public void start() {
         primaryClaw.setPosition(OPEN);
         secondaryClaw.setPosition(1);
-        secondaryClawYaw.setPosition(0);//this will set the claw to hold a specimen parallel to the main claw
-
+        secondaryClawYaw.setPosition(0);
+//TODO: Get new Default pitch/Yaw for teleop init
         raiseArmSlider.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         raiseArmSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         raiseArmSlider.setTargetPosition(0);
@@ -289,8 +302,16 @@ public class XDrive extends OpMode {
      */
     void doClaw() {//this will handle extension, yaw, and claw state
         doArmExtension();
+        doSecondaryClawPitch();
         doSecondaryClawYaw();
         doClawStateToggle();
+    }
+
+    /**
+     * Calculates secondary claw pitch position
+     */
+    void doSecondaryClawPitch() {
+        secondaryClawPitch.setPosition(0 + gamepad2.right_stick_y);//TODO: Get default position for claw to be sticking out
     }
 
     /**
@@ -300,17 +321,9 @@ public class XDrive extends OpMode {
         if (resetServoOrientationButton) {
             secondaryClawYaw.setPosition(0);
         }
-        switch (clawYawState) {//does the claw yaw
-            case -1:
-                secondaryClawYaw.setPosition(secondaryClawYaw.getPosition() - .03);
-                break;
-            case 1:
-                secondaryClawYaw.setPosition(secondaryClawYaw.getPosition() + .03);
-                break;
-            default:
-                break;
+        else{
+            secondaryClawYaw.setPosition(clawYawState);
         }
-        clawYawState = 0;
     }
 
     /**
@@ -335,6 +348,7 @@ public class XDrive extends OpMode {
             if (clawState) {//opens both claws
                 primaryClaw.setPosition(OPEN);
                 secondaryClaw.setPosition(0.7);
+                //TODO: Get tertiary claw measurements and tune
             } else {//closes claws
                 primaryClaw.setPosition(CLOSED);
                 secondaryClaw.setPosition(1);
@@ -369,14 +383,7 @@ public class XDrive extends OpMode {
             sliderState = 0;
         }
 
-        if (gamepad2.dpad_left) {//yaw left, or ccw
-            clawYawState = 1;
-        } else if (gamepad2.dpad_right) {//yaw right, or cw
-            clawYawState = -1;
-        } else {
-            clawYawState = 0;
-        }
-
+        clawYawState = gamepad2.left_stick_x;//TODO: Make sure if negative or not
         halfSpeed = gamepad1.right_bumper;
         extenderState = -gamepad2.left_stick_y;
         clawToggleButton = gamepad2.b;
@@ -385,5 +392,6 @@ public class XDrive extends OpMode {
         lowSpecimenButton = gamepad2.left_bumper;
         highSpecimenLowBasketButton = gamepad2.right_bumper;
         clipSpecimen = gamepad2.dpad_down;
+        pitchState = gamepad2.right_stick_y;//TODO: Make sure if negative or not
     }
 }
