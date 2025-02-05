@@ -8,8 +8,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 @Config
 public class RaiseArmSlider {
     private final DcMotor raiseArmSlider;
-    public static int lowSpecimen = -1400;
-    public static int highSpecimenLowBasket = -2900;
+    public static int lowSpecimen = -1400;//TODO: Re-tune low specimen
+    public static int highSpecimenLowBasket = -2900;//TODO: Re-tune high specimen/low basket
+    public static int highBasket = 0;//TODO: Get high basket measurements
     public static int clipSpecimenOffSet = 700;
 
     public RaiseArmSlider(@NonNull OpMode opMode, String hwName) {

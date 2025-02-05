@@ -4,7 +4,7 @@ import static org.firstinspires.ftc.teamcode.subsystems.RaiseArmSlider.highSpeci
 import static org.firstinspires.ftc.teamcode.subsystems.RaiseArmSlider.lowSpecimen;
 import static org.firstinspires.ftc.teamcode.subsystems.RaiseArmSlider.clipSpecimenOffSet;
 import static org.firstinspires.ftc.teamcode.subsystems.Claw.*;
-import static java.lang.Thread.sleep;
+
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -27,8 +27,12 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
  * X: Lower Slider
  * Left Stick Vertical: Extend secondary arm
  * B: toggle open/close claw
- * Left+right D-Pad: CW/CCW claw yaw
- * Up+down D-Pad: CW/CCW claw pitch
+ * Left Stick y: Secondary Claw extension
+ * Right Stick x: CW/CCW claw yaw
+ * Right Stick y: CW/CCW claw pitch
+ * D-Pad down: Clip Specimen
+ * D-Pad up: Reset yaw
+ *
  */
 
 @Config
@@ -94,6 +98,10 @@ public class XDrive extends OpMode {
      * Stores the claw yaw state
      */
     private volatile double clawYawState;
+    /**
+     * Stores the initial pitch offset when the game starts. The claw should be sticking outwards
+     */
+    public static double initialPitchOffset = 0.65;
     /**
      * Stores the slider button state
      */
@@ -182,9 +190,10 @@ public class XDrive extends OpMode {
     @Override
     public void start() {
         primaryClaw.setPosition(OPEN);
-        secondaryClaw.setPosition(1);
-        secondaryClawYaw.setPosition(0);
-//TODO: Get new Default pitch/Yaw for teleop init
+        secondaryClaw.setPosition(OPEN);
+        secondaryClawYaw.setPosition(initialPitchOffset);//This starts the servo in the middle of both extrema
+        secondaryClawPitch.setPosition(0);
+
         raiseArmSlider.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         raiseArmSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         raiseArmSlider.setTargetPosition(0);
@@ -311,7 +320,7 @@ public class XDrive extends OpMode {
      * Calculates secondary claw pitch position
      */
     void doSecondaryClawPitch() {
-        secondaryClawPitch.setPosition(0 + gamepad2.right_stick_y);//TODO: Get default position for claw to be sticking out
+        secondaryClawPitch.setPosition(initialPitchOffset + pitchState);
     }
 
     /**
@@ -347,17 +356,22 @@ public class XDrive extends OpMode {
 
             if (clawState) {//opens both claws
                 primaryClaw.setPosition(OPEN);
-                secondaryClaw.setPosition(0.7);
+                secondaryClaw.setPosition(OPEN);
+                tertiaryClaw.setPosition(OPEN);
                 //TODO: Get tertiary claw measurements and tune
             } else {//closes claws
                 primaryClaw.setPosition(CLOSED);
-                secondaryClaw.setPosition(1);
+                secondaryClaw.setPosition(CLOSED);
+                tertiaryClaw.setPosition(CLOSED);
             }
         } else {
             clawToggleButtonHeld = clawToggleButton;
         }
     }
 
+    /**
+     * Just some QoL stuff
+     */
     void goToPresetHeight() {
         if (lowSpecimenButton) {
             raiseArmSlider.setTargetPosition(lowSpecimen);
@@ -383,15 +397,15 @@ public class XDrive extends OpMode {
             sliderState = 0;
         }
 
-        clawYawState = gamepad2.left_stick_x;//TODO: Make sure if negative or not
+        clawYawState = -gamepad2.right_stick_x + 0.5;
         halfSpeed = gamepad1.right_bumper;
         extenderState = -gamepad2.left_stick_y;
-        clawToggleButton = gamepad2.b;
+        clawToggleButton = gamepad2.b || gamepad2.right_stick_button;
         resetServoOrientationButton = gamepad2.dpad_up;
         touchSensorState = touchSensor.isPressed();
         lowSpecimenButton = gamepad2.left_bumper;
         highSpecimenLowBasketButton = gamepad2.right_bumper;
         clipSpecimen = gamepad2.dpad_down;
-        pitchState = gamepad2.right_stick_y;//TODO: Make sure if negative or not
+        pitchState = (int)(-gamepad2.right_stick_y * 10) / 10.0;
     }
 }
