@@ -191,6 +191,7 @@ public class XDrive extends OpMode {
     public void start() {
         primaryClaw.setPosition(OPEN);
         secondaryClaw.setPosition(OPEN);
+        tertiaryClaw.setPosition(OPEN);
         secondaryClawYaw.setPosition(initialPitchOffset);//This starts the servo in the middle of both extrema
         secondaryClawPitch.setPosition(0);
 
@@ -406,6 +407,6 @@ public class XDrive extends OpMode {
         lowSpecimenButton = gamepad2.left_bumper;
         highSpecimenLowBasketButton = gamepad2.right_bumper;
         clipSpecimen = gamepad2.dpad_down;
-        pitchState = (int)(-gamepad2.right_stick_y * 10) / 10.0;
+        pitchState = (int)(gamepad2.right_stick_y * 10) / 10.0;
     }
 }
