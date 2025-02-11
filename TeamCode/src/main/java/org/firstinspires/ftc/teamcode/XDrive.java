@@ -89,7 +89,7 @@ public class XDrive extends OpMode {
     /**
      * Stores the joystick state to compute the pitch of the secondary claw
      */
-    private volatile double pitchState;
+    private volatile int pitchState;
     /**
      * Stores the extender's state on whether to extend or retract
      */
@@ -97,7 +97,7 @@ public class XDrive extends OpMode {
     /**
      * Stores the claw yaw state
      */
-    private volatile double clawYawState;
+    private volatile int clawYawState;
     /**
      * Stores the initial pitch offset when the game starts. The claw should be sticking outwards
      */
@@ -321,7 +321,9 @@ public class XDrive extends OpMode {
      * Calculates secondary claw pitch position
      */
     void doSecondaryClawPitch() {
-        secondaryClawPitch.setPosition(initialPitchOffset + pitchState);
+        if(pitchState != 0){
+            secondaryClawPitch.setPosition((secondaryClawPitch.getPosition()) + (pitchState * 0.03));
+        }
     }
 
     /**
@@ -329,10 +331,11 @@ public class XDrive extends OpMode {
      */
     void doSecondaryClawYaw() {
         if (resetServoOrientationButton) {
-            secondaryClawYaw.setPosition(0);
+            secondaryClawYaw.setPosition(0.5);
+            secondaryClawPitch.setPosition(initialPitchOffset);
         }
-        else{
-            secondaryClawYaw.setPosition(clawYawState);
+        else if(clawYawState != 0){
+            secondaryClawYaw.setPosition(secondaryClawYaw.getPosition() + (clawYawState * 0.05));
         }
     }
 
@@ -359,7 +362,6 @@ public class XDrive extends OpMode {
                 primaryClaw.setPosition(OPEN);
                 secondaryClaw.setPosition(OPEN);
                 tertiaryClaw.setPosition(OPEN);
-                //TODO: Get tertiary claw measurements and tune
             } else {//closes claws
                 primaryClaw.setPosition(CLOSED);
                 secondaryClaw.setPosition(CLOSED);
@@ -398,15 +400,33 @@ public class XDrive extends OpMode {
             sliderState = 0;
         }
 
-        clawYawState = -gamepad2.right_stick_x + 0.5;
+        if(gamepad2.dpad_right){
+            clawYawState = -1;
+        }
+        else if(gamepad2.dpad_left){
+            clawYawState = 1;
+        }
+        else {
+            clawYawState = 0;
+        }
+
+        if(gamepad2.dpad_up){
+            pitchState = 1;
+        }
+        else if(gamepad2.dpad_down){
+            pitchState = -1;
+        }
+        else {
+            pitchState = 0;
+        }
+
         halfSpeed = gamepad1.right_bumper;
         extenderState = -gamepad2.left_stick_y;
         clawToggleButton = gamepad2.b || gamepad2.right_stick_button;
-        resetServoOrientationButton = gamepad2.dpad_up;
+        resetServoOrientationButton = gamepad2.a;
         touchSensorState = touchSensor.isPressed();
         lowSpecimenButton = gamepad2.left_bumper;
         highSpecimenLowBasketButton = gamepad2.right_bumper;
         clipSpecimen = gamepad2.dpad_down;
-        pitchState = (int)(gamepad2.right_stick_y * 10) / 10.0;
     }
 }
