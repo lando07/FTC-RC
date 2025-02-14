@@ -7,13 +7,20 @@ import static org.firstinspires.ftc.teamcode.subsystems.Claw.*;
 
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.ftc.LazyImu;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.ImuOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Quaternion;
 
 /**
  * Ok, so this is our omega be-all-end-all class.
@@ -32,7 +39,6 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
  * Right Stick y: CW/CCW claw pitch
  * D-Pad down: Clip Specimen
  * D-Pad up: Reset yaw
- *
  */
 
 @Config
@@ -86,6 +92,9 @@ public class XDrive extends OpMode {
      * The touch sensor to stop the slider motor from retracting after it has been fully retracted
      */
     private TouchSensor touchSensor;
+
+    private IMU imu;
+    private LazyImu lazyImu;
     /**
      * Stores the joystick state to compute the pitch of the secondary claw
      */
@@ -105,7 +114,7 @@ public class XDrive extends OpMode {
     /**
      * Stores the slider button state
      */
-    private volatile int sliderState;
+    private volatile double sliderState;
     /**
      * Stores the claw toggle button state
      */
@@ -138,10 +147,17 @@ public class XDrive extends OpMode {
      * Stores button/bumper state to raise arm to preset height for the first specimen hook
      */
     private volatile boolean highSpecimenLowBasketButton;
-    /**
-     * Stores button/bumper state to raise arm to second specimen hook
-     */
-    private volatile boolean lowSpecimenButton;
+
+    public volatile boolean resetIMUHeadingButton;
+
+    public volatile  boolean isResetIMUHeadingButtonHeld;
+    public volatile  boolean toggleXDriveMode;
+    public
+
+    public volatile boolean isToggleXDriveModeHeld;
+
+    public static boolean fieldOrientedMode = true;
+
 
     /**
      * Code to run ONCE when the driver hits INIT
@@ -170,6 +186,10 @@ public class XDrive extends OpMode {
         secondaryClawPitch = hardwareMap.get(Servo.class, "pitch");
         tertiaryClaw = hardwareMap.get(Servo.class, "fieldClaw");
         touchSensor = hardwareMap.get(TouchSensor.class, "touchSensor");
+        lazyImu = new LazyImu(hardwareMap, "imu", new RevHubOrientationOnRobot(
+                MecanumDrive.PARAMS.logoFacingDirection, MecanumDrive.PARAMS.usbFacingDirection));
+
+        imu = lazyImu.get();
 
 
         telemetry.addData("Status:", "Initialized");
@@ -210,7 +230,11 @@ public class XDrive extends OpMode {
     @Override
     public void loop() {
         getControllerData();
-        doXDrive();
+        if (fieldOrientedMode) {
+            doHeadlessXDrive();
+        } else {
+            doXDrive();
+        }
         doSlider();
         doClaw();
         goToPresetHeight();
@@ -227,9 +251,10 @@ public class XDrive extends OpMode {
         double max;
         // Omni Mode uses right joystick to go forward & strafe, and left joystick to rotate.
         //Just like a drone
-        double axial = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
-        double lateral = gamepad1.left_stick_x;
-        double yaw = gamepad1.right_stick_x;
+        //I decided to limit precision to 4 decimal places to counteract drift
+        double axial = ((int) (-gamepad1.left_stick_y * 10000) / 10000.0);  // Note: pushing stick forward gives negative value
+        double lateral = ((int) (gamepad1.left_stick_x * 10000) / 10000.0);
+        double yaw = ((int) (gamepad1.right_stick_x * 10000) / 10000.0);
         //these are the magic 4 statements right here
         // Combine the joystick requests for each axis-motion to determine each wheel's power.
         // Set up a variable for each drive wheel to save the power level for telemetry.
@@ -262,6 +287,56 @@ public class XDrive extends OpMode {
         frontRight.setPower(rightFrontPower);
         backLeft.setPower(leftBackPower);
         backRight.setPower(rightBackPower);
+
+    }
+
+    /**
+     * Inspired by: <a href="https://github.com/cporter/ftc_app/blob/rr/pre-season/TeamCode/src/main/java/soupbox/Mecanum.java#L58">this code</a>
+     */
+    void doHeadlessXDrive() {
+        if (resetIMUHeadingButton && !isResetIMUHeadingButtonHeld) {//Toggles claw state, then does servo toggling
+            isResetIMUHeadingButtonHeld = true;
+            imu.resetYaw();
+        }
+        else{
+            isResetIMUHeadingButtonHeld = false;
+        }
+        if (toggleXDriveMode && !clawToggleButtonHeld) {//Toggles claw state, then does servo toggling
+            clawState = !clawState;
+            clawToggleButtonHeld = true;
+
+            if (clawState) {//opens both claws
+                primaryClaw.setPosition(OPEN);
+                secondaryClaw.setPosition(OPEN);
+                tertiaryClaw.setPosition(OPEN);
+            } else {//closes claws
+                primaryClaw.setPosition(CLOSED);
+                secondaryClaw.setPosition(CLOSED);
+                tertiaryClaw.setPosition(CLOSED);
+            }
+        } else {
+            clawToggleButtonHeld = clawToggleButton;
+        }
+
+
+
+
+        final double lateral = Math.pow(((int) (gamepad1.left_stick_x * 10000) / 10000.0), 3.0);
+        final double axial = Math.pow(((int) (-gamepad1.left_stick_y * 10000) / 10000.0), 3.0);
+
+        final double yaw = Math.pow(((int) (gamepad1.right_stick_x * 10000) / 10000.0), 3.0);
+        final double direction = -(Math.atan2(lateral, axial) + imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
+        final double speed = Math.min(1.0, Math.sqrt(lateral * lateral + axial * axial));
+
+        final double lf = speed * Math.cos(direction + Math.PI / 4.0) + yaw;
+        final double rf = speed * Math.sin(direction + Math.PI / 4.0) - yaw;
+        final double lr = speed * Math.sin(direction + Math.PI / 4.0) + yaw;
+        final double rr = speed * Math.cos(direction + Math.PI / 4.0) - yaw;
+
+        frontLeft.setPower(lf);
+        frontRight.setPower(rf);
+        backLeft.setPower(lr);
+        backRight.setPower(rr);
 
     }
 
@@ -321,7 +396,7 @@ public class XDrive extends OpMode {
      * Calculates secondary claw pitch position
      */
     void doSecondaryClawPitch() {
-        if(pitchState != 0){
+        if (pitchState != 0) {
             secondaryClawPitch.setPosition((secondaryClawPitch.getPosition()) + (pitchState * 0.03));
         }
     }
@@ -333,8 +408,7 @@ public class XDrive extends OpMode {
         if (resetServoOrientationButton) {
             secondaryClawYaw.setPosition(0.5);
             secondaryClawPitch.setPosition(initialPitchOffset);
-        }
-        else if(clawYawState != 0){
+        } else if (clawYawState != 0) {
             secondaryClawYaw.setPosition(secondaryClawYaw.getPosition() + (clawYawState * 0.05));
         }
     }
@@ -376,10 +450,7 @@ public class XDrive extends OpMode {
      * Just some QoL stuff
      */
     void goToPresetHeight() {
-        if (lowSpecimenButton) {
-            raiseArmSlider.setTargetPosition(lowSpecimen);
-            raiseArmSlider.setPower(1);
-        } else if (highSpecimenLowBasketButton) {
+        if (highSpecimenLowBasketButton) {
             raiseArmSlider.setTargetPosition(highSpecimenLowBasket);
             raiseArmSlider.setPower(1);
         } else if (clipSpecimen) {
@@ -392,41 +463,32 @@ public class XDrive extends OpMode {
      * Grabs all controller data, then stores that shit for methods or whatever
      */
     void getControllerData() {//drivetrain and gamepad1's joysticks are handled in doXDrive, every thing else is handled here
-        if (gamepad2.y) {//slider goes up
-            sliderState = 1;
-        } else if (gamepad2.x) {//slider goes down
-            sliderState = -1;
-        } else {
-            sliderState = 0;
-        }
 
-        if(gamepad2.dpad_right){
+        if (gamepad2.dpad_right) {
             clawYawState = -1;
-        }
-        else if(gamepad2.dpad_left){
+        } else if (gamepad2.dpad_left) {
             clawYawState = 1;
-        }
-        else {
+        } else {
             clawYawState = 0;
         }
 
-        if(gamepad2.dpad_up){
+        if (gamepad2.dpad_up) {
             pitchState = 1;
-        }
-        else if(gamepad2.dpad_down){
+        } else if (gamepad2.dpad_down) {
             pitchState = -1;
-        }
-        else {
+        } else {
             pitchState = 0;
         }
 
+        sliderState = gamepad2.right_stick_y;
         halfSpeed = gamepad1.right_bumper;
         extenderState = -gamepad2.left_stick_y;
         clawToggleButton = gamepad2.b || gamepad2.right_stick_button;
         resetServoOrientationButton = gamepad2.a;
         touchSensorState = touchSensor.isPressed();
-        lowSpecimenButton = gamepad2.left_bumper;
         highSpecimenLowBasketButton = gamepad2.right_bumper;
-        clipSpecimen = gamepad2.dpad_down;
+        clipSpecimen = gamepad2.left_bumper;
+        resetIMUHeadingButton = gamepad1.x;
+        toggleXDriveMode = gamepad1.y;
     }
 }

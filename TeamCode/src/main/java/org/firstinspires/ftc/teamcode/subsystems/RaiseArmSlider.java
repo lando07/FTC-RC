@@ -10,20 +10,15 @@ public class RaiseArmSlider {
     private final DcMotor raiseArmSlider;
     public static int lowSpecimen = -100;
     public static int lowBasket = -2100;
-    public static int highSpecimenLowBasket = -1750;
+    public static int highSpecimenLowBasket = -1850;
     public static int highBasket = -4050;
-    public static int clipSpecimenOffSet = 500;
+    public static int clipSpecimenOffSet = 300;
 
     public RaiseArmSlider(@NonNull OpMode opMode, String hwName) {
         raiseArmSlider = opMode.hardwareMap.get(DcMotor.class, hwName);
         raiseArmSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         raiseArmSlider.setTargetPosition(0);
         raiseArmSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    }
-
-    public void doLowSpecimen() {
-        raiseArmSlider.setPower(1);
-        raiseArmSlider.setTargetPosition(lowSpecimen);
     }
 
     public void doHighSpecimenLowBasket() {
