@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.teamcode.subsystems.RaiseArmSlider.highSpecimenLowBasket;
-import static org.firstinspires.ftc.teamcode.subsystems.RaiseArmSlider.lowSpecimen;
 import static org.firstinspires.ftc.teamcode.subsystems.RaiseArmSlider.clipSpecimenOffSet;
 import static org.firstinspires.ftc.teamcode.subsystems.Claw.*;
 
@@ -15,12 +14,10 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.robotcore.hardware.ImuOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Quaternion;
 
 /**
  * Ok, so this is our omega be-all-end-all class.
@@ -87,14 +84,13 @@ public class XDrive extends OpMode {
     /**
      * The static claw mounted to the front - grabs field specimens
      */
-    private Servo tertiaryClaw;
+    private Servo backStop;
     /**
      * The touch sensor to stop the slider motor from retracting after it has been fully retracted
      */
     private TouchSensor touchSensor;
 
     private IMU imu;
-    private LazyImu lazyImu;
     /**
      * Stores the joystick state to compute the pitch of the secondary claw
      */
@@ -114,7 +110,7 @@ public class XDrive extends OpMode {
     /**
      * Stores the slider button state
      */
-    private volatile double sliderState;
+    private volatile int sliderState;
     /**
      * Stores the claw toggle button state
      */
@@ -150,13 +146,13 @@ public class XDrive extends OpMode {
 
     public volatile boolean resetIMUHeadingButton;
 
-    public volatile  boolean isResetIMUHeadingButtonHeld;
-    public volatile  boolean toggleXDriveMode;
-    public
+    public volatile boolean isResetIMUHeadingButtonHeld;
 
-    public volatile boolean isToggleXDriveModeHeld;
+    private volatile boolean toggleDriveModeButton;
 
-    public static boolean fieldOrientedMode = true;
+    private boolean toggleDriveModeButtonHeld;
+
+    private boolean fieldOrientedMode;
 
 
     /**
@@ -184,13 +180,11 @@ public class XDrive extends OpMode {
         secondaryClaw = hardwareMap.get(Servo.class, "secondaryClaw");
         secondaryClawYaw = hardwareMap.get(Servo.class, "yaw");
         secondaryClawPitch = hardwareMap.get(Servo.class, "pitch");
-        tertiaryClaw = hardwareMap.get(Servo.class, "fieldClaw");
+        backStop = hardwareMap.get(Servo.class, "backStop");
         touchSensor = hardwareMap.get(TouchSensor.class, "touchSensor");
-        lazyImu = new LazyImu(hardwareMap, "imu", new RevHubOrientationOnRobot(
-                MecanumDrive.PARAMS.logoFacingDirection, MecanumDrive.PARAMS.usbFacingDirection));
 
-        imu = lazyImu.get();
-
+        imu = new LazyImu(hardwareMap, "imu", new RevHubOrientationOnRobot(
+                MecanumDrive.PARAMS.logoFacingDirection, MecanumDrive.PARAMS.usbFacingDirection)).get();
 
         telemetry.addData("Status:", "Initialized");
         telemetry.update();
@@ -211,9 +205,10 @@ public class XDrive extends OpMode {
     public void start() {
         primaryClaw.setPosition(OPEN);
         secondaryClaw.setPosition(OPEN);
-        tertiaryClaw.setPosition(OPEN);
         secondaryClawYaw.setPosition(initialPitchOffset);//This starts the servo in the middle of both extrema
         secondaryClawPitch.setPosition(0);
+
+        backStop.setPosition(0);
 
         raiseArmSlider.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         raiseArmSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -230,18 +225,30 @@ public class XDrive extends OpMode {
     @Override
     public void loop() {
         getControllerData();
+        doMecanumDrive();
+        doSlider();
+        doClaw();
+        goToPresetHeight();
+        telemetry.addData("Current Drive Mode", fieldOrientedMode ? "headless" : "headed");
+        telemetry.addData("SliderCurrentPos: ", raiseArmSlider.getCurrentPosition());
+        telemetry.addData("ExtCurrPos:", armExtender.getCurrentPosition());
+        telemetry.addData("PrimaryClaw Pos:", primaryClaw.getPosition());
+        telemetry.addData("SecondaryClaw pos", secondaryClaw.getPosition());
+    }
+
+    void doMecanumDrive() {
         if (fieldOrientedMode) {
             doHeadlessXDrive();
         } else {
             doXDrive();
         }
-        doSlider();
-        doClaw();
-        goToPresetHeight();
-        telemetry.addData("SliderCurrentPos: ", raiseArmSlider.getCurrentPosition());
-        telemetry.addData("ExtCurrPos:", armExtender.getCurrentPosition());
-        telemetry.addData("PrimaryClaw Pos:", primaryClaw.getPosition());
-        telemetry.addData("SecondaryClaw pos", secondaryClaw.getPosition());
+        if (toggleDriveModeButton && !toggleDriveModeButtonHeld) {//Toggles claw state, then does servo toggling
+            fieldOrientedMode = !fieldOrientedMode;
+            toggleDriveModeButtonHeld = true;
+
+        } else {
+            toggleDriveModeButtonHeld = toggleDriveModeButton;
+        }
     }
 
     /**
@@ -297,28 +304,9 @@ public class XDrive extends OpMode {
         if (resetIMUHeadingButton && !isResetIMUHeadingButtonHeld) {//Toggles claw state, then does servo toggling
             isResetIMUHeadingButtonHeld = true;
             imu.resetYaw();
-        }
-        else{
+        } else {
             isResetIMUHeadingButtonHeld = false;
         }
-        if (toggleXDriveMode && !clawToggleButtonHeld) {//Toggles claw state, then does servo toggling
-            clawState = !clawState;
-            clawToggleButtonHeld = true;
-
-            if (clawState) {//opens both claws
-                primaryClaw.setPosition(OPEN);
-                secondaryClaw.setPosition(OPEN);
-                tertiaryClaw.setPosition(OPEN);
-            } else {//closes claws
-                primaryClaw.setPosition(CLOSED);
-                secondaryClaw.setPosition(CLOSED);
-                tertiaryClaw.setPosition(CLOSED);
-            }
-        } else {
-            clawToggleButtonHeld = clawToggleButton;
-        }
-
-
 
 
         final double lateral = Math.pow(((int) (gamepad1.left_stick_x * 10000) / 10000.0), 3.0);
@@ -328,10 +316,12 @@ public class XDrive extends OpMode {
         final double direction = -(Math.atan2(lateral, axial) + imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
         final double speed = Math.min(1.0, Math.sqrt(lateral * lateral + axial * axial));
 
-        final double lf = speed * Math.cos(direction + Math.PI / 4.0) + yaw;
-        final double rf = speed * Math.sin(direction + Math.PI / 4.0) - yaw;
-        final double lr = speed * Math.sin(direction + Math.PI / 4.0) + yaw;
-        final double rr = speed * Math.cos(direction + Math.PI / 4.0) - yaw;
+        double vCos = speed * Math.cos(direction + Math.PI / 4.0);
+        double vSin = speed * Math.sin(direction + Math.PI / 4.0);
+        final double lf = vCos + yaw;
+        final double rf = vSin - yaw;
+        final double lr = vSin + yaw;
+        final double rr = vCos - yaw;
 
         frontLeft.setPower(lf);
         frontRight.setPower(rf);
@@ -435,11 +425,9 @@ public class XDrive extends OpMode {
             if (clawState) {//opens both claws
                 primaryClaw.setPosition(OPEN);
                 secondaryClaw.setPosition(OPEN);
-                tertiaryClaw.setPosition(OPEN);
             } else {//closes claws
                 primaryClaw.setPosition(CLOSED);
                 secondaryClaw.setPosition(CLOSED);
-                tertiaryClaw.setPosition(CLOSED);
             }
         } else {
             clawToggleButtonHeld = clawToggleButton;
@@ -480,7 +468,13 @@ public class XDrive extends OpMode {
             pitchState = 0;
         }
 
-        sliderState = gamepad2.right_stick_y;
+        if (gamepad2.y) {
+            sliderState = 1;
+        } else if (gamepad2.x) {
+            sliderState = -1;
+        } else {
+            sliderState = 0;
+        }
         halfSpeed = gamepad1.right_bumper;
         extenderState = -gamepad2.left_stick_y;
         clawToggleButton = gamepad2.b || gamepad2.right_stick_button;
@@ -489,6 +483,6 @@ public class XDrive extends OpMode {
         highSpecimenLowBasketButton = gamepad2.right_bumper;
         clipSpecimen = gamepad2.left_bumper;
         resetIMUHeadingButton = gamepad1.x;
-        toggleXDriveMode = gamepad1.y;
+        toggleDriveModeButton = gamepad1.y;
     }
 }

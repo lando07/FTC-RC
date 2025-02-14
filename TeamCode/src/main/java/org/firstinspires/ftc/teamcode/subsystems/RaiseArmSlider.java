@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+
 @Config
 public class RaiseArmSlider {
     private final DcMotor raiseArmSlider;
@@ -12,7 +13,7 @@ public class RaiseArmSlider {
     public static int lowBasket = -2100;
     public static int highSpecimenLowBasket = -1850;
     public static int highBasket = -4050;
-    public static int clipSpecimenOffSet = 300;
+    public static int clipSpecimenOffSet = 375;
 
     public RaiseArmSlider(@NonNull OpMode opMode, String hwName) {
         raiseArmSlider = opMode.hardwareMap.get(DcMotor.class, hwName);
@@ -25,7 +26,8 @@ public class RaiseArmSlider {
         raiseArmSlider.setPower(1);
         raiseArmSlider.setTargetPosition(highSpecimenLowBasket);
     }
-    public void doHighSpecimenLowBasket(double power){
+
+    public void doHighSpecimenLowBasket(double power) {
         raiseArmSlider.setPower(power);
         raiseArmSlider.setTargetPosition(highSpecimenLowBasket);
     }
@@ -33,11 +35,13 @@ public class RaiseArmSlider {
     public void clipSpecimen() {
         raiseArmSlider.setTargetPosition(highSpecimenLowBasket + clipSpecimenOffSet);
     }
+
     /**
      * Special method for autonomous
+     *
      * @param offSet extra offset needed if clip doesn't work with default
      */
-    public void clipSpecimen(int offSet){
+    public void clipSpecimen(int offSet) {
         raiseArmSlider.setTargetPosition(highSpecimenLowBasket + clipSpecimenOffSet + offSet);
 
     }

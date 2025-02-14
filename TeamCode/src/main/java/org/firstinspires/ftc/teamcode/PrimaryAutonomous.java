@@ -90,7 +90,7 @@ public class PrimaryAutonomous extends LinearOpMode {
                     .build());
             slider.resetHeight();
             Actions.runBlocking(drive.actionBuilder(new Pose2d(5, 35, Math.toRadians(270)))
-                    .strafeToLinearHeading(new Vector2d(-39,59.5), Math.toRadians(180))
+                    .strafeToLinearHeading(new Vector2d(-39, 59.5), Math.toRadians(180))
                     .build());
             primaryClaw.closeClaw();
             sleep(clawReleaseDelay);
@@ -104,8 +104,8 @@ public class PrimaryAutonomous extends LinearOpMode {
             secondarySlider.setPower(-1);
             sleep(300);
             secondarySlider.setPower(0);
-            Actions.runBlocking(drive.actionBuilder(new Pose2d(-3,31, Math.toRadians(270)))
-                    .strafeTo(new Vector2d(-46,60))
+            Actions.runBlocking(drive.actionBuilder(new Pose2d(-3, 31, Math.toRadians(270)))
+                    .strafeTo(new Vector2d(-46, 60))
                     .build());
         }
     }
