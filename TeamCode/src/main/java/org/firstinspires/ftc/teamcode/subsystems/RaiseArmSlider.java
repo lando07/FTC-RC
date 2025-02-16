@@ -13,7 +13,7 @@ public class RaiseArmSlider {
     public static int lowBasket = -2100;
     public static int highSpecimenLowBasket = -1850;
     public static int highBasket = -4050;
-    public static int clipSpecimenOffSet = 375;
+    public static int clipSpecimenOffSet = 600;
 
     public RaiseArmSlider(@NonNull OpMode opMode, String hwName) {
         raiseArmSlider = opMode.hardwareMap.get(DcMotor.class, hwName);
@@ -33,7 +33,7 @@ public class RaiseArmSlider {
     }
 
     public void clipSpecimen() {
-        raiseArmSlider.setTargetPosition(highSpecimenLowBasket + clipSpecimenOffSet);
+        raiseArmSlider.setTargetPosition(raiseArmSlider.getCurrentPosition() + clipSpecimenOffSet);
     }
 
     /**

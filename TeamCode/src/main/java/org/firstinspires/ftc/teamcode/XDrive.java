@@ -134,7 +134,7 @@ public class XDrive extends OpMode {
     /**
      * True if open, false if closed, starts false
      */
-    private boolean clawState = false;
+    private boolean clawState = true;
     /**
      * Stores held button state for de-bouncing and anti-infinite loop stuff
      */
@@ -152,7 +152,7 @@ public class XDrive extends OpMode {
 
     private boolean toggleDriveModeButtonHeld;
 
-    private boolean fieldOrientedMode;
+    private boolean fieldOrientedMode = true;
 
 
     /**
@@ -206,7 +206,7 @@ public class XDrive extends OpMode {
         primaryClaw.setPosition(OPEN);
         secondaryClaw.setPosition(OPEN);
         secondaryClawYaw.setPosition(initialPitchOffset);//This starts the servo in the middle of both extrema
-        secondaryClawPitch.setPosition(0);
+        secondaryClawPitch.setPosition(0.5);
 
         backStop.setPosition(0);
 
@@ -316,13 +316,20 @@ public class XDrive extends OpMode {
         final double direction = -(Math.atan2(lateral, axial) + imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
         final double speed = Math.min(1.0, Math.sqrt(lateral * lateral + axial * axial));
 
-        double vCos = speed * Math.cos(direction + Math.PI / 4.0);
-        double vSin = speed * Math.sin(direction + Math.PI / 4.0);
-        final double lf = vCos + yaw;
-        final double rf = vSin - yaw;
-        final double lr = vSin + yaw;
-        final double rr = vCos - yaw;
+        final double vCos = speed * Math.cos(direction + Math.PI / 4.0);
+        final double vSin = speed * Math.sin(direction + Math.PI / 4.0);
+        double lf = vCos + yaw;
+        double rf = vSin - yaw;
+        double lr = vSin + yaw;
+        double rr = vCos - yaw;
 
+        if (halfSpeed) {
+            lf *= 0.5;
+            rf *= 0.5;
+            lr *= 0.5;
+            rr *= 0.5;
+
+        }
         frontLeft.setPower(lf);
         frontRight.setPower(rf);
         backLeft.setPower(lr);
@@ -418,17 +425,17 @@ public class XDrive extends OpMode {
      * Handles the state of both claws
      */
     void doClawStateToggle() {
+        if (clawState) {//opens both claws
+            primaryClaw.setPosition(OPEN);
+            secondaryClaw.setPosition(OPEN);
+        } else {//closes claws
+            primaryClaw.setPosition(CLOSED);
+            secondaryClaw.setPosition(CLOSED);
+        }
         if (clawToggleButton && !clawToggleButtonHeld) {//Toggles claw state, then does servo toggling
             clawState = !clawState;
             clawToggleButtonHeld = true;
 
-            if (clawState) {//opens both claws
-                primaryClaw.setPosition(OPEN);
-                secondaryClaw.setPosition(OPEN);
-            } else {//closes claws
-                primaryClaw.setPosition(CLOSED);
-                secondaryClaw.setPosition(CLOSED);
-            }
         } else {
             clawToggleButtonHeld = clawToggleButton;
         }
