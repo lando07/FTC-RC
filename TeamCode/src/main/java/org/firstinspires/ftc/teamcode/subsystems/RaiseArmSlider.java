@@ -3,17 +3,21 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 @Config
-public class RaiseArmSlider {
+public class RaiseArmSlider implements Action {
     private final DcMotor raiseArmSlider;
     public static int lowSpecimen = -100;
     public static int lowBasket = -2100;
     public static int highSpecimenLowBasket = -1850;
     public static int highBasket = -4050;
-    public static int clipSpecimenOffSet = 600;
+    public static int clipSpecimenOffsetAuto = 600;
+
+    public static int clipSpecimenOffsetTeleOp = 375;
 
     public RaiseArmSlider(@NonNull OpMode opMode, String hwName) {
         raiseArmSlider = opMode.hardwareMap.get(DcMotor.class, hwName);
@@ -27,27 +31,42 @@ public class RaiseArmSlider {
         raiseArmSlider.setTargetPosition(highSpecimenLowBasket);
     }
 
-    public void doHighSpecimenLowBasket(double power) {
-        raiseArmSlider.setPower(power);
-        raiseArmSlider.setTargetPosition(highSpecimenLowBasket);
-    }
-
-    public void clipSpecimen() {
-        raiseArmSlider.setTargetPosition(raiseArmSlider.getCurrentPosition() + clipSpecimenOffSet);
+    public void clipSpecimenTeleOp() {
+        raiseArmSlider.setTargetPosition(raiseArmSlider.getCurrentPosition() + clipSpecimenOffsetTeleOp);
     }
 
     /**
-     * Special method for autonomous
-     *
-     * @param offSet extra offset needed if clip doesn't work with default
+     * Special method for autonomous, it has a more aggressive clip for reliability
      */
-    public void clipSpecimen(int offSet) {
-        raiseArmSlider.setTargetPosition(highSpecimenLowBasket + clipSpecimenOffSet + offSet);
+    public void clipSpecimenAuto() {
+        raiseArmSlider.setTargetPosition(raiseArmSlider.getCurrentPosition() + clipSpecimenOffsetAuto);
+
+    }
+    public void resetHeightTeleOp() {
+        raiseArmSlider.setPower(1);
+        raiseArmSlider.setTargetPosition(0);
+    }
+    public void resetHeightAuto() {
+        raiseArmSlider.setPower(1);
+        raiseArmSlider.setTargetPosition(5);
+    }
+
+    public void setPower(double power){
+        raiseArmSlider.setPower(power);
+
+    }
+    public void setMode(DcMotor.RunMode mode){
+        raiseArmSlider.setMode(mode);
+    }
+
+    public  void setTargetPosition(int position){
+        raiseArmSlider.setTargetPosition(position);
 
     }
 
-    public void resetHeight() {
-        raiseArmSlider.setPower(1);
-        raiseArmSlider.setTargetPosition(0);
+    @Override
+    public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+        resetHeightAuto();
+        return true;
     }
 }

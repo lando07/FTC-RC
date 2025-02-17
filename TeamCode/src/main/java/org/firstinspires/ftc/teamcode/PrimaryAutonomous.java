@@ -7,18 +7,16 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.subsystems.*;
-import org.opencv.core.Mat;
 
 @Config
 @Autonomous(name = "PrimaryAuto", group = "autonomous")
 public class PrimaryAutonomous extends LinearOpMode {
     public static int humanDelayTime = 100;
     public static int clawReleaseDelay = 300;
-    public static double testYvalue = 12;
+    public static double testYValue = 12;
 
     public static double testXvalue = -69;
 
@@ -37,74 +35,76 @@ public class PrimaryAutonomous extends LinearOpMode {
         }
         waitForStart();
         if (opModeIsActive()) {
+
+            //Extend out backstop for specimen grabbing
             backStop.setPosition(0);
             //Even though secondarySlider is not extended, the claw is closed so clearance is ok
             slider.doHighSpecimenLowBasket();
             //Clip first specimen
-            Actions.runBlocking(drive.actionBuilder(startingPose)
-                    .strafeTo(new Vector2d(0, 32))
-                    .build());
-            slider.clipSpecimen();
-            secondarySlider.setPower(1);
-            sleep(500);
-            secondarySlider.setPower(0);
-            //Release specimen
-            primaryClaw.openClaw();
-            Actions.runBlocking(drive.actionBuilder(new Pose2d(0, 32, Math.toRadians(-90)))
-                    .strafeTo(new Vector2d(0, 36))
-                    .build());
-            //Lower slider and take first field sample to observation zone
-            slider.resetHeight();
-            Actions.runBlocking(drive.actionBuilder(new Pose2d(0, 36, Math.toRadians(-90)))
-                    .strafeTo(new Vector2d(-42, 36))
-                    .build());
-//            //Turn around and push sample to observation zone
-            Actions.runBlocking(drive.actionBuilder(new Pose2d(-42, 36, Math.toRadians(-90)))
-                    .strafeTo(new Vector2d(-42, 5))
-                    .turnTo(Math.toRadians(90))
-                    .strafeTo(new Vector2d(-50, 5))
-                    .strafeTo(new Vector2d(-50, 52))
-                    .strafeTo(new Vector2d(-50, 12))
-                    .strafeTo(new Vector2d(-60, 12))
-                    .strafeTo(new Vector2d( -60, 52))
-                    .strafeTo(new Vector2d(-60, 12))
-                    .strafeTo(new Vector2d(-69, 12))
-                    .strafeTo(new Vector2d(-69, 52))
-                    .build());
 
-//            //Take specimen to submersible
-//            primaryClaw.closeClaw();
-//            sleep(humanDelayTime);
-//            slider.doHighSpecimenLowBasket();
-//            Actions.runBlocking(drive.actionBuilder(new Pose2d(-52, 56.5, Math.toRadians(90)))
-//                    .strafeTo(new Vector2d(-52, 40))
-//                    .strafeToLinearHeading(new Vector2d(5, 30), Math.toRadians(270))
-//                    .build());
-//            slider.clipSpecimen();
-//            sleep(clawReleaseDelay);
-//            primaryClaw.openClaw();
-//            Actions.runBlocking(drive.actionBuilder(new Pose2d(5, 30, Math.toRadians(270)))
-//                    .strafeTo(new Vector2d(5, 35))
-//                    .build());
-//            slider.resetHeight();
-//            Actions.runBlocking(drive.actionBuilder(new Pose2d(5, 35, Math.toRadians(270)))
-//                    .strafeToLinearHeading(new Vector2d(-39, 59.5), Math.toRadians(180))
-//                    .build());
-//            primaryClaw.closeClaw();
-//            sleep(clawReleaseDelay);
-//            slider.doHighSpecimenLowBasket();
-//            Actions.runBlocking(drive.actionBuilder(new Pose2d(-39, 59.5, Math.toRadians(180)))
-//                    .strafeToLinearHeading(new Vector2d(-3, 31), Math.toRadians(270))
-//                    .build());
-//            slider.clipSpecimen();
-//            sleep(clawReleaseDelay);
-//            primaryClaw.openClaw();
-//            secondarySlider.setPower(-1);
-//            sleep(300);
-//            secondarySlider.setPower(0);
-//            Actions.runBlocking(drive.actionBuilder(new Pose2d(-3, 31, Math.toRadians(270)))
-//                    .strafeTo(new Vector2d(-46, 60))
-//                    .build());
+            Actions.runBlocking(drive.actionBuilder(startingPose)
+                    .strafeTo(new Vector2d(-6, 32))
+                    .build());
+            slider.clipSpecimenAuto();
+            secondarySlider.setPower(1);
+            sleep(250);
+            secondarySlider.setPower(0);
+            //clip first specimen
+            primaryClaw.openClaw();
+            slider.resetHeightAuto();
+            Actions.runBlocking(drive.actionBuilder(new Pose2d(-6, 32, Math.toRadians(-90)))
+                    .strafeToLinearHeading(new Vector2d(-36, 36), Math.toRadians(90))
+                    //get behind field samples
+                    .strafeTo(new Vector2d(-36, 10))
+                    .setTangent(Math.toRadians(180))
+                    //Push first sample
+                    .splineToConstantHeading(new Vector2d(-50, 52), Math.toRadians(90))
+                    .splineToConstantHeading(new Vector2d(-50, 15), Math.toRadians(270))
+                    //push second sample
+                    .splineToConstantHeading(new Vector2d(-60, 52), Math.toRadians(90))
+                    //grab second specimen
+                    .splineToConstantHeading(new Vector2d(-60, 60), Math.toRadians(270))
+                    .build());
+            primaryClaw.closeClaw();
+            slider.doHighSpecimenLowBasket();
+            Actions.runBlocking(drive.actionBuilder(new Pose2d(-60, 60, Math.toRadians(270)))
+                    .setTangent(Math.toRadians(0))
+                    .splineToLinearHeading(new Pose2d(-3, 40, Math.toRadians(270)), Math.toRadians(0))
+                    //clip second specimen
+                    .setTangent(Math.toRadians(270))
+                    .splineToConstantHeading(new Vector2d(-3, 32), Math.toRadians(270))
+                    .build());
+            slider.clipSpecimenAuto();
+            sleep(250);
+            primaryClaw.openClaw();
+            slider.resetHeightAuto();
+            Actions.runBlocking(drive.actionBuilder(new Pose2d(-3, 32, Math.toRadians(270)))
+                    //grab third specimen
+                    .setTangent(Math.toRadians(90))
+                    .splineToLinearHeading(new Pose2d(-40, 60, Math.toRadians(90)), Math.toRadians(90))
+                    .build());
+            primaryClaw.closeClaw();
+            slider.doHighSpecimenLowBasket();
+            Actions.runBlocking(drive.actionBuilder(new Pose2d(-40, 60, Math.toRadians(90)))
+                    //clip third specimen
+                    .setTangent(Math.toRadians(270))
+                    .splineToLinearHeading(new Pose2d(0, 32, Math.toRadians(270)), Math.toRadians(270))
+                    .build());
+            slider.clipSpecimenAuto();
+            sleep(250);
+            primaryClaw.openClaw();
+            slider.resetHeightAuto();
+            Actions.runBlocking(drive.actionBuilder(new Pose2d(0, 32, Math.toRadians(270)))
+                    //grab fourth specimen
+                    .setTangent(Math.toRadians(90))
+                    .splineToLinearHeading(new Pose2d(-40, 60, Math.toRadians(90)), Math.toRadians(90))
+                    .build());
+            primaryClaw.closeClaw();
+            slider.doHighSpecimenLowBasket();
+            Actions.runBlocking(drive.actionBuilder(new Pose2d(-40, 60, Math.toRadians(90)))
+                    .setTangent(Math.toRadians(270))
+                    .splineToLinearHeading(new Pose2d(3, 32, Math.toRadians(270)), Math.toRadians(270))
+                    .build());
         }
     }
 }

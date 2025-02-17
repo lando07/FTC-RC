@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.teamcode.subsystems.RaiseArmSlider.highSpecimenLowBasket;
-import static org.firstinspires.ftc.teamcode.subsystems.RaiseArmSlider.clipSpecimenOffSet;
+import static org.firstinspires.ftc.teamcode.subsystems.RaiseArmSlider.clipSpecimenOffsetTeleOp;
 import static org.firstinspires.ftc.teamcode.subsystems.Claw.*;
 
 
@@ -449,7 +449,7 @@ public class XDrive extends OpMode {
             raiseArmSlider.setTargetPosition(highSpecimenLowBasket);
             raiseArmSlider.setPower(1);
         } else if (clipSpecimen) {
-            raiseArmSlider.setTargetPosition(raiseArmSlider.getCurrentPosition() + clipSpecimenOffSet);
+            raiseArmSlider.setTargetPosition(raiseArmSlider.getCurrentPosition() + clipSpecimenOffsetTeleOp);
         }
         raiseArmSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }

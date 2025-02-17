@@ -31,7 +31,6 @@ import com.acmerobotics.roadrunner.ftc.PositionVelocityPair;
 import com.acmerobotics.roadrunner.ftc.RawEncoder;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -73,13 +72,13 @@ public final class MecanumDrive {
         public double kA = 0.000002;
 
         // path profile parameters (in inches)
-        public double maxWheelVel = 30;
-        public double minProfileAccel = -25;//Shit gets lit when this is too high
-        public double maxProfileAccel = 25;
+        public double maxWheelVel = 45;
+        public double minProfileAccel = -50;//haha braking go brr
+        public double maxProfileAccel = 60;
 
         // turn profile parameters (in radians)
-        public double maxAngVel = 40; // shared with path
-        public double maxAngAccel = 30;
+        public double maxAngVel = 45; // shared with path
+        public double maxAngAccel = 60;
 
         // path controller gains
         public double axialGain = 6.0;
