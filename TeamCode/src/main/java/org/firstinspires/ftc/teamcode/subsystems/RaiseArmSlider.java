@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 @Config
-public class RaiseArmSlider implements Action {
+public class RaiseArmSlider {
 
     private final DcMotor raiseArmSlider;
     public static int lowSpecimen = -100;
@@ -26,6 +26,7 @@ public class RaiseArmSlider implements Action {
         raiseArmSlider.setTargetPosition(0);
         raiseArmSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
+
     public DcMotor getRaiseArmSlider() {
         return raiseArmSlider;
     }
@@ -34,12 +35,22 @@ public class RaiseArmSlider implements Action {
         raiseArmSlider.setPower(1);
         raiseArmSlider.setTargetPosition(highSpecimenLowBasket);
     }
+
     public void doHighSample() {
         raiseArmSlider.setPower(1);
         raiseArmSlider.setTargetPosition(highBasket);
     }
+
     public void clipSpecimenTeleOp() {
         raiseArmSlider.setTargetPosition(raiseArmSlider.getCurrentPosition() + clipSpecimenOffsetTeleOp);
+    }
+
+    public void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior zeroPowerBehavior) {
+        raiseArmSlider.setZeroPowerBehavior(zeroPowerBehavior);
+    }
+
+    public int getCurrentPosition() {
+        return raiseArmSlider.getCurrentPosition();
     }
 
     /**
@@ -49,31 +60,28 @@ public class RaiseArmSlider implements Action {
         raiseArmSlider.setTargetPosition(raiseArmSlider.getCurrentPosition() + clipSpecimenOffsetAuto);
 
     }
+
     public void resetHeightTeleOp() {
         raiseArmSlider.setPower(1);
         raiseArmSlider.setTargetPosition(0);
     }
+
     public void resetHeightAuto() {
         raiseArmSlider.setPower(1);
         raiseArmSlider.setTargetPosition(5);
     }
 
-    public void setPower(double power){
+    public void setPower(double power) {
         raiseArmSlider.setPower(power);
 
     }
-    public void setMode(DcMotor.RunMode mode){
+
+    public void setMode(DcMotor.RunMode mode) {
         raiseArmSlider.setMode(mode);
     }
 
-    public  void setTargetPosition(int position){
+    public void setTargetPosition(int position) {
         raiseArmSlider.setTargetPosition(position);
 
-    }
-
-    @Override
-    public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-        resetHeightAuto();
-        return true;
     }
 }

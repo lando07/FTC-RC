@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.teamcode.subsystems.RaiseArmSlider.highSpecimenLowBasket;
 import static org.firstinspires.ftc.teamcode.subsystems.RaiseArmSlider.clipSpecimenOffsetTeleOp;
-import static org.firstinspires.ftc.teamcode.subsystems.Claw.*;
 
 
 import com.acmerobotics.dashboard.config.Config;
@@ -18,24 +17,36 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.subsystems.Claw;
+import org.firstinspires.ftc.teamcode.subsystems.RaiseArmSlider;
 
 /**
  * Ok, so this is our omega be-all-end-all class.
+ * <p>
  * Here's the button mappings:
- * Gamepad 1:
- * left stick: translational movement
- * right stick: rotational movement, only by tilting it left or right
- * A: Toggle speed setting
- * Gamepad 2:
- * Y: Raise Slider
- * X: Lower Slider
- * Left Stick Vertical: Extend secondary arm
- * B: toggle open/close claw
- * Left Stick y: Secondary Claw extension
- * Right Stick x: CW/CCW claw yaw
- * Right Stick y: CW/CCW claw pitch
- * D-Pad down: Clip Specimen
- * D-Pad up: Reset yaw
+ * </p>
+ * <ul>
+ *   <li><b>Gamepad 1:</b>
+ *     <ul>
+ *       <li>Left Stick: translational movement</li>
+ *       <li>Right Stick: rotational movement, only by tilting it left or right</li>
+ *       <li>Right bumper: hold for half-speed</li>
+ *     </ul>
+ *   </li>
+ *   <li><b>Gamepad 2:</b>
+ *     <ul>
+ *       <li>Y: Raise Slider</li>
+ *       <li>X: Lower Slider</li>
+ *       <li>Left Stick Y: Extend/retract secondary arm</li>
+ *       <li>A: Reset servo pitch and yaw on secondary claw (great for once a sample has been obtained)</li>
+ *       <li>B: toggle open/close all claws (for simplicity)</li>
+ *       <li>D-Pad Left/Right: Claw yaw</li>
+ *       <li>D-Pad Up/Down: Claw Pitch</li>
+ *       <li>Left Bumper: Clip Specimen</li>
+ *       <li>Right Bumper: Raise slider to high specimen</li>
+ *     </ul>
+ *   </li>
+ * </ul>
  */
 
 @Config
@@ -64,15 +75,15 @@ public class XDrive extends OpMode {
     /**
      * The motor for raising the slider with static claw
      */
-    private DcMotor raiseArmSlider;
+    private RaiseArmSlider raiseArmSlider;
     /**
      * The claw servo for the static claw
      */
-    private Servo primaryClaw;
+    private Claw primaryClaw;
     /**
      * The claw servo for the secondary claw
      */
-    private Servo secondaryClaw;
+    private Claw secondaryClaw;
     /**
      * The claw motor for secondary claw yaw control
      */
@@ -89,7 +100,9 @@ public class XDrive extends OpMode {
      * The touch sensor to stop the slider motor from retracting after it has been fully retracted
      */
     private TouchSensor touchSensor;
-
+    /**
+     * Stores the imu object for heading calculations in headless mode
+     */
     private IMU imu;
     /**
      * Stores the joystick state to compute the pitch of the secondary claw
@@ -111,6 +124,14 @@ public class XDrive extends OpMode {
      * Stores the slider button state
      */
     private volatile int sliderState;
+    /**
+     * Stores the speed to change claw pitch, do not do values greater than 5, the servo isn't fast enough
+     */
+    public static int pitchSpeed = 3;
+    /**
+     * Stores the speed to change claw yaw, do not do values greater than 5, the servo isn't fast enough
+     */
+    public static int yawSpeed = 5;
     /**
      * Stores the claw toggle button state
      */
@@ -143,20 +164,30 @@ public class XDrive extends OpMode {
      * Stores button/bumper state to raise arm to preset height for the first specimen hook
      */
     private volatile boolean highSpecimenLowBasketButton;
-
+    /**
+     * Stores the state of the button used to reset the imu heading in case of drift
+     */
     public volatile boolean resetIMUHeadingButton;
-
+    /**
+     * Supplemental boolean for de-bouncing and infinite toggling
+     */
     public volatile boolean isResetIMUHeadingButtonHeld;
-
+    /**
+     * Stores the button state used to toggle between headed and headless mode
+     */
     private volatile boolean toggleDriveModeButton;
-
+    /**
+     * Supplemental boolean for de-bouncing and infinite toggling
+     */
     private boolean toggleDriveModeButtonHeld;
-
+    /**
+     * True to start headless, false to start headed
+     */
     private boolean fieldOrientedMode = true;
 
 
     /**
-     * Code to run ONCE when the driver hits INIT
+     * Code to run ONCE when the driver hits INIT. Mainly just initializes all the robot's features
      */
     @Override
     public void init() {
@@ -172,12 +203,12 @@ public class XDrive extends OpMode {
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //Arm and slider init, the slider motor and secondary claw servos go on the expansion hub, touch sensor on control hub
-        raiseArmSlider = hardwareMap.get(DcMotor.class, "raiseArmSlider");
+        raiseArmSlider = new RaiseArmSlider(this, "raiseArmSlider");
         armExtender = hardwareMap.get(DcMotor.class, "armSlider");
 
 
-        primaryClaw = hardwareMap.get(Servo.class, "primaryClaw");
-        secondaryClaw = hardwareMap.get(Servo.class, "secondaryClaw");
+        primaryClaw = new Claw(this, "primaryClaw");
+        secondaryClaw = new Claw(this, "secondaryClaw");
         secondaryClawYaw = hardwareMap.get(Servo.class, "yaw");
         secondaryClawPitch = hardwareMap.get(Servo.class, "pitch");
         backStop = hardwareMap.get(Servo.class, "backStop");
@@ -191,7 +222,7 @@ public class XDrive extends OpMode {
     }
 
     /**
-     * Code to run continuously before start but after init
+     * Code to run continuously before start but after init. Not used as of right now
      */
     @Override
     public void init_loop() {//not used as of right now
@@ -199,12 +230,13 @@ public class XDrive extends OpMode {
     }
 
     /**
-     * Code to run once when the driver presses Start
+     * Code to run once when the driver presses Start. Mainly just starts the robot in a preset config
+     * according to our strategy.
      */
     @Override
     public void start() {
-        primaryClaw.setPosition(OPEN);
-        secondaryClaw.setPosition(OPEN);
+        primaryClaw.openClaw();
+        secondaryClaw.openClaw();
         secondaryClawYaw.setPosition(initialPitchOffset);//This starts the servo in the middle of both extrema
         secondaryClawPitch.setPosition(0.5);
 
@@ -220,7 +252,7 @@ public class XDrive extends OpMode {
     }
 
     /**
-     * Code to run continuously when the driver hits Start
+     * Code to run continuously when the driver hits Start, after start(). This does everything we need
      */
     @Override
     public void loop() {
@@ -229,6 +261,8 @@ public class XDrive extends OpMode {
         doSlider();
         doClaw();
         goToPresetHeight();
+
+        //You can add more telemetry by mimicking the method call structure here, very useful since line-by-line debugging is broken
         telemetry.addData("Current Drive Mode", fieldOrientedMode ? "headless" : "headed");
         telemetry.addData("SliderCurrentPos: ", raiseArmSlider.getCurrentPosition());
         telemetry.addData("ExtCurrPos:", armExtender.getCurrentPosition());
@@ -236,6 +270,10 @@ public class XDrive extends OpMode {
         telemetry.addData("SecondaryClaw pos", secondaryClaw.getPosition());
     }
 
+    /**
+     * Helper method to handle which mode the robot is in for mecanum drive. The driver can
+     * hot-swap between both headless and headed mode without losing data or heading position
+     */
     void doMecanumDrive() {
         if (fieldOrientedMode) {
             doHeadlessXDrive();
@@ -252,7 +290,7 @@ public class XDrive extends OpMode {
     }
 
     /**
-     * Runs Mecanum drive
+     * Runs Mecanum drive, the direction of the robot is the forward
      */
     void doXDrive() {//oh boy this is gonna get fun
         double max;
@@ -299,9 +337,11 @@ public class XDrive extends OpMode {
 
     /**
      * Inspired by: <a href="https://github.com/cporter/ftc_app/blob/rr/pre-season/TeamCode/src/main/java/soupbox/Mecanum.java#L58">this code</a>
+     * <br />
+     * Does some funny math so the robot always goes in the direction you input, regardless of where it's pointed.
      */
     void doHeadlessXDrive() {
-        if (resetIMUHeadingButton && !isResetIMUHeadingButtonHeld) {//Toggles claw state, then does servo toggling
+        if (resetIMUHeadingButton && !isResetIMUHeadingButtonHeld) {//resets headless state heading
             isResetIMUHeadingButtonHeld = true;
             imu.resetYaw();
         } else {
@@ -309,27 +349,28 @@ public class XDrive extends OpMode {
         }
 
 
-        final double lateral = Math.pow(((int) (gamepad1.left_stick_x * 10000) / 10000.0), 3.0);
-        final double axial = Math.pow(((int) (-gamepad1.left_stick_y * 10000) / 10000.0), 3.0);
+        final double lateral = Math.pow(((int) (gamepad1.left_stick_x * 10000) / 10000.0), 3.0);//gainzzz
+        final double axial = Math.pow(((int) (-gamepad1.left_stick_y * 10000) / 10000.0), 3.0);//gainzzz
 
-        final double yaw = Math.pow(((int) (gamepad1.right_stick_x * 10000) / 10000.0), 3.0);
-        final double direction = -(Math.atan2(lateral, axial) + imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
-        final double speed = Math.min(1.0, Math.sqrt(lateral * lateral + axial * axial));
+        final double yaw = Math.pow(((int) (gamepad1.right_stick_x * 10000) / 10000.0), 3.0);//gainzzz
+        final double direction = -(Math.atan2(lateral, axial) + imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));// wtf
+        final double speed = Math.min(1.0, Math.sqrt(lateral * lateral + axial * axial));//vector normalization(I think) + pythagorean theorem
 
-        final double vCos = speed * Math.cos(direction + Math.PI / 4.0);
-        final double vSin = speed * Math.sin(direction + Math.PI / 4.0);
-        double lf = vCos + yaw;
+        final double vCos = speed * Math.cos(direction + Math.PI / 4.0);//I hate trig
+        final double vSin = speed * Math.sin(direction + Math.PI / 4.0);//I have no clue how this even works
+        double lf = vCos + yaw;//These 4 lines calculate the motor powers
         double rf = vSin - yaw;
         double lr = vSin + yaw;
         double rr = vCos - yaw;
 
-        if (halfSpeed) {
+        if (halfSpeed) {//half speed go brrrr
             lf *= 0.5;
             rf *= 0.5;
             lr *= 0.5;
             rr *= 0.5;
 
         }
+        //Actually what makes the robot moves
         frontLeft.setPower(lf);
         frontRight.setPower(rf);
         backLeft.setPower(lr);
@@ -338,11 +379,11 @@ public class XDrive extends OpMode {
     }
 
     /**
-     * Does slider motor logic, such as protecting the slide from over-retraction
+     * Does slider motor logic, such as protecting the slide from over-retraction and parasitic power draw
      */
     void doSlider() {
         if (touchSensorState && !gamepad2.y) {//this stops the motor from going any further down, but still allows it to go upward
-            raiseArmSlider.setPower(0);//The zero power behavior set to float is because the arm has so much resistance it can hold it's own weight
+            raiseArmSlider.setPower(0);//The zero power behavior set to float so the motor power is cut when the slider is fully retracted
             raiseArmSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             raiseArmSlider.setTargetPosition(0);
             raiseArmSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -350,6 +391,7 @@ public class XDrive extends OpMode {
                 sliderState = 0;
             }
         }
+
         if (sliderState != 0) {
             int targetPos = raiseArmSlider.getCurrentPosition();
             if (sliderState == -1) {
@@ -394,7 +436,10 @@ public class XDrive extends OpMode {
      */
     void doSecondaryClawPitch() {
         if (pitchState != 0) {
-            secondaryClawPitch.setPosition((secondaryClawPitch.getPosition()) + (pitchState * 0.03));
+            //do not modify the 100.0, since pitch
+            //speed is a whole number, it needs to be
+            //divided to work with the servos correctly
+            secondaryClawPitch.setPosition((secondaryClawPitch.getPosition()) + (pitchState * (pitchSpeed / 100.0)));
         }
     }
 
@@ -406,7 +451,10 @@ public class XDrive extends OpMode {
             secondaryClawYaw.setPosition(0.5);
             secondaryClawPitch.setPosition(initialPitchOffset);
         } else if (clawYawState != 0) {
-            secondaryClawYaw.setPosition(secondaryClawYaw.getPosition() + (clawYawState * 0.05));
+            //do not modify the 100.0, since yaw
+            //speed is a whole number, it needs to be
+            //divided to work with the servos correctly
+            secondaryClawYaw.setPosition(secondaryClawYaw.getPosition() + (clawYawState * (yawSpeed / 100.0)));
         }
     }
 
@@ -414,6 +462,8 @@ public class XDrive extends OpMode {
      * Calculates the speed at which the arm extends
      */
     void doArmExtension() {
+        //due to the unpredictable and high friction on the rack + pinion,
+        // I just set the motor power without encoder position for high responsiveness
         if (halfSpeed) {
             armExtender.setPower(0.5 * extenderState);
         } else {
@@ -426,11 +476,11 @@ public class XDrive extends OpMode {
      */
     void doClawStateToggle() {
         if (clawState) {//opens both claws
-            primaryClaw.setPosition(OPEN);
-            secondaryClaw.setPosition(OPEN);
+            primaryClaw.openClaw();
+            secondaryClaw.openClaw();
         } else {//closes claws
-            primaryClaw.setPosition(CLOSED);
-            secondaryClaw.setPosition(CLOSED);
+            primaryClaw.closeClaw();
+            secondaryClaw.closeClaw();
         }
         if (clawToggleButton && !clawToggleButtonHeld) {//Toggles claw state, then does servo toggling
             clawState = !clawState;
@@ -455,9 +505,9 @@ public class XDrive extends OpMode {
     }
 
     /**
-     * Grabs all controller data, then stores that shit for methods or whatever
+     * Grabs all controller data, then stores that stuff for methods or whatever
      */
-    void getControllerData() {//drivetrain and gamepad1's joysticks are handled in doXDrive, every thing else is handled here
+    void getControllerData() {//drivetrain and gamepad1's joysticks are handled in mecanumDrive() and it's method calls, every thing else is handled here
 
         if (gamepad2.dpad_right) {
             clawYawState = -1;

@@ -35,4 +35,8 @@ public class Claw {
         claw.setPosition(OPEN);
         clawState = true;
     }
+
+    public double getPosition(){
+        return claw.getPosition();
+    }
 }
