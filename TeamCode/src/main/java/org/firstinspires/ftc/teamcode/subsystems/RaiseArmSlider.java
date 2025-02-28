@@ -10,12 +10,13 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 @Config
 public class RaiseArmSlider implements Action {
+
     private final DcMotor raiseArmSlider;
     public static int lowSpecimen = -100;
     public static int lowBasket = -2100;
-    public static int highSpecimenLowBasket = -1850;
-    public static int highBasket = -4050;
-    public static int clipSpecimenOffsetAuto = 600;
+    public static int highSpecimenLowBasket = -1900;
+    public static int highBasket = -4150;
+    public static int clipSpecimenOffsetAuto = 700;
 
     public static int clipSpecimenOffsetTeleOp = 375;
 
@@ -25,12 +26,18 @@ public class RaiseArmSlider implements Action {
         raiseArmSlider.setTargetPosition(0);
         raiseArmSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
+    public DcMotor getRaiseArmSlider() {
+        return raiseArmSlider;
+    }
 
     public void doHighSpecimenLowBasket() {
         raiseArmSlider.setPower(1);
         raiseArmSlider.setTargetPosition(highSpecimenLowBasket);
     }
-
+    public void doHighSample() {
+        raiseArmSlider.setPower(1);
+        raiseArmSlider.setTargetPosition(highBasket);
+    }
     public void clipSpecimenTeleOp() {
         raiseArmSlider.setTargetPosition(raiseArmSlider.getCurrentPosition() + clipSpecimenOffsetTeleOp);
     }
