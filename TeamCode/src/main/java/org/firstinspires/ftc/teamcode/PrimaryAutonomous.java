@@ -1,9 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.AccelConstraint;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.ProfileAccelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -16,8 +14,6 @@ import org.firstinspires.ftc.teamcode.subsystems.*;
 @Config
 @Autonomous(name = "PrimaryAuto", group = "autonomous")
 public class PrimaryAutonomous extends LinearOpMode {
-    public static int humanDelayTime = 100;
-    public static int clawReleaseDelay = 300;
     public static double testYValue = 29;
     public static double testXvalue = 31;
 
