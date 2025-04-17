@@ -14,7 +14,7 @@ public class Claw {
 
     public Claw(@NonNull OpMode opMode, String hwName) {
         claw = opMode.hardwareMap.get(Servo.class, hwName);
-        claw.setPosition(CLOSED);
+//        claw.setPosition(CLOSED);
         clawState = false;
     }
 

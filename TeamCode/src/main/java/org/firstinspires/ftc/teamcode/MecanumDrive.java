@@ -29,6 +29,7 @@ import com.acmerobotics.roadrunner.ftc.LynxFirmware;
 import com.acmerobotics.roadrunner.ftc.OverflowEncoder;
 import com.acmerobotics.roadrunner.ftc.PositionVelocityPair;
 import com.acmerobotics.roadrunner.ftc.RawEncoder;
+import com.qualcomm.hardware.bosch.BHI260IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -62,14 +63,14 @@ public final class MecanumDrive {
                 RevHubOrientationOnRobot.UsbFacingDirection.UP;
 
         // drive model parameters
-        public double inPerTick = 0.011485017593;
-        public double lateralInPerTick = inPerTick;
-        public double trackWidthTicks = 1890.970216455953;
+        public double inPerTick = 0.0676056338028;
+        public double lateralInPerTick = 0.0690647482014;
+        public double trackWidthTicks = 658.9107385915254;
 
         // feedforward parameters (in tick units)
-        public double kS = 0.7313781651857143;
-        public double kV = 0.004120040463302852;
-        public double kA = 0.000002;
+        public double kS = 1.2148161627908172;
+        public double kV = 0.00414378711176407;
+        public double kA = 0.00002;
 
         // path profile parameters (in inches)
         public double maxWheelVel = 40;
@@ -81,8 +82,8 @@ public final class MecanumDrive {
         public double maxAngAccel = 45;
 
         // path controller gains
-        public double axialGain = 6.0;
-        public double lateralGain = 5.0;
+        public double axialGain = 3.1;
+        public double lateralGain = 5;
         public double headingGain = 3; // shared with turn
 
         public double axialVelGain = 0.0;
@@ -121,7 +122,8 @@ public final class MecanumDrive {
 
     public class DriveLocalizer implements Localizer {
         public final Encoder leftFront, leftBack, rightBack, rightFront;
-        public final IMU imu;
+        //Normally the wrapper class IMU, but changed to our specific model
+        public final BHI260IMU imu;
 
         private int lastLeftFrontPos, lastLeftBackPos, lastRightBackPos, lastRightFrontPos;
         private Rotation2d lastHeading;
@@ -133,8 +135,8 @@ public final class MecanumDrive {
             leftBack = new OverflowEncoder(new RawEncoder(MecanumDrive.this.leftBack));
             rightBack = new OverflowEncoder(new RawEncoder(MecanumDrive.this.rightBack));
             rightFront = new OverflowEncoder(new RawEncoder(MecanumDrive.this.rightFront));
-
-            imu = lazyImu.get();
+            //the typecast is to help counteract drift
+            imu = (BHI260IMU) lazyImu.get();
 
             leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
             leftBack.setDirection(DcMotorSimple.Direction.REVERSE);

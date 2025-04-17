@@ -18,7 +18,7 @@ public class RaiseArmSlider {
     public static int highBasket = -4150;
     public static int clipSpecimenOffsetAuto = 700;
 
-    public static int clipSpecimenOffsetTeleOp = 375;
+    public static int clipSpecimenOffsetTeleOp = 425;
 
     public RaiseArmSlider(@NonNull OpMode opMode, String hwName) {
         raiseArmSlider = opMode.hardwareMap.get(DcMotor.class, hwName);

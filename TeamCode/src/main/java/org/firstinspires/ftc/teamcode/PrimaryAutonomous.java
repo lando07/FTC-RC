@@ -14,8 +14,10 @@ import org.firstinspires.ftc.teamcode.subsystems.*;
 @Config
 @Autonomous(name = "PrimaryAuto", group = "autonomous")
 public class PrimaryAutonomous extends LinearOpMode {
-    public static double testYValue = 29;
+    public static double testYValue = 54.5;
     public static double testXvalue = 31;
+    public static double brakeVal = -20;
+    public static double slowWheelVel = 40;
 
     @Override
     public void runOpMode() {
@@ -41,9 +43,9 @@ public class PrimaryAutonomous extends LinearOpMode {
                     .strafeToConstantHeading(new Vector2d(0, 32)).build());
             slider.clipSpecimenAuto();
             secondarySlider.setPower(1);
-            sleep(150);
+            sleep(300);
             secondarySlider.setPower(0);
-            sleep(200);
+            sleep(50);
             //clip first specimen
             primaryClaw.openClaw();
             slider.resetHeightAuto();
@@ -59,20 +61,20 @@ public class PrimaryAutonomous extends LinearOpMode {
                     .strafeToConstantHeading(new Vector2d(-62, 10))
                     //push second sample
                     //and grab second specimen
-                    .strafeToConstantHeading(new Vector2d(-62, 54.5))
+                    .strafeToConstantHeading(new Vector2d(-62, testYValue))
                     .waitSeconds(0.3)
                     .build());
             primaryClaw.closeClaw();
             sleep(200);
             slider.doHighSpecimenLowBasket();
-            Actions.runBlocking(drive.actionBuilder(new Pose2d(-65, 54.5, Math.toRadians(90)))
-                    .strafeToLinearHeading(new Vector2d(-3, testYValue), Math.toRadians(270 + 1e-9))                    //clip second specimen
+            Actions.runBlocking(drive.actionBuilder(new Pose2d(-65, testYValue, Math.toRadians(90)))
+                    .strafeToLinearHeading(new Vector2d(-3, 29), Math.toRadians(270 + 1e-9))                    //clip second specimen
                     .build());
             slider.clipSpecimenAuto();
             sleep(350);
             primaryClaw.openClaw();
             slider.resetHeightAuto();
-            Actions.runBlocking(drive.actionBuilder(new Pose2d(-3, testYValue, Math.toRadians(270 + 1e-9)))
+            Actions.runBlocking(drive.actionBuilder(new Pose2d(-3, 29, Math.toRadians(270 + 1e-9)))
                     //grab third specimen
                     .strafeToLinearHeading(new Vector2d(-44, 54.5), Math.toRadians(90))
                     .build());
@@ -81,17 +83,26 @@ public class PrimaryAutonomous extends LinearOpMode {
             slider.doHighSpecimenLowBasket();
             Actions.runBlocking(drive.actionBuilder(new Pose2d(-44, 54.5, Math.toRadians(90)))
                     //clip third specimen
-                    .strafeToLinearHeading(new Vector2d(0, testYValue), Math.toRadians(270))
+                    .strafeToLinearHeading(new Vector2d(0, 29), Math.toRadians(270))
                     .build());
             slider.clipSpecimenAuto();
             sleep(350);
             primaryClaw.openClaw();
             slider.resetHeightAuto();
-            Actions.runBlocking(drive.actionBuilder(new Pose2d(0, testYValue, Math.toRadians(270)))
+            Actions.runBlocking(drive.actionBuilder(new Pose2d(0, 29, Math.toRadians(270)))
                     //grab fourth specimen
                     .strafeToConstantHeading(new Vector2d(-40, 60))
                     .build());
             primaryClaw.closeClaw();
         }
+    }
+
+    private void setSlowBrake(){
+        MecanumDrive.PARAMS.minProfileAccel = brakeVal;
+        MecanumDrive.PARAMS.maxWheelVel = slowWheelVel;
+    }
+    private void resetBrakeSpeed(){
+        MecanumDrive.PARAMS.minProfileAccel = -35;
+        MecanumDrive.PARAMS.maxWheelVel = 40;
     }
 }

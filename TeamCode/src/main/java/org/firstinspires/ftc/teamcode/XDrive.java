@@ -6,6 +6,8 @@ import static org.firstinspires.ftc.teamcode.subsystems.RaiseArmSlider.clipSpeci
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.ftc.LazyImu;
+import com.qualcomm.hardware.bosch.BHI260IMU;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -31,6 +33,8 @@ import org.firstinspires.ftc.teamcode.subsystems.RaiseArmSlider;
  *       <li>Left Stick: translational movement</li>
  *       <li>Right Stick: rotational movement, only by tilting it left or right</li>
  *       <li>Right bumper: hold for half-speed</li>
+ *       <li>X: Reset IMU Heading</li>
+ *       <li>Y: Toggle between headless and headed mode(DISABLED)</li>
  *     </ul>
  *   </li>
  *   <li><b>Gamepad 2:</b>
@@ -44,6 +48,7 @@ import org.firstinspires.ftc.teamcode.subsystems.RaiseArmSlider;
  *       <li>D-Pad Up/Down: Claw Pitch</li>
  *       <li>Left Bumper: Clip Specimen</li>
  *       <li>Right Bumper: Raise slider to high specimen</li>
+ *       <li>Right Trigger: Reset IMU Heading</li>
  *     </ul>
  *   </li>
  * </ul>
@@ -103,7 +108,7 @@ public class XDrive extends OpMode {
     /**
      * Stores the imu object for heading calculations in headless mode
      */
-    private IMU imu;
+    private BHI260IMU imu;
     /**
      * Stores the joystick state to compute the pitch of the secondary claw
      */
@@ -167,11 +172,11 @@ public class XDrive extends OpMode {
     /**
      * Stores the state of the button used to reset the imu heading in case of drift
      */
-    public volatile boolean resetIMUHeadingButton;
+    private volatile boolean resetIMUHeadingButton;
     /**
      * Supplemental boolean for de-bouncing and infinite toggling
      */
-    public volatile boolean isResetIMUHeadingButtonHeld;
+    private volatile boolean isResetIMUHeadingButtonHeld;
     /**
      * Stores the button state used to toggle between headed and headless mode
      */
@@ -214,9 +219,9 @@ public class XDrive extends OpMode {
         backStop = hardwareMap.get(Servo.class, "backStop");
         touchSensor = hardwareMap.get(TouchSensor.class, "touchSensor");
 
-        imu = new LazyImu(hardwareMap, "imu", new RevHubOrientationOnRobot(
-                MecanumDrive.PARAMS.logoFacingDirection, MecanumDrive.PARAMS.usbFacingDirection)).get();
-
+        imu = hardwareMap.get(BHI260IMU.class, "imu");
+        imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(MecanumDrive.PARAMS.logoFacingDirection, MecanumDrive.PARAMS.usbFacingDirection)));
+        imu.resetYaw();
         telemetry.addData("Status:", "Initialized");
         telemetry.update();
     }
@@ -268,6 +273,9 @@ public class XDrive extends OpMode {
         telemetry.addData("ExtCurrPos:", armExtender.getCurrentPosition());
         telemetry.addData("PrimaryClaw Pos:", primaryClaw.getPosition());
         telemetry.addData("SecondaryClaw pos", secondaryClaw.getPosition());
+        telemetry.addData("IMU Heading (deg)", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+
+        telemetry.update();
     }
 
     /**
@@ -379,7 +387,9 @@ public class XDrive extends OpMode {
     }
 
     /**
-     * Does slider motor logic, such as protecting the slide from over-retraction and parasitic power draw
+     * Does slider motor logic, including protecting the slide from over-retraction and parasitic power draw,
+     * resetting the motor encoder to account for drift, and changing motor behavior based on the
+     * slider's height
      */
     void doSlider() {
         if (touchSensorState && !gamepad2.y) {//this stops the motor from going any further down, but still allows it to go upward
@@ -539,7 +549,8 @@ public class XDrive extends OpMode {
         touchSensorState = touchSensor.isPressed();
         highSpecimenLowBasketButton = gamepad2.right_bumper;
         clipSpecimen = gamepad2.left_bumper;
-        resetIMUHeadingButton = gamepad1.x;
-        toggleDriveModeButton = gamepad1.y;
+        resetIMUHeadingButton = gamepad2.right_trigger > 0.8 || gamepad1.x;
+        //This is disabled, should only be used for debugging
+//        toggleDriveModeButton = gamepad1.y;
     }
 }
