@@ -5,9 +5,7 @@ import static org.firstinspires.ftc.teamcode.subsystems.RaiseArmSlider.clipSpeci
 
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.ftc.LazyImu;
 import com.qualcomm.hardware.bosch.BHI260IMU;
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -190,6 +188,9 @@ public class XDrive extends OpMode {
      */
     private boolean fieldOrientedMode = true;
 
+    public static double axialGain = 3;
+    public static double lateralGain = 3;
+    public static double yawGain = 3;
 
     /**
      * Code to run ONCE when the driver hits INIT. Mainly just initializes all the robot's features
@@ -269,6 +270,9 @@ public class XDrive extends OpMode {
 
         //You can add more telemetry by mimicking the method call structure here, very useful since line-by-line debugging is broken
         telemetry.addData("Current Drive Mode", fieldOrientedMode ? "headless" : "headed");
+        telemetry.addData("Axial Movement:", Math.pow(((int) (-gamepad1.left_stick_y * 10000) / 10000.0), axialGain) );
+        telemetry.addData("Lateral Movement:", Math.pow(((int) (gamepad1.left_stick_x * 10000) / 10000.0), lateralGain));
+        telemetry.addData("Yaw Movement:", Math.pow(((int) (gamepad1.right_stick_x * 10000) / 10000.0), yawGain));
         telemetry.addData("SliderCurrentPos: ", raiseArmSlider.getCurrentPosition());
         telemetry.addData("ExtCurrPos:", armExtender.getCurrentPosition());
         telemetry.addData("PrimaryClaw Pos:", primaryClaw.getPosition());
@@ -357,11 +361,11 @@ public class XDrive extends OpMode {
         }
 
 
-        final double lateral = Math.pow(((int) (gamepad1.left_stick_x * 10000) / 10000.0), 3.0);//gainzzz
-        final double axial = Math.pow(((int) (-gamepad1.left_stick_y * 10000) / 10000.0), 3.0);//gainzzz
+        final double lateral = Math.pow(((int) (gamepad1.left_stick_x * 10000) / 10000.0), lateralGain);
+        final double axial = Math.pow(((int) (-gamepad1.left_stick_y * 10000) / 10000.0), axialGain);
+        final double yaw = Math.pow(((int) (gamepad1.right_stick_x * 10000) / 10000.0), yawGain);
 
-        final double yaw = Math.pow(((int) (gamepad1.right_stick_x * 10000) / 10000.0), 3.0);//gainzzz
-        final double direction = -(Math.atan2(lateral, axial) + imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));// wtf
+        final double direction = -(Math.atan2(lateral, axial) + imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));// I have zero clue how this works
         final double speed = Math.min(1.0, Math.sqrt(lateral * lateral + axial * axial));//vector normalization(I think) + pythagorean theorem
 
         final double vCos = speed * Math.cos(direction + Math.PI / 4.0);//I hate trig
@@ -371,7 +375,7 @@ public class XDrive extends OpMode {
         double lr = vSin + yaw;
         double rr = vCos - yaw;
 
-        if (halfSpeed) {//half speed go brrrr
+        if (halfSpeed) {
             lf *= 0.5;
             rf *= 0.5;
             lr *= 0.5;
