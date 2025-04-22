@@ -80,15 +80,8 @@ class TristateButtonState {
  */
 class AxisState {
     public volatile double value;
-    public GamepadButton button;
-
-    public AxisState(boolean isButton, GamepadButton button) {
-        this.value = 0.0f;
-        this.button = button;
-    }
-
     public AxisState() {
-        this(false, null);
+        this.value = 0;
     }
 
     /**
@@ -118,14 +111,14 @@ public class GamepadController {
     }
 
     /**
-     * Configures a button with a specific behavior.
+     * Configures a  bi-state button with a specific behavior.
      */
-    public void configureButton(GamepadButton button, ButtonBehavior behavior) {
+    public void configureBiStateButton(GamepadButton button, ButtonBehavior behavior) {
         buttonStates.put(button, new ButtonState(button, behavior));
     }
 
     /**
-     * Configures a button with a specific behavior.
+     * Configures a tri-state button with a specific behavior.
      */
     public void configureTristateButton(GamepadButton buttonPositive, GamepadButton buttonNegative) {
         tristateButtonStates.put(buttonPositive, new TristateButtonState(buttonPositive, buttonNegative));
@@ -233,10 +226,10 @@ public class GamepadController {
      * Returns the current value of the specified tristate button.
      * Will throw an error if the button doesn't exist
      */
-    public int getTristateButtonValue(GamepadButton buttonPositive, GamepadButton buttonNegative) {
+    public int getTristateButtonValue(GamepadButton buttonPositive) {
         TristateButtonState state = tristateButtonStates.get(buttonPositive);
-        if (state == null || !state.buttonNegative.equals(buttonNegative)) {
-            throw new NoSuchElementException("Tristate button for " + buttonPositive + " and " + buttonNegative + " not configured.");
+        if (state == null) {
+            throw new NoSuchElementException("Tristate button for " + buttonPositive + " not configured.");
         }
         return state.value;
     }

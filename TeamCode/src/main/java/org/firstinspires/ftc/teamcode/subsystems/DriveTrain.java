@@ -26,12 +26,12 @@ public class DriveTrain {
     public static boolean toggleDriveModeButtonDisabled = true;
     private boolean halfSpeed = false;
 
-    private BHI260IMU imu;
+    private final BHI260IMU imu;
 
-    private DcMotor frontLeft;
-    private DcMotor frontRight;
-    private DcMotor backLeft;
-    private DcMotor backRight;
+    private final DcMotor frontLeft;
+    private final DcMotor frontRight;
+    private final DcMotor backLeft;
+    private final DcMotor backRight;
 
     private GamepadController gamepad;
 
@@ -44,6 +44,7 @@ public class DriveTrain {
         gamepad = controller;
         imu = opmode.hardwareMap.get(BHI260IMU.class, "imu");
         imu.initialize(new BHI260IMU.Parameters(new RevHubOrientationOnRobot(MecanumDrive.PARAMS.logoFacingDirection, MecanumDrive.PARAMS.usbFacingDirection)));
+        imu.resetYaw();
         frontLeft = opmode.hardwareMap.get(DcMotorEx.class, "leftFront");
         frontRight = opmode.hardwareMap.get(DcMotorEx.class, "rightFront");
         backLeft = opmode.hardwareMap.get(DcMotorEx.class, "leftBack");
@@ -54,6 +55,12 @@ public class DriveTrain {
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        controller.configureAxis(lateralAxis);
+        controller.configureAxis(axialAxis);
+        controller.configureAxis(yawAxis);
+        controller.configureBiStateButton(halfSpeedButton, ButtonBehavior.HOLD);
+        controller.configureBiStateButton(toggleDriveModeButton, ButtonBehavior.TOGGLE);
+        controller.configureBiStateButton(resetIMUButton, ButtonBehavior.HOLD);
     }
 
 
@@ -66,9 +73,9 @@ public class DriveTrain {
 
         final double direction = -(Math.atan2(lateral, axial) + imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));// I have zero clue how this works
         final double speed = Math.min(1.0, Math.sqrt(lateral * lateral + axial * axial));//vector normalization(I think) + pythagorean theorem
-
-        final double vCos = speed * Math.cos(direction + Math.PI / 4.0);//I hate trig
-        final double vSin = speed * Math.sin(direction + Math.PI / 4.0);//I have no clue how this even works
+        //I have no clue how this even works
+        final double vCos = speed * Math.cos(direction + Math.PI / 4.0);
+        final double vSin = speed * Math.sin(direction + Math.PI / 4.0);
         double lf = vCos + yaw;//These 4 lines calculate the motor powers
         double rf = vSin - yaw;
         double lr = vSin + yaw;
@@ -130,7 +137,15 @@ public class DriveTrain {
         backRight.setPower(rightBackPower);
     }
 
+    public void setBrakingMode(DcMotor.ZeroPowerBehavior zeroPowerBehavior){
+        frontLeft.setZeroPowerBehavior(zeroPowerBehavior);
+        backLeft.setZeroPowerBehavior(zeroPowerBehavior);
+        frontRight.setZeroPowerBehavior(zeroPowerBehavior);
+        backRight.setZeroPowerBehavior(zeroPowerBehavior);
+    }
+
     public void updateDriveTrainBehavior() {
+
         halfSpeed = gamepad.getGamepadButtonValue(halfSpeedButton);
 
         if(gamepad.getGamepadButtonValue(resetIMUButton)){
@@ -143,4 +158,6 @@ public class DriveTrain {
         }
 
     }
+
+
 }

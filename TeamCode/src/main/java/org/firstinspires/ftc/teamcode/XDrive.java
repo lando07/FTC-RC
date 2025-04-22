@@ -17,52 +17,104 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.subsystems.Claw;
-import org.firstinspires.ftc.teamcode.subsystems.RaiseArmSlider;
+import org.firstinspires.ftc.teamcode.subsystems.*;
+
 
 /**
  * Ok, so this is our omega be-all-end-all class.
- * <p>
- * Here's the button mappings:
- * </p>
- * <ul>
- *   <li><b>Gamepad 1:</b>
- *     <ul>
- *       <li>Left Stick: translational movement</li>
- *       <li>Right Stick: rotational movement, only by tilting it left or right</li>
- *       <li>Right bumper: hold for half-speed</li>
- *       <li>X: Reset IMU Heading</li>
- *       <li>Y: Toggle between headless and headed mode(DISABLED)</li>
- *     </ul>
- *   </li>
- *   <li><b>Gamepad 2:</b>
- *     <ul>
- *       <li>Y: Raise Slider</li>
- *       <li>X: Lower Slider</li>
- *       <li>Left Stick Y: Extend/retract secondary arm</li>
- *       <li>A: Reset servo pitch and yaw on secondary claw (great for once a sample has been obtained)</li>
- *       <li>B: toggle open/close all claws (for simplicity)</li>
- *       <li>D-Pad Left/Right: Claw yaw</li>
- *       <li>D-Pad Up/Down: Claw Pitch</li>
- *       <li>Left Bumper: Clip Specimen</li>
- *       <li>Right Bumper: Raise slider to high specimen</li>
- *       <li>Right Trigger: Reset IMU Heading</li>
- *     </ul>
- *   </li>
- * </ul>
  */
 
 @Config
 @TeleOp(name = "XDrive", group = "Robot")
 public class XDrive extends OpMode {
+    private GamepadController GamePad1 = new GamepadController(gamepad1);
+    private GamepadController GamePad2 = new GamepadController(gamepad2);
+    private axisBehavior armExtendAxis = axisBehavior.LEFT_STICK_Y;
+    private GamepadButton clawToggleButton = GamepadButton.B;
+    private ButtonBehavior clawToggleBehavior = ButtonBehavior.TOGGLE;
+    private RaiseArmSlider raiseArmSlider;
+    private DcMotor armExtender;
+    private Claw primaryClaw;
+    private Claw secondaryClaw;
+    private Servo secondaryClawYaw;
+    private Servo secondaryClawPitch;
+    private Servo backStop;
+    private TouchSensor touchSensor;
+    private DriveTrain driveTrain;
+    private GamepadController controller1, controller2;
+
+    /**
+     * Stores the speed to change claw pitch, do not do values greater than 5, the servo isn't fast enough
+     */
+    public static int pitchSpeed = 3;
+    /**
+     * Stores the speed to change claw yaw, do not do values greater than 5, the servo isn't fast enough
+     */
+    public static int yawSpeed = 5;
+    /**
+     * Stores the initial pitch offset when the game starts. The claw should be sticking outwards
+     */
+    public static double initialPitchOffset = 0.65;
 
     @Override
     public void init() {
+        controller1 = new GamepadController(gamepad1);
 
+
+        controller2 = new GamepadController(gamepad2);
+        controller2.configureBiStateButton(clawToggleButton, clawToggleBehavior);
+        controller2.configureAxis(armExtendAxis);
+
+        armExtender = hardwareMap.get(DcMotor.class, "armSlider");
+        driveTrain = new DriveTrain(this, controller1);
+
+        primaryClaw = new Claw(this, "primaryClaw");
+        secondaryClaw = new Claw(this, "secondaryClaw");
+        secondaryClawYaw = hardwareMap.get(Servo.class, "yaw");
+        secondaryClawPitch = hardwareMap.get(Servo.class, "pitch");
+        backStop = hardwareMap.get(Servo.class, "backStop");
+        touchSensor = hardwareMap.get(TouchSensor.class, "touchSensor");
+        raiseArmSlider = new RaiseArmSlider(this, "raiseArmSlider", controller2, touchSensor);
+
+        telemetry.addData("Status:", "Initialized");
+        telemetry.update();
+    }
+
+    @Override
+    public void start() {
+        primaryClaw.openClaw();
+        secondaryClaw.openClaw();
+        secondaryClawYaw.setPosition(initialPitchOffset);//This starts the servo in the middle of both extrema
+        secondaryClawPitch.setPosition(0.5);
+
+        backStop.setPosition(0);
+
+        raiseArmSlider.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        raiseArmSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        raiseArmSlider.setTargetPosition(0);
+        raiseArmSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        raiseArmSlider.setPower(1);
+
+        armExtender.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     @Override
     public void loop() {
+        controller1.update();
+        controller2.update();
+        driveTrain.updateDriveTrainBehavior();
+        raiseArmSlider.update();
+        if(raiseArmSlider.getCurrentPosition() < -100) {
+            driveTrain.setBrakingMode(DcMotor.ZeroPowerBehavior.FLOAT);
+        }
+        else{
+            driveTrain.setBrakingMode(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
 
+
+    }
+
+    private void doArmExtension(){
+        armExtender.setPower(-controller2.getAxisValue(armExtendAxis));
     }
 }

@@ -7,6 +7,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 @Config
 public class RaiseArmSlider {
@@ -20,11 +21,30 @@ public class RaiseArmSlider {
 
     public static int clipSpecimenOffsetTeleOp = 425;
 
+    public GamepadButton raiseArmButton = GamepadButton.X;
+    public GamepadButton lowerArmButton = GamepadButton.Y;
+    public ButtonBehavior raiseArmButtonBehavior = ButtonBehavior.TRI_STATE;
+    public GamepadButton clipSpecimenButton = GamepadButton.LEFT_BUMPER;
+    public ButtonBehavior clipSpecimenButtonBehavior = ButtonBehavior.HOLD;
+    private TouchSensor touchSensor;
+    private GamepadController gamepad;
+
     public RaiseArmSlider(@NonNull OpMode opMode, String hwName) {
         raiseArmSlider = opMode.hardwareMap.get(DcMotor.class, hwName);
         raiseArmSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         raiseArmSlider.setTargetPosition(0);
         raiseArmSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+    public RaiseArmSlider(@NonNull OpMode opMode, String hwName, GamepadController controller, TouchSensor tS) {
+        raiseArmSlider = opMode.hardwareMap.get(DcMotor.class, hwName);
+        raiseArmSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        raiseArmSlider.setTargetPosition(0);
+        raiseArmSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        gamepad = controller;
+        gamepad.configureTristateButton(raiseArmButton, lowerArmButton);
+        gamepad.configureBiStateButton(clipSpecimenButton, clipSpecimenButtonBehavior);
+        touchSensor = tS;
     }
 
     public DcMotor getRaiseArmSlider() {
@@ -83,5 +103,28 @@ public class RaiseArmSlider {
     public void setTargetPosition(int position) {
         raiseArmSlider.setTargetPosition(position);
 
+    }
+
+    public void update() {
+        if (touchSensor.isPressed() && !gamepad.getGamepadButtonValue(lowerArmButton)) {//this stops the motor from going any further down, but still allows it to go upward
+            raiseArmSlider.setPower(0);//The zero power behavior set to float so the motor power is cut when the slider is fully retracted
+            raiseArmSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            raiseArmSlider.setTargetPosition(0);
+            raiseArmSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+        int value = gamepad.getTristateButtonValue(raiseArmButton);
+        if (value != 0) {
+            int targetPos = raiseArmSlider.getCurrentPosition();
+            if (value == -1) {
+                raiseArmSlider.setPower(1);
+                targetPos = raiseArmSlider.getCurrentPosition() + 200;
+            } else if (value == 1) {
+                raiseArmSlider.setPower(1);
+                targetPos = raiseArmSlider.getCurrentPosition() - 200;
+            }
+            raiseArmSlider.setTargetPosition(Math.max(Math.min(2000, targetPos), -4050));
+            raiseArmSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        }
     }
 }
