@@ -36,16 +36,14 @@ public class XDrive extends OpMode {
      * Stores the initial pitch offset when the game starts. The claw should be sticking outwards
      */
     public static double initialPitchOffset = 0.8;
-    private final GamepadController GamePad1 = new GamepadController(gamepad1);
-    private final GamepadController GamePad2 = new GamepadController(gamepad2);
-    private axisBehavior armExtendAxis = axisBehavior.LEFT_STICK_Y;
-    private GamepadButton resetServoOrientationButton = GamepadButton.A;
-    private GamepadButton clawToggleButton = GamepadButton.B;
-    private BiStateButtonBehavior clawToggleBehavior = BiStateButtonBehavior.TOGGLE;
-    private GamepadButton yawRightButton = GamepadButton.D_PAD_RIGHT;
-    private GamepadButton yawLeftButton = GamepadButton.D_PAD_LEFT;
-    private GamepadButton pitchUpButton = GamepadButton.D_PAD_UP;
-    private GamepadButton pitchDownButton = GamepadButton.D_PAD_DOWN;
+    private final axisBehavior armExtendAxis = axisBehavior.LEFT_STICK_Y;
+    private final GamepadButton resetServoOrientationButton = GamepadButton.A;
+    private final GamepadButton clawToggleButton = GamepadButton.B;
+    private final BiStateButtonBehavior clawToggleBehavior = BiStateButtonBehavior.TOGGLE;
+    private final GamepadButton yawRightButton = GamepadButton.D_PAD_RIGHT;
+    private final GamepadButton yawLeftButton = GamepadButton.D_PAD_LEFT;
+    private final GamepadButton pitchUpButton = GamepadButton.D_PAD_UP;
+    private final GamepadButton pitchDownButton = GamepadButton.D_PAD_DOWN;
     private RaiseArmSlider raiseArmSlider;
     private DcMotor armExtender;
     private Claw primaryClaw;
@@ -53,7 +51,6 @@ public class XDrive extends OpMode {
     private Servo secondaryClawYaw;
     private Servo secondaryClawPitch;
     private Servo backStop;
-    private TouchSensor touchSensor;
     private DriveTrain driveTrain;
     private GamepadController controller1, controller2;
 
@@ -76,7 +73,7 @@ public class XDrive extends OpMode {
         secondaryClawYaw = hardwareMap.get(Servo.class, "yaw");
         secondaryClawPitch = hardwareMap.get(Servo.class, "pitch");
         backStop = hardwareMap.get(Servo.class, "backStop");
-        touchSensor = hardwareMap.get(TouchSensor.class, "touchSensor");
+        TouchSensor touchSensor = hardwareMap.get(TouchSensor.class, "touchSensor");
         raiseArmSlider = new RaiseArmSlider(this, "raiseArmSlider", controller2, touchSensor);
 
         telemetry.addData("Status:", "Initialized");

@@ -33,7 +33,7 @@ public class DriveTrain {
     private final DcMotor backLeft;
     private final DcMotor backRight;
     private boolean halfSpeed = false;
-    private GamepadController gamepad;
+    private final GamepadController gamepad;
 
     public DriveTrain(OpMode opmode, GamepadController controller) {
         gamepad = controller;

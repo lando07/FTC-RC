@@ -13,7 +13,7 @@ class ButtonState {
     public final GamepadButton button;
     public volatile boolean isPressed;
     public BiStateButtonBehavior behavior;
-    public volatile boolean value;
+    public boolean value;
     private volatile boolean wasHeld;
 
     public ButtonState(GamepadButton button, BiStateButtonBehavior behavior) {
