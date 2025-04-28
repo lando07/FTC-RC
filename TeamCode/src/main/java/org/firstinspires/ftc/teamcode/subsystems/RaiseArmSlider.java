@@ -23,10 +23,9 @@ public class RaiseArmSlider {
     public static int minHeightAuto = -125;
     public GamepadButton raiseArmButton = GamepadButton.Y;
     public GamepadButton lowerArmButton = GamepadButton.X;
-    public GamepadButton highSpecimenLowBasketButton = GamepadButton.LEFT_BUMPER;
-    public ButtonBehavior raiseArmButtonBehavior = ButtonBehavior.TRI_STATE;
+    public GamepadButton highSpecimenLowBasketButton = GamepadButton.RIGHT_BUMPER;
     public GamepadButton clipSpecimenButton = GamepadButton.LEFT_BUMPER;
-    public ButtonBehavior clipSpecimenButtonBehavior = ButtonBehavior.HOLD;
+    public BiStateButtonBehavior clipSpecimenButtonBehavior = BiStateButtonBehavior.HOLD;
     private TouchSensor touchSensor;
     private GamepadController gamepad;
 
@@ -45,8 +44,8 @@ public class RaiseArmSlider {
         gamepad = controller;
         gamepad.configureTristateButton(raiseArmButton, lowerArmButton);
         gamepad.configureBiStateButton(clipSpecimenButton, clipSpecimenButtonBehavior);
-        gamepad.configureBiStateButton(raiseArmButton, ButtonBehavior.HOLD);
-        gamepad.configureBiStateButton(highSpecimenLowBasketButton, ButtonBehavior.HOLD);
+        gamepad.configureBiStateButton(raiseArmButton, BiStateButtonBehavior.HOLD);
+        gamepad.configureBiStateButton(highSpecimenLowBasketButton, BiStateButtonBehavior.HOLD);
         touchSensor = tS;
     }
 

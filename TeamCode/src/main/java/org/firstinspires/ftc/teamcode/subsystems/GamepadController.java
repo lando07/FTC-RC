@@ -12,11 +12,11 @@ import java.util.NoSuchElementException;
 class ButtonState {
     public final GamepadButton button;
     public volatile boolean isPressed;
-    public ButtonBehavior behavior;
+    public BiStateButtonBehavior behavior;
     public volatile boolean value;
     private volatile boolean wasHeld;
 
-    public ButtonState(GamepadButton button, ButtonBehavior behavior) {
+    public ButtonState(GamepadButton button, BiStateButtonBehavior behavior) {
         this.button = button;
         this.isPressed = false;
         this.behavior = behavior;
@@ -40,8 +40,6 @@ class ButtonState {
                 }
                 wasHeld = isPressed;
                 break;
-            case TRI_STATE:
-                throw new UnsupportedOperationException("Tristate button type should be handled by TristateButtonState");
         }
     }
 }
@@ -113,7 +111,7 @@ public class GamepadController {
     /**
      * Configures a  bi-state button with a specific behavior.
      */
-    public void configureBiStateButton(GamepadButton button, ButtonBehavior behavior) {
+    public void configureBiStateButton(GamepadButton button, BiStateButtonBehavior behavior) {
         buttonStates.put(button, new ButtonState(button, behavior));
     }
 

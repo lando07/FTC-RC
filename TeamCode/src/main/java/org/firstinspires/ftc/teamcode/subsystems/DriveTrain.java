@@ -58,9 +58,9 @@ public class DriveTrain {
         controller.configureAxis(lateralAxis);
         controller.configureAxis(axialAxis);
         controller.configureAxis(yawAxis);
-        controller.configureBiStateButton(halfSpeedButton, ButtonBehavior.HOLD);
-        controller.configureBiStateButton(toggleDriveModeButton, ButtonBehavior.TOGGLE);
-        controller.configureBiStateButton(resetIMUButton, ButtonBehavior.HOLD);
+        controller.configureBiStateButton(halfSpeedButton, BiStateButtonBehavior.HOLD);
+        controller.configureBiStateButton(toggleDriveModeButton, BiStateButtonBehavior.TOGGLE);
+        controller.configureBiStateButton(resetIMUButton, BiStateButtonBehavior.HOLD);
     }
 
 

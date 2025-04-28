@@ -13,8 +13,8 @@ public class Claw {
 
     private boolean clawState;//false closed, true open
 
-    private GamepadButton toggleButton = GamepadButton.B;
-    private ButtonBehavior toggleBehavior = ButtonBehavior.TOGGLE;
+    public static GamepadButton toggleButton = GamepadButton.B;
+    public static BiStateButtonBehavior toggleBehavior = BiStateButtonBehavior.TOGGLE;
     private GamepadController controller;
 
     public Claw(@NonNull OpMode opMode, String hwName, GamepadController gamepad) {

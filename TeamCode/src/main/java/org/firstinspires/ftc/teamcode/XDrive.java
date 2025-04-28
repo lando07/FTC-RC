@@ -23,13 +23,11 @@ public class XDrive extends OpMode {
     private axisBehavior armExtendAxis = axisBehavior.LEFT_STICK_Y;
     private GamepadButton resetServoOrientationButton = GamepadButton.A;
     private GamepadButton clawToggleButton = GamepadButton.B;
-    private ButtonBehavior clawToggleBehavior = ButtonBehavior.TOGGLE;
+    private BiStateButtonBehavior clawToggleBehavior = BiStateButtonBehavior.TOGGLE;
     private GamepadButton yawRightButton = GamepadButton.D_PAD_RIGHT;
     private GamepadButton yawLeftButton = GamepadButton.D_PAD_LEFT;
-    private ButtonBehavior yawBehavior = ButtonBehavior.TRI_STATE;
     private GamepadButton pitchUpButton = GamepadButton.D_PAD_UP;
     private GamepadButton pitchDownButton = GamepadButton.D_PAD_DOWN;
-    private ButtonBehavior pitchBehavior = ButtonBehavior.TRI_STATE;
     private RaiseArmSlider raiseArmSlider;
     private DcMotor armExtender;
     private Claw primaryClaw;
@@ -62,7 +60,7 @@ public class XDrive extends OpMode {
         controller2 = new GamepadController(gamepad2);
         controller2.configureBiStateButton(clawToggleButton, clawToggleBehavior);
         controller2.configureAxis(armExtendAxis);
-        controller2.configureBiStateButton(resetServoOrientationButton, ButtonBehavior.HOLD);
+        controller2.configureBiStateButton(resetServoOrientationButton, BiStateButtonBehavior.HOLD);
         controller2.configureTristateButton(yawLeftButton, yawRightButton);
         controller2.configureTristateButton(pitchUpButton, pitchDownButton);
         armExtender = hardwareMap.get(DcMotor.class, "armSlider");
