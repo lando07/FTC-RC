@@ -24,21 +24,16 @@ public class DriveTrain {
     public static GamepadButton toggleDriveModeButton = GamepadButton.Y;
 
     public static boolean toggleDriveModeButtonDisabled = true;
-    private boolean halfSpeed = false;
-
+    public static double lateralGain = 1.0;
+    public static double axialGain = 1.0;
+    public static double yawGain = 3;
     private final BHI260IMU imu;
-
     private final DcMotor frontLeft;
     private final DcMotor frontRight;
     private final DcMotor backLeft;
     private final DcMotor backRight;
-
+    private boolean halfSpeed = false;
     private GamepadController gamepad;
-
-
-    public static double lateralGain = 1.0;
-    public static double axialGain = 1.0;
-    public static double yawGain = 3;
 
     public DriveTrain(OpMode opmode, GamepadController controller) {
         gamepad = controller;
@@ -137,7 +132,7 @@ public class DriveTrain {
         backRight.setPower(rightBackPower);
     }
 
-    public void setBrakingMode(DcMotor.ZeroPowerBehavior zeroPowerBehavior){
+    public void setBrakingMode(DcMotor.ZeroPowerBehavior zeroPowerBehavior) {
         frontLeft.setZeroPowerBehavior(zeroPowerBehavior);
         backLeft.setZeroPowerBehavior(zeroPowerBehavior);
         frontRight.setZeroPowerBehavior(zeroPowerBehavior);
@@ -148,7 +143,7 @@ public class DriveTrain {
 
         halfSpeed = gamepad.getGamepadButtonValue(halfSpeedButton);
 
-        if(gamepad.getGamepadButtonValue(resetIMUButton)){
+        if (gamepad.getGamepadButtonValue(resetIMUButton)) {
             imu.resetYaw();
         }
         if (gamepad.getGamepadButtonValue(toggleDriveModeButton) && !toggleDriveModeButtonDisabled) {

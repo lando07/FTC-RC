@@ -8,7 +8,13 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
-import org.firstinspires.ftc.teamcode.subsystems.*;
+import org.firstinspires.ftc.teamcode.subsystems.BiStateButtonBehavior;
+import org.firstinspires.ftc.teamcode.subsystems.Claw;
+import org.firstinspires.ftc.teamcode.subsystems.DriveTrain;
+import org.firstinspires.ftc.teamcode.subsystems.GamepadButton;
+import org.firstinspires.ftc.teamcode.subsystems.GamepadController;
+import org.firstinspires.ftc.teamcode.subsystems.RaiseArmSlider;
+import org.firstinspires.ftc.teamcode.subsystems.axisBehavior;
 
 
 /**
@@ -18,6 +24,18 @@ import org.firstinspires.ftc.teamcode.subsystems.*;
 @Config
 @TeleOp(name = "XDrive", group = "Robot")
 public class XDrive extends OpMode {
+    /**
+     * Stores the speed to change claw pitch, do not do values greater than 5, the servo isn't fast enough
+     */
+    public static int pitchSpeed = 2;
+    /**
+     * Stores the speed to change claw yaw, do not do values greater than 5, the servo isn't fast enough
+     */
+    public static int yawSpeed = 2;
+    /**
+     * Stores the initial pitch offset when the game starts. The claw should be sticking outwards
+     */
+    public static double initialPitchOffset = 0.8;
     private final GamepadController GamePad1 = new GamepadController(gamepad1);
     private final GamepadController GamePad2 = new GamepadController(gamepad2);
     private axisBehavior armExtendAxis = axisBehavior.LEFT_STICK_Y;
@@ -38,19 +56,6 @@ public class XDrive extends OpMode {
     private TouchSensor touchSensor;
     private DriveTrain driveTrain;
     private GamepadController controller1, controller2;
-
-    /**
-     * Stores the speed to change claw pitch, do not do values greater than 5, the servo isn't fast enough
-     */
-    public static int pitchSpeed = 2;
-    /**
-     * Stores the speed to change claw yaw, do not do values greater than 5, the servo isn't fast enough
-     */
-    public static int yawSpeed = 2;
-    /**
-     * Stores the initial pitch offset when the game starts. The claw should be sticking outwards
-     */
-    public static double initialPitchOffset = 0.8;
 
     @Override
     public void init() {
@@ -121,7 +126,7 @@ public class XDrive extends OpMode {
         if (controller2.getGamepadButtonValue(resetServoOrientationButton)) {
             secondaryClawYaw.setPosition(0.5);
             secondaryClawPitch.setPosition(initialPitchOffset);
-        } else if(val != 0){
+        } else if (val != 0) {
             secondaryClawYaw.setPosition(secondaryClawYaw.getPosition() + (val * (yawSpeed / 100.0)));
 
         }
@@ -129,7 +134,7 @@ public class XDrive extends OpMode {
 
     private void doSecondaryClawPitch() {
         int val = controller2.getTristateButtonValue(pitchUpButton);
-        if(val != 0){
+        if (val != 0) {
             secondaryClawPitch.setPosition((secondaryClawPitch.getPosition()) + (val * (pitchSpeed / 100.0)));
 
         }

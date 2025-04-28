@@ -30,10 +30,8 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /*
@@ -62,15 +60,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Auto Drive By Encoder", group="Robot")
+@Autonomous(name = "Auto Drive By Encoder", group = "Robot")
 public class AutoDriveByEncoder extends LinearOpMode {
-
-    /* Declare OpMode members. */
-    private DcMotor         leftDrive   = null;
-    private DcMotor         rightDrive  = null;
-
-    private DcMotor         HangArm = null;
-    private ElapsedTime     runtime = new ElapsedTime();
 
     // Calculate the COUNTS_PER_INCH for your specific drive train.
     // Go to your motor vendor website to determine your motor's COUNTS_PER_MOTOR_REV
@@ -79,19 +70,24 @@ public class AutoDriveByEncoder extends LinearOpMode {
     // This is gearing DOWN for less speed and more torque.
     // For gearing UP, use a gear ratio less than 1.0. Note this will affect the direction of wheel rotation.
     //
-    static final double     COUNTS_PER_MOTOR_REV    = 1120 ;    // eg: NeveRest 40 Motor Encoder
-    static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing.
-    static final double     WHEEL_DIAMETER_INCHES   = 3.94 ;     // For figuring circumference
-    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-                                                      (WHEEL_DIAMETER_INCHES * Math.PI);
-    static final double     DRIVE_SPEED             = 0.6;
-    static final double     TURN_SPEED              = 0.3;
+    static final double COUNTS_PER_MOTOR_REV = 1120;    // eg: NeveRest 40 Motor Encoder
+    static final double DRIVE_GEAR_REDUCTION = 1.0;     // No External Gearing.
+    static final double WHEEL_DIAMETER_INCHES = 3.94;     // For figuring circumference
+    static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
+            (WHEEL_DIAMETER_INCHES * Math.PI);
+    static final double DRIVE_SPEED = 0.6;
+    static final double TURN_SPEED = 0.3;
+    /* Declare OpMode members. */
+    private DcMotor leftDrive = null;
+    private DcMotor rightDrive = null;
+    private DcMotor HangArm = null;
+    private ElapsedTime runtime = new ElapsedTime();
 
     @Override
     public void runOpMode() throws InterruptedException {
 
         // Initialize the drive system variables.
-        leftDrive  = hardwareMap.get(DcMotor.class, "left_drive");
+        leftDrive = hardwareMap.get(DcMotor.class, "left_drive");
         rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
         HangArm = hardwareMap.get(DcMotor.class, "HangArm");
         HangArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -111,9 +107,9 @@ public class AutoDriveByEncoder extends LinearOpMode {
         rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Send telemetry message to indicate successful Encoder reset
-        telemetry.addData("Starting at",  "%7d :%7d",
-                          leftDrive.getCurrentPosition(),
-                          rightDrive.getCurrentPosition());
+        telemetry.addData("Starting at", "%7d :%7d",
+                leftDrive.getCurrentPosition(),
+                rightDrive.getCurrentPosition());
         telemetry.update();
 
         // Wait for the game to start (driver presses START)
@@ -121,16 +117,17 @@ public class AutoDriveByEncoder extends LinearOpMode {
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        encoderDrive(DRIVE_SPEED,  22,  22, 5.0, 0.2);  // S1: Forward 22 Inches with 5 Sec timeout
-        encoderDrive(DRIVE_SPEED, -8, -8,5.0, 0.2);
-        encoderDrive(TURN_SPEED,   12, -12, 6, 0.2);  // S2: Turn Right 12 Inches with 4 Sec timeout
+        encoderDrive(DRIVE_SPEED, 22, 22, 5.0, 0.2);  // S1: Forward 22 Inches with 5 Sec timeout
+        encoderDrive(DRIVE_SPEED, -8, -8, 5.0, 0.2);
+        encoderDrive(TURN_SPEED, 12, -12, 6, 0.2);  // S2: Turn Right 12 Inches with 4 Sec timeout
         encoderDrive(DRIVE_SPEED, 40, 40, 6.0, 0.2);  // S3: Reverse 24 Inches with 4 Sec timeout
-        encoderDrive(TURN_SPEED,   12, -12, 6.0, 0.2);  // S2: Turn Right 12 Inches with 4 Sec timeout
-        encoderDrive(DRIVE_SPEED,  9,  9, 6, 0.2);  // S1: Forward 47 Inches with 5 Sec timeout
+        encoderDrive(TURN_SPEED, 12, -12, 6.0, 0.2);  // S2: Turn Right 12 Inches with 4 Sec timeout
+        encoderDrive(DRIVE_SPEED, 9, 9, 6, 0.2);  // S1: Forward 47 Inches with 5 Sec timeout
         HangArm.setTargetPosition(-1150);
         HangArm.setPower(0.5);
         HangArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        while(HangArm.isBusy());//ensures that the HangArm is fully set to the position before proceeding
+        while (HangArm.isBusy())
+            ;//ensures that the HangArm is fully set to the position before proceeding
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
@@ -156,8 +153,8 @@ public class AutoDriveByEncoder extends LinearOpMode {
         if (opModeIsActive()) {
 
             // Determine new target position, and pass to motor controller
-            newLeftTarget = leftDrive.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-            newRightTarget = rightDrive.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
+            newLeftTarget = leftDrive.getCurrentPosition() + (int) (leftInches * COUNTS_PER_INCH);
+            newRightTarget = rightDrive.getCurrentPosition() + (int) (rightInches * COUNTS_PER_INCH);
             leftDrive.setTargetPosition(newLeftTarget);
             rightDrive.setTargetPosition(newRightTarget);
 
@@ -169,7 +166,7 @@ public class AutoDriveByEncoder extends LinearOpMode {
             runtime.reset();
 //            leftDrive.setPower(Math.abs(speed));
 //            rightDrive.setPower(Math.abs(speed));
-            for(double i = 0; i <= Math.abs(speed); i += acceleration){//I made this so it can soft start, first at 0, then .01 power, .02 power, to speed amount of power
+            for (double i = 0; i <= Math.abs(speed); i += acceleration) {//I made this so it can soft start, first at 0, then .01 power, .02 power, to speed amount of power
                 leftDrive.setPower(Math.abs(i));
                 rightDrive.setPower(Math.abs(i));
                 sleep(100);//modify this for more acceleration, but less accuracy due to wheel slip
@@ -181,13 +178,13 @@ public class AutoDriveByEncoder extends LinearOpMode {
             // However, if you require that BOTH motors have finished their moves before the robot continues
             // onto the next step, use (isBusy() || isBusy()) in the loop test.
             while (opModeIsActive() &&
-                   (runtime.seconds() < timeoutS) &&
-                   (leftDrive.isBusy() && rightDrive.isBusy())) {
+                    (runtime.seconds() < timeoutS) &&
+                    (leftDrive.isBusy() && rightDrive.isBusy())) {
 
                 // Display it for the driver.
-                telemetry.addData("Running to",  " %7d :%7d", newLeftTarget,  newRightTarget);
-                telemetry.addData("Currently at",  " at %7d :%7d",
-                                            leftDrive.getCurrentPosition(), rightDrive.getCurrentPosition());
+                telemetry.addData("Running to", " %7d :%7d", newLeftTarget, newRightTarget);
+                telemetry.addData("Currently at", " at %7d :%7d",
+                        leftDrive.getCurrentPosition(), rightDrive.getCurrentPosition());
                 telemetry.update();
             }
 

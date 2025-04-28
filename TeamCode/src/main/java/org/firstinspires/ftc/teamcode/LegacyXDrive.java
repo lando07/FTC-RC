@@ -1,8 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.subsystems.RaiseArmSlider.highSpecimenLowBasket;
 import static org.firstinspires.ftc.teamcode.subsystems.RaiseArmSlider.clipSpecimenOffsetTeleOp;
-
+import static org.firstinspires.ftc.teamcode.subsystems.RaiseArmSlider.highSpecimenLowBasket;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.bosch.BHI260IMU;
@@ -55,6 +54,21 @@ import org.firstinspires.ftc.teamcode.subsystems.RaiseArmSlider;
 @Config
 @TeleOp(name = "LegacyXDrive", group = "Robot")
 public class LegacyXDrive extends OpMode {
+    /**
+     * Stores the initial pitch offset when the game starts. The claw should be sticking outwards
+     */
+    public static double initialPitchOffset = 0.65;
+    /**
+     * Stores the speed to change claw pitch, do not do values greater than 5, the servo isn't fast enough
+     */
+    public static int pitchSpeed = 3;
+    /**
+     * Stores the speed to change claw yaw, do not do values greater than 5, the servo isn't fast enough
+     */
+    public static int yawSpeed = 5;
+    public static double axialGain = 3;
+    public static double lateralGain = 3;
+    public static double yawGain = 3;
     /**
      * The front-left motor for mecanum drive
      */
@@ -120,21 +134,9 @@ public class LegacyXDrive extends OpMode {
      */
     private volatile int clawYawState;
     /**
-     * Stores the initial pitch offset when the game starts. The claw should be sticking outwards
-     */
-    public static double initialPitchOffset = 0.65;
-    /**
      * Stores the slider button state
      */
     private volatile int sliderState;
-    /**
-     * Stores the speed to change claw pitch, do not do values greater than 5, the servo isn't fast enough
-     */
-    public static int pitchSpeed = 3;
-    /**
-     * Stores the speed to change claw yaw, do not do values greater than 5, the servo isn't fast enough
-     */
-    public static int yawSpeed = 5;
     /**
      * Stores the claw toggle button state
      */
@@ -187,10 +189,6 @@ public class LegacyXDrive extends OpMode {
      * True to start headless, false to start headed
      */
     private boolean fieldOrientedMode = true;
-
-    public static double axialGain = 3;
-    public static double lateralGain = 3;
-    public static double yawGain = 3;
 
     /**
      * Code to run ONCE when the driver hits INIT. Mainly just initializes all the robot's features
@@ -270,7 +268,7 @@ public class LegacyXDrive extends OpMode {
 
         //You can add more telemetry by mimicking the method call structure here, very useful since line-by-line debugging is broken
         telemetry.addData("Current Drive Mode", fieldOrientedMode ? "headless" : "headed");
-        telemetry.addData("Axial Movement:", Math.pow(((int) (-gamepad1.left_stick_y * 10000) / 10000.0), axialGain) );
+        telemetry.addData("Axial Movement:", Math.pow(((int) (-gamepad1.left_stick_y * 10000) / 10000.0), axialGain));
         telemetry.addData("Lateral Movement:", Math.pow(((int) (gamepad1.left_stick_x * 10000) / 10000.0), lateralGain));
         telemetry.addData("Yaw Movement:", Math.pow(((int) (gamepad1.right_stick_x * 10000) / 10000.0), yawGain));
         telemetry.addData("SliderCurrentPos: ", raiseArmSlider.getCurrentPosition());

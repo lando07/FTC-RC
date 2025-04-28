@@ -8,7 +8,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.subsystems.*;
+import org.firstinspires.ftc.teamcode.subsystems.Claw;
+import org.firstinspires.ftc.teamcode.subsystems.RaiseArmSlider;
 
 @Config
 @Autonomous(name = "SecondaryAuto", group = "autonomous")
@@ -17,7 +18,9 @@ public class SecondaryAutonomous extends LinearOpMode {
 
     public static double testXvalue = 60;
 
-    /** @noinspection StatementWithEmptyBody*/
+    /**
+     * @noinspection StatementWithEmptyBody
+     */
     @Override
     public void runOpMode() {
         Pose2d startingPose = new Pose2d(17.2, 62, Math.toRadians(-90));
@@ -39,7 +42,7 @@ public class SecondaryAutonomous extends LinearOpMode {
         if (opModeIsActive()) {
             slider.doHighSample();
             Actions.runBlocking(drive.actionBuilder(startingPose)
-                            .strafeToConstantHeading(new Vector2d(18,58))
+                    .strafeToConstantHeading(new Vector2d(18, 58))
                     .strafeToLinearHeading(new Vector2d(testXvalue, testYValue), Math.toRadians(45))
                     .build());
             sleep(1000);
@@ -52,9 +55,9 @@ public class SecondaryAutonomous extends LinearOpMode {
             primaryClaw.closeClaw();
             sleep(2000);
             Actions.runBlocking(drive.actionBuilder(new Pose2d(testXvalue - 5, testYValue - 5, Math.toRadians(45)))
-                    .strafeToLinearHeading(new Vector2d(38,32), Math.toRadians(180))
-                    .strafeToConstantHeading(new Vector2d(38,12))
-                    .strafeToConstantHeading(new Vector2d(23,6))
+                    .strafeToLinearHeading(new Vector2d(38, 32), Math.toRadians(180))
+                    .strafeToConstantHeading(new Vector2d(38, 12))
+                    .strafeToConstantHeading(new Vector2d(23, 6))
                     .build());
 
 

@@ -10,13 +10,12 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 @Config
 public class RaiseArmSlider {
 
-    private final DcMotor raiseArmSlider;
     public static int highSpecimenLowBasket = -1920;
     public static int highBasket = -4150;
     public static int clipSpecimenOffsetAuto = 700;
-
     public static int clipSpecimenOffsetTeleOp = 425;
     public static int minHeightAuto = -125;
+    private final DcMotor raiseArmSlider;
     public GamepadButton raiseArmButton = GamepadButton.Y;
     public GamepadButton lowerArmButton = GamepadButton.X;
     public GamepadButton highSpecimenLowBasketButton = GamepadButton.RIGHT_BUMPER;

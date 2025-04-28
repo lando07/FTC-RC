@@ -32,11 +32,8 @@ package org.firstinspires.ftc.teamcode;
 // phone to recognize our class as executable, will probably never need to be updated
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 /*
@@ -193,8 +190,7 @@ public class TankDrive extends OpMode {
         getControllerData();
         if (halfSpeedButton) {//half-speed button, not for analog input, remap it to any button not in use
             halfSpeed = true;
-        }
-        else if (fullSpeedButton) {//full-speed button, not for analog input, remap it to any button not in use
+        } else if (fullSpeedButton) {//full-speed button, not for analog input, remap it to any button not in use
             halfSpeed = false;
         }
 
@@ -204,8 +200,7 @@ public class TankDrive extends OpMode {
             rightDrive.setDirection(DcMotor.Direction.FORWARD);
             HangArm.setDirection(DcMotor.Direction.REVERSE);
             reverse = false;
-        }
-        else if (reverseButton) {//the idle wheels are facing forward, remap this button to any other button not in use
+        } else if (reverseButton) {//the idle wheels are facing forward, remap this button to any other button not in use
             leftDrive.setDirection(DcMotor.Direction.FORWARD);
             rightDrive.setDirection(DcMotor.Direction.REVERSE);
             reverse = true;//I can't set the claw motor to reverse or the algorithm controlling it's position freaks out
@@ -234,26 +229,21 @@ public class TankDrive extends OpMode {
         telemetry.addData("Current HangArm Speed", arm_direction);
     }
 
-    double[] doDriveTrain()
-    {
+    double[] doDriveTrain() {
         double left = 0;//used to store the calculated power of the left motor
         double right = 0;//same, but for the right
         //the joysticks go negative as you push them forward, so I used double-negatives to get it to add power, rather than subtract
         //the reverse keeps the value intact, which makes it go negative as the joystick goes negative
-        if (reverse)
-        {
+        if (reverse) {
             right += right_drive_joystick;
             left += left_drive_joystick;
-        }
-        else
-        {
+        } else {
             left -= left_drive_joystick;
             right -= right_drive_joystick;
         }
 
 
-        if (halfSpeed)
-        {
+        if (halfSpeed) {
             left = left / 2; //halves the computed speed
             right = right / 2; //
         }
@@ -267,40 +257,29 @@ public class TankDrive extends OpMode {
                 {left, right};
     }
 
-    void doHangArm()
-    {
+    void doHangArm() {
         //hang arm code
         //left_trigger and right_trigger are analog triggers, DO NOT MODIFY ANYTHING BELOW UNLESS NOTED OTHERWISE
         int targetPos = 0;//this is the variable used to store the new calculated position of the motor, in reference to the old point
         //the formula is as follows
         //current position + (arm_direction * increment var (for sensitivity))
-        if (arm_direction > 0.01 || arm_direction < -0.01)
-        {//compensates for trigger drift
-            if (reverse)
-            {
-                if (halfSpeed)
-                {
+        if (arm_direction > 0.01 || arm_direction < -0.01) {//compensates for trigger drift
+            if (reverse) {
+                if (halfSpeed) {
                     //this is half speed +
                     // reversed polarity
                     targetPos = HangArm.getCurrentPosition() + (int) (arm_direction * 50);
-                }
-                else
-                {
+                } else {
                     //this is full speed +
                     // reversed polarity
                     targetPos = HangArm.getCurrentPosition() + (int) (arm_direction * 100);
                 }
-            }
-            else
-            {
-                if (halfSpeed)
-                {
+            } else {
+                if (halfSpeed) {
                     //this is half speed +
                     // normal polarity
                     targetPos = HangArm.getCurrentPosition() - (int) (arm_direction * 50);
-                }
-                else
-                {
+                } else {
                     //this if full speed +
                     //normal polarity
                     targetPos = HangArm.getCurrentPosition() - (int) (arm_direction * 100);
@@ -311,31 +290,26 @@ public class TankDrive extends OpMode {
             //instance of HangArm.setTargetPosition()
         }
 
-        if (motorPosResetButton)
-        {
+        if (motorPosResetButton) {
             HangArm.setTargetPosition(HangArm.getCurrentPosition() - 300);//on hang, if the triggers can't get the motor to move, this will help
             HangArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);//Do not remove, this must go after every
             //instance of HangArm.setTargetPosition()
         }
     }
 
-    void doClaw()
-    {
+    void doClaw() {
         //claw goes from .12 (open) to .45 (closed)
-        if (close_claw)
-        {//close servo
+        if (close_claw) {//close servo
 
             Claw.setPosition(.45);//do not change value unless claw design is changed
             //Claw.setPosition(1);
-        } else if (open_claw)
-        {// open servo
+        } else if (open_claw) {// open servo
             Claw.setPosition(0.12);//do not change value unless claw design is changed
             //Claw.setPosition(0);
         }
     }
 
-    void getControllerData()
-    {
+    void getControllerData() {
         //Here are the button mappings, change them as you please
         open_claw = gamepad1.dpad_left;//this is meant to be any digital button
         close_claw = gamepad1.dpad_right;//this is meant to be any digital button
@@ -355,7 +329,6 @@ public class TankDrive extends OpMode {
      * Code to run ONCE after the driver hits STOP
      */
     @Override
-    public void stop()
-    {
+    public void stop() {
     }
 }

@@ -78,6 +78,7 @@ class TristateButtonState {
  */
 class AxisState {
     public volatile double value;
+
     public AxisState() {
         this.value = 0;
     }
