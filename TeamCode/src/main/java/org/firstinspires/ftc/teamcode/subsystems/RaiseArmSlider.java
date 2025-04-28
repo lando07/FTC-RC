@@ -3,8 +3,6 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.TouchSensor;
@@ -13,8 +11,6 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 public class RaiseArmSlider {
 
     private final DcMotor raiseArmSlider;
-    public static int lowSpecimen = -100;
-    public static int lowBasket = -2100;
     public static int highSpecimenLowBasket = -1920;
     public static int highBasket = -4150;
     public static int clipSpecimenOffsetAuto = 700;
@@ -49,10 +45,6 @@ public class RaiseArmSlider {
         touchSensor = tS;
     }
 
-    public DcMotor getRaiseArmSlider() {
-        return raiseArmSlider;
-    }
-
     public void doHighSpecimenLowBasket() {
         raiseArmSlider.setPower(1);
         raiseArmSlider.setTargetPosition(highSpecimenLowBasket);
@@ -81,11 +73,6 @@ public class RaiseArmSlider {
     public void clipSpecimenAuto() {
         raiseArmSlider.setTargetPosition(raiseArmSlider.getCurrentPosition() + clipSpecimenOffsetAuto);
 
-    }
-
-    public void resetHeightTeleOp() {
-        raiseArmSlider.setPower(1);
-        raiseArmSlider.setTargetPosition(0);
     }
 
     public void resetHeightAuto() {
@@ -128,10 +115,10 @@ public class RaiseArmSlider {
                 raiseArmSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
             if (gamepad.getGamepadButtonValue(clipSpecimenButton)) {
-                raiseArmSlider.setTargetPosition(getCurrentPosition() + clipSpecimenOffsetTeleOp);
+                clipSpecimenTeleOp();
             }
             if (gamepad.getGamepadButtonValue(highSpecimenLowBasketButton)) {
-                raiseArmSlider.setTargetPosition(highSpecimenLowBasket);
+                doHighSpecimenLowBasket();
             }
         }
         raiseArmSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);

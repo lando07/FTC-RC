@@ -1,19 +1,16 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.AccelConstraint;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.ProfileAccelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
-import com.acmerobotics.roadrunner.VelConstraint;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.subsystems.*;
-import org.opencv.core.Mat;
+import org.firstinspires.ftc.teamcode.subsystems.Claw;
+import org.firstinspires.ftc.teamcode.subsystems.RaiseArmSlider;
 
 @Config
 @Autonomous(name = "PrimaryAuto", group = "autonomous")
@@ -24,16 +21,14 @@ public class PrimaryAutonomous extends LinearOpMode {
     public static double testXValue = -45;
     public static double testXValue2 = -50.5;
     public static int testHeadingDeg = 310;
-    public static double brakeVal = -20;
-    public static double slowWheelVel = 40;
     public static int clipDelay = 350;
     public static int extendLength = 500;
     public static double neutralPitch = 0.1;
     public static double neutralYaw = 1;
 
+    /** @noinspection StatementWithEmptyBody*/
     @Override
     public void runOpMode() {
-        AccelConstraint accelConstraint = new ProfileAccelConstraint(-45, 40);
         Pose2d startingPose = new Pose2d(-17.2, 60, Math.toRadians(-90));
         MecanumDrive drive = new MecanumDrive(hardwareMap, startingPose);
         RaiseArmSlider slider = new RaiseArmSlider(this, "raiseArmSlider");
@@ -153,15 +148,5 @@ public class PrimaryAutonomous extends LinearOpMode {
 
 
         }
-    }
-
-    private void setSlowBrake() {
-        MecanumDrive.PARAMS.minProfileAccel = brakeVal;
-        MecanumDrive.PARAMS.maxWheelVel = slowWheelVel;
-    }
-
-    private void resetBrakeSpeed() {
-        MecanumDrive.PARAMS.minProfileAccel = -35;
-        MecanumDrive.PARAMS.maxWheelVel = 40;
     }
 }
