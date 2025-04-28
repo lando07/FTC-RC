@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 /**
  * Represents the state of a button on the gamepad.
@@ -143,22 +144,22 @@ public class GamepadController {
         for (axisBehavior axis : axisStates.keySet()) {
             switch (axis) {
                 case LEFT_STICK_X:
-                    axisStates.get(axis).update(gamepad.left_stick_x);
+                    Objects.requireNonNull(axisStates.get(axis)).update(gamepad.left_stick_x);
                     break;
                 case LEFT_STICK_Y:
-                    axisStates.get(axis).update(gamepad.left_stick_y);
+                    Objects.requireNonNull(axisStates.get(axis)).update(gamepad.left_stick_y);
                     break;
                 case RIGHT_STICK_X:
-                    axisStates.get(axis).update(gamepad.right_stick_x);
+                    Objects.requireNonNull(axisStates.get(axis)).update(gamepad.right_stick_x);
                     break;
                 case RIGHT_STICK_Y:
-                    axisStates.get(axis).update(gamepad.right_stick_y);
+                    Objects.requireNonNull(axisStates.get(axis)).update(gamepad.right_stick_y);
                     break;
                 case LEFT_TRIGGER:
-                    axisStates.get(axis).update(gamepad.left_trigger);
+                    Objects.requireNonNull(axisStates.get(axis)).update(gamepad.left_trigger);
                     break;
                 case RIGHT_TRIGGER:
-                    axisStates.get(axis).update(gamepad.right_trigger);
+                    Objects.requireNonNull(axisStates.get(axis)).update(gamepad.right_trigger);
                     break;
 
             }
@@ -204,7 +205,7 @@ public class GamepadController {
 
     private void updateRawNormalButtonStates() {
         for (GamepadButton button : buttonStates.keySet()) {
-            buttonStates.get(button).update(getButtonState(button));
+            Objects.requireNonNull(buttonStates.get(button)).update(getButtonState(button));
 
         }
     }
