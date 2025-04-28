@@ -38,7 +38,7 @@ public class DriveTrain {
 
     public static double lateralGain = 1.0;
     public static double axialGain = 1.0;
-    public static double yawGain = 1.0;
+    public static double yawGain = 3;
 
     public DriveTrain(OpMode opmode, GamepadController controller) {
         gamepad = controller;
@@ -101,7 +101,7 @@ public class DriveTrain {
         //Just like a drone
         //I decided to limit precision to 4 decimal places to counteract drift
         double axial = ((int) (gamepad.getAxisValue(axialAxis) * 10000) / 10000.0);  // Note: pushing stick forward gives negative value
-        double lateral = ((int) (gamepad.getAxisValue(lateralAxis) * 10000) / 10000.0);
+        double lateral = ((int) (-gamepad.getAxisValue(lateralAxis) * 10000) / 10000.0);
         double yaw = ((int) (gamepad.getAxisValue(yawAxis) * 10000) / 10000.0);
         //these are the magic 4 statements right here
         // Combine the joystick requests for each axis-motion to determine each wheel's power.
@@ -152,9 +152,9 @@ public class DriveTrain {
             imu.resetYaw();
         }
         if (gamepad.getGamepadButtonValue(toggleDriveModeButton) && !toggleDriveModeButtonDisabled) {
-            doFieldOrientedDrive();
-        } else {
             doClassicMecanumDrive();
+        } else {
+            doFieldOrientedDrive();
         }
 
     }

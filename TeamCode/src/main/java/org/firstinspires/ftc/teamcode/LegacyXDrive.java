@@ -277,6 +277,8 @@ public class LegacyXDrive extends OpMode {
         telemetry.addData("ExtCurrPos:", armExtender.getCurrentPosition());
         telemetry.addData("PrimaryClaw Pos:", primaryClaw.getPosition());
         telemetry.addData("SecondaryClaw pos", secondaryClaw.getPosition());
+        telemetry.addData("Pitch:", secondaryClawPitch.getPosition());
+        telemetry.addData("Yaw:", secondaryClawYaw.getPosition());
         telemetry.addData("IMU Heading (deg)", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
 
         telemetry.update();

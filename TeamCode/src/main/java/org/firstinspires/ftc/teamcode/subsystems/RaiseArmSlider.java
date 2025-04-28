@@ -15,14 +15,15 @@ public class RaiseArmSlider {
     private final DcMotor raiseArmSlider;
     public static int lowSpecimen = -100;
     public static int lowBasket = -2100;
-    public static int highSpecimenLowBasket = -1900;
+    public static int highSpecimenLowBasket = -1920;
     public static int highBasket = -4150;
     public static int clipSpecimenOffsetAuto = 700;
 
     public static int clipSpecimenOffsetTeleOp = 425;
-
-    public GamepadButton raiseArmButton = GamepadButton.X;
-    public GamepadButton lowerArmButton = GamepadButton.Y;
+    public static int minHeightAuto = -125;
+    public GamepadButton raiseArmButton = GamepadButton.Y;
+    public GamepadButton lowerArmButton = GamepadButton.X;
+    public GamepadButton highSpecimenLowBasketButton = GamepadButton.LEFT_BUMPER;
     public ButtonBehavior raiseArmButtonBehavior = ButtonBehavior.TRI_STATE;
     public GamepadButton clipSpecimenButton = GamepadButton.LEFT_BUMPER;
     public ButtonBehavior clipSpecimenButtonBehavior = ButtonBehavior.HOLD;
@@ -44,6 +45,8 @@ public class RaiseArmSlider {
         gamepad = controller;
         gamepad.configureTristateButton(raiseArmButton, lowerArmButton);
         gamepad.configureBiStateButton(clipSpecimenButton, clipSpecimenButtonBehavior);
+        gamepad.configureBiStateButton(raiseArmButton, ButtonBehavior.HOLD);
+        gamepad.configureBiStateButton(highSpecimenLowBasketButton, ButtonBehavior.HOLD);
         touchSensor = tS;
     }
 
@@ -88,7 +91,7 @@ public class RaiseArmSlider {
 
     public void resetHeightAuto() {
         raiseArmSlider.setPower(1);
-        raiseArmSlider.setTargetPosition(5);
+        raiseArmSlider.setTargetPosition(minHeightAuto);
     }
 
     public void setPower(double power) {
@@ -106,25 +109,32 @@ public class RaiseArmSlider {
     }
 
     public void update() {
-        if (touchSensor.isPressed() && !gamepad.getGamepadButtonValue(lowerArmButton)) {//this stops the motor from going any further down, but still allows it to go upward
+        if (touchSensor.isPressed() && !gamepad.getGamepadButtonValue(raiseArmButton)) {//this stops the motor from going any further down, but still allows it to go upward
             raiseArmSlider.setPower(0);//The zero power behavior set to float so the motor power is cut when the slider is fully retracted
             raiseArmSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             raiseArmSlider.setTargetPosition(0);
             raiseArmSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
-        int value = gamepad.getTristateButtonValue(raiseArmButton);
-        if (value != 0) {
-            int targetPos = raiseArmSlider.getCurrentPosition();
-            if (value == -1) {
-                raiseArmSlider.setPower(1);
-                targetPos = raiseArmSlider.getCurrentPosition() + 200;
-            } else if (value == 1) {
-                raiseArmSlider.setPower(1);
-                targetPos = raiseArmSlider.getCurrentPosition() - 200;
+        } else {
+            int value = gamepad.getTristateButtonValue(raiseArmButton);
+            if (value != 0) {
+                int targetPos = raiseArmSlider.getCurrentPosition();
+                if (value == -1) {
+                    raiseArmSlider.setPower(1);
+                    targetPos = raiseArmSlider.getCurrentPosition() + 200;
+                } else if (value == 1) {
+                    raiseArmSlider.setPower(1);
+                    targetPos = raiseArmSlider.getCurrentPosition() - 200;
+                }
+                raiseArmSlider.setTargetPosition(Math.max(Math.min(2000, targetPos), -4050));
+                raiseArmSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
-            raiseArmSlider.setTargetPosition(Math.max(Math.min(2000, targetPos), -4050));
-            raiseArmSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
+            if (gamepad.getGamepadButtonValue(clipSpecimenButton)) {
+                raiseArmSlider.setTargetPosition(getCurrentPosition() + clipSpecimenOffsetTeleOp);
+            }
+            if (gamepad.getGamepadButtonValue(highSpecimenLowBasketButton)) {
+                raiseArmSlider.setTargetPosition(highSpecimenLowBasket);
+            }
         }
+        raiseArmSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 }

@@ -16,32 +16,27 @@ public class PrimaryMeepMeep {
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 13)
                 .build();
 
-        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(-17.2, 62, Math.toRadians(-90)))
+        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(-17.2, 60, Math.toRadians(-90)))
                 //Clip first specimen
-                .strafeToConstantHeading(new Vector2d(0, 34))
-                .strafeToLinearHeading(new Vector2d(-36, 30), Math.toRadians(90))
-                //get behind field samples
-                .strafeToConstantHeading(new Vector2d(-36, 10))
-                .setTangent(Math.toRadians(270))
-                .splineToConstantHeading(new Vector2d(-50, 10), Math.toRadians(90))
-                //Push first sample
-                .strafeToLinearHeading(new Vector2d(-50, 54), Math.toRadians(90))
-                .setTangent(Math.toRadians(270))
-                //Get behind second sample
-                .splineToConstantHeading(new Vector2d(-50, 12), Math.toRadians(270))
-                .splineToConstantHeading(new Vector2d(-62, 10), Math.toRadians(90))
-                //push second sample
-                //and second specimen
-                .strafeToConstantHeading(new Vector2d(-62, 61))
-                .waitSeconds(0.3)
-                .strafeToLinearHeading(new Vector2d(-3, 34), Math.toRadians(270 + 1e-9))
-                //clip second specimen
-                //grab third specimen
-                .strafeToLinearHeading(new Vector2d(-40, 61.5), Math.toRadians(90))
-                //clip third specimen
-                .strafeToLinearHeading(new Vector2d(0, 34), Math.toRadians(270))
-                //grab fourth specimen
-                .strafeToLinearHeading(new Vector2d(-40, 60), Math.toRadians(90))
+                .strafeToConstantHeading(new Vector2d(6, 36))
+                .strafeToConstantHeading(new Vector2d(6, 32.5))
+                .strafeToLinearHeading(new Vector2d(-39, 34), Math.toRadians(0))
+                .strafeTo(new Vector2d(-39, 21))
+                .strafeToLinearHeading(new Vector2d(-41, 50), Math.toRadians(310))
+                .strafeToLinearHeading(new Vector2d(-50.5, 21), Math.toRadians(0))
+                .strafeToLinearHeading(new Vector2d(-50.5, 50), Math.toRadians(310))
+                .strafeToLinearHeading(new Vector2d(-59, 21), Math.toRadians(0))
+                .strafeToLinearHeading(new Vector2d(-50, 50), Math.toRadians(310))
+                .strafeToLinearHeading(new Vector2d(-50, 55), Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(3,35.2+2), Math.toRadians(270))
+                .strafeToLinearHeading(new Vector2d(3,35.2), Math.toRadians(270))
+                        .setTangent(Math.toRadians(180))
+                .splineToLinearHeading(new Pose2d(new Vector2d(-45, 58), Math.toRadians(90)), Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(-3,35.2+2), Math.toRadians(270))
+                .splineToLinearHeading(new Pose2d(new Vector2d(-45, 58), Math.toRadians(90)), Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(-3,36), Math.toRadians(270))
+
+
                 .build());
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_INTO_THE_DEEP_JUICE_DARK)

@@ -2,9 +2,10 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import androidx.annotation.NonNull;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.Servo;
-
+@Config
 public class Claw {
     private Servo claw;
     public static double OPEN = 0.55;
@@ -12,10 +13,23 @@ public class Claw {
 
     private boolean clawState;//false closed, true open
 
+    private GamepadButton toggleButton = GamepadButton.B;
+    private ButtonBehavior toggleBehavior = ButtonBehavior.TOGGLE;
+    private GamepadController controller;
+
+    public Claw(@NonNull OpMode opMode, String hwName, GamepadController gamepad) {
+        claw = opMode.hardwareMap.get(Servo.class, hwName);
+//        claw.setPosition(CLOSED);
+        clawState = false;
+        controller = gamepad;
+        controller.configureBiStateButton(toggleButton, toggleBehavior);
+
+    }
     public Claw(@NonNull OpMode opMode, String hwName) {
         claw = opMode.hardwareMap.get(Servo.class, hwName);
 //        claw.setPosition(CLOSED);
         clawState = false;
+
     }
 
     public void toggleState() {
@@ -36,7 +50,17 @@ public class Claw {
         clawState = true;
     }
 
-    public double getPosition(){
+    public double getPosition() {
         return claw.getPosition();
+    }
+
+    public void update() {
+        clawState = controller.getGamepadButtonValue(toggleButton);
+        if (clawState) {
+            claw.setPosition(OPEN);
+        } else {
+            claw.setPosition(CLOSED);
+        }
+
     }
 }

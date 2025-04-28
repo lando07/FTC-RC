@@ -1,22 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.subsystems.RaiseArmSlider.highSpecimenLowBasket;
-import static org.firstinspires.ftc.teamcode.subsystems.RaiseArmSlider.clipSpecimenOffsetTeleOp;
-
 
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.hardware.bosch.BHI260IMU;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.subsystems.*;
 
 
@@ -27,11 +18,18 @@ import org.firstinspires.ftc.teamcode.subsystems.*;
 @Config
 @TeleOp(name = "XDrive", group = "Robot")
 public class XDrive extends OpMode {
-    private GamepadController GamePad1 = new GamepadController(gamepad1);
-    private GamepadController GamePad2 = new GamepadController(gamepad2);
+    private final GamepadController GamePad1 = new GamepadController(gamepad1);
+    private final GamepadController GamePad2 = new GamepadController(gamepad2);
     private axisBehavior armExtendAxis = axisBehavior.LEFT_STICK_Y;
+    private GamepadButton resetServoOrientationButton = GamepadButton.A;
     private GamepadButton clawToggleButton = GamepadButton.B;
     private ButtonBehavior clawToggleBehavior = ButtonBehavior.TOGGLE;
+    private GamepadButton yawRightButton = GamepadButton.D_PAD_RIGHT;
+    private GamepadButton yawLeftButton = GamepadButton.D_PAD_LEFT;
+    private ButtonBehavior yawBehavior = ButtonBehavior.TRI_STATE;
+    private GamepadButton pitchUpButton = GamepadButton.D_PAD_UP;
+    private GamepadButton pitchDownButton = GamepadButton.D_PAD_DOWN;
+    private ButtonBehavior pitchBehavior = ButtonBehavior.TRI_STATE;
     private RaiseArmSlider raiseArmSlider;
     private DcMotor armExtender;
     private Claw primaryClaw;
@@ -46,15 +44,15 @@ public class XDrive extends OpMode {
     /**
      * Stores the speed to change claw pitch, do not do values greater than 5, the servo isn't fast enough
      */
-    public static int pitchSpeed = 3;
+    public static int pitchSpeed = 2;
     /**
      * Stores the speed to change claw yaw, do not do values greater than 5, the servo isn't fast enough
      */
-    public static int yawSpeed = 5;
+    public static int yawSpeed = 2;
     /**
      * Stores the initial pitch offset when the game starts. The claw should be sticking outwards
      */
-    public static double initialPitchOffset = 0.65;
+    public static double initialPitchOffset = 0.8;
 
     @Override
     public void init() {
@@ -64,12 +62,14 @@ public class XDrive extends OpMode {
         controller2 = new GamepadController(gamepad2);
         controller2.configureBiStateButton(clawToggleButton, clawToggleBehavior);
         controller2.configureAxis(armExtendAxis);
-
+        controller2.configureBiStateButton(resetServoOrientationButton, ButtonBehavior.HOLD);
+        controller2.configureTristateButton(yawLeftButton, yawRightButton);
+        controller2.configureTristateButton(pitchUpButton, pitchDownButton);
         armExtender = hardwareMap.get(DcMotor.class, "armSlider");
         driveTrain = new DriveTrain(this, controller1);
 
-        primaryClaw = new Claw(this, "primaryClaw");
-        secondaryClaw = new Claw(this, "secondaryClaw");
+        primaryClaw = new Claw(this, "primaryClaw", controller2);
+        secondaryClaw = new Claw(this, "secondaryClaw", controller2);
         secondaryClawYaw = hardwareMap.get(Servo.class, "yaw");
         secondaryClawPitch = hardwareMap.get(Servo.class, "pitch");
         backStop = hardwareMap.get(Servo.class, "backStop");
@@ -104,17 +104,42 @@ public class XDrive extends OpMode {
         controller2.update();
         driveTrain.updateDriveTrainBehavior();
         raiseArmSlider.update();
-        if(raiseArmSlider.getCurrentPosition() < -100) {
+        if (raiseArmSlider.getCurrentPosition() < -100) {
             driveTrain.setBrakingMode(DcMotor.ZeroPowerBehavior.FLOAT);
-        }
-        else{
+        } else {
             driveTrain.setBrakingMode(DcMotor.ZeroPowerBehavior.BRAKE);
         }
+        doArmExtension();
+        primaryClaw.update();
+        secondaryClaw.update();
+        doSecondaryClawPitch();
+        doSecondaryClawYaw();
 
 
     }
 
-    private void doArmExtension(){
+    private void doSecondaryClawYaw() {
+        int val = controller2.getTristateButtonValue(yawLeftButton);
+        if (controller2.getGamepadButtonValue(resetServoOrientationButton)) {
+            secondaryClawYaw.setPosition(0.5);
+            secondaryClawPitch.setPosition(initialPitchOffset);
+        } else if(val != 0){
+            secondaryClawYaw.setPosition(secondaryClawYaw.getPosition() + (val * (yawSpeed / 100.0)));
+
+        }
+    }
+
+    private void doSecondaryClawPitch() {
+        int val = controller2.getTristateButtonValue(pitchUpButton);
+        if(val != 0){
+            secondaryClawPitch.setPosition((secondaryClawPitch.getPosition()) + (val * (pitchSpeed / 100.0)));
+
+        }
+    }
+
+    private void doArmExtension() {
         armExtender.setPower(-controller2.getAxisValue(armExtendAxis));
     }
+
+
 }
