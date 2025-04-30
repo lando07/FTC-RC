@@ -27,15 +27,15 @@ public class XDrive extends OpMode {
     /**
      * Stores the speed to change claw pitch, do not do values greater than 5, the servo isn't fast enough
      */
-    public static int pitchSpeed = 2;
+    public static int pitchSpeed = 3;
     /**
      * Stores the speed to change claw yaw, do not do values greater than 5, the servo isn't fast enough
      */
-    public static int yawSpeed = 2;
+    public static int yawSpeed = 3;
     /**
      * Stores the initial pitch offset when the game starts. The claw should be sticking outwards
      */
-    public static double initialPitchOffset = 0.8;
+    public static double initialPitchOffset = 0.65;
     private final axisBehavior armExtendAxis = axisBehavior.LEFT_STICK_Y;
     private final GamepadButton resetServoOrientationButton = GamepadButton.A;
     private final GamepadButton clawToggleButton = GamepadButton.B;

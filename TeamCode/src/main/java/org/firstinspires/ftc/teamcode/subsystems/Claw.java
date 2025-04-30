@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.InstantAction;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -58,5 +59,12 @@ public class Claw {
         clawState = controller.getGamepadButtonValue(toggleButton);
         toggleState();
 
+    }
+
+    public InstantAction closeClawAction(){
+        return new InstantAction(this::closeClaw);
+    }
+    public InstantAction openClawAction(){
+        return new InstantAction(this::openClaw);
     }
 }

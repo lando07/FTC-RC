@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -15,23 +18,24 @@ import org.firstinspires.ftc.teamcode.subsystems.RaiseArmSlider;
 @Config
 @Autonomous(name = "PrimaryAuto", group = "autonomous")
 public class PrimaryAutonomous extends LinearOpMode {
-    public static double testYValue = 58;
-    public static double testYValue2 = 35.2;
-    public static double testYValue3 = 36;
+    public static double testYValue = 55;
+    public static double testYValue2 = 32.8;
+    public static double testYValue3 = 56.5;
+    public static double testYValue4 = 45;
+    public static double thirdSpecimenOffset = 3.5;
+    public static double fourthSpecimenOffset = 3.5;
+    public static double clipOffset = 3.5;
     public static double testXValue = -45;
-    public static double testXValue2 = -50.5;
-    public static int testHeadingDeg = 310;
-    public static int clipDelay = 350;
-    public static int extendLength = 500;
+    public static int clipDelay = 275;
+    public static int extendLength = 400;
     public static double neutralPitch = 0.1;
     public static double neutralYaw = 1;
+    public static int grabDelay = 200;
 
-    /**
-     * @noinspection StatementWithEmptyBody
-     */
+
     @Override
     public void runOpMode() {
-        Pose2d startingPose = new Pose2d(-17.2, 60, Math.toRadians(-90));
+        Pose2d startingPose = new Pose2d(-17.2, 62, Math.toRadians(-90));
         MecanumDrive drive = new MecanumDrive(hardwareMap, startingPose);
         RaiseArmSlider slider = new RaiseArmSlider(this, "raiseArmSlider");
         DcMotor armExtender = hardwareMap.get(DcMotor.class, "armSlider");
@@ -46,138 +50,108 @@ public class PrimaryAutonomous extends LinearOpMode {
         Servo pitch = hardwareMap.get(Servo.class, "pitch");
         Servo yaw = hardwareMap.get(Servo.class, "yaw");
         primaryClaw.closeClaw();
+        MecanumDrive.DriveLocalizer dl = (MecanumDrive.DriveLocalizer) drive.localizer;
+
+
+        Action autonomous = drive.actionBuilder(startingPose)
+                .stopAndAdd(new InstantAction(() -> pitch.setPosition(neutralPitch)))
+                .stopAndAdd(new InstantAction(() -> yaw.setPosition(neutralYaw)))
+                .stopAndAdd(new InstantAction(() -> backStop.setPosition(0)))
+                //Extend out backstop for specimen grabbing
+                .stopAndAdd(slider.doHighSpecimenLowBasketAction())
+                //Clip first specimen
+                .strafeToConstantHeading(new Vector2d(6, 36))
+                .strafeToConstantHeading(new Vector2d(6, 34))
+
+                .stopAndAdd(new InstantAction(() -> armExtender.setPower(1)))
+                .stopAndAdd(new InstantAction(() -> armExtender.setTargetPosition(extendLength)))
+                .stopAndAdd(secondaryClaw.openClawAction())
+                .stopAndAdd(slider.clipSpecimenAutoAction())
+                .waitSeconds(clipDelay / 1000.0)
+                .stopAndAdd(primaryClaw.openClawAction())
+                .stopAndAdd(slider.resetHeightAutoAction())
+                //go to pick up first field sample
+                .strafeToLinearHeading(new Vector2d(-39, 34), Math.toRadians(0))
+                .strafeTo(new Vector2d(-39, 21))
+                .stopAndAdd(secondaryClaw.closeClawAction())
+                //Drop Off first field sample
+                .waitSeconds(.250)
+                .stopAndAdd(new InstantAction(() -> pitch.setPosition(0.65)))
+                .strafeToLinearHeading(new Vector2d(-41, 45), Math.toRadians(310))
+                .stopAndAdd(secondaryClaw.openClawAction())
+                //Reset Secondary Claw pitch and pick up second sample
+                .stopAndAdd(new InstantAction(() -> pitch.setPosition(neutralPitch)))
+                .strafeToLinearHeading(new Vector2d(-49.5, 21), Math.toRadians(0))
+                .stopAndAdd(secondaryClaw.closeClawAction())
+                //Drop Off second field sample
+                .waitSeconds(.300)
+                .stopAndAdd(new InstantAction(() -> pitch.setPosition(0.65)))
+                .strafeToLinearHeading(new Vector2d(-49.5, 45), Math.toRadians(310))
+                .stopAndAdd(secondaryClaw.openClawAction())
+                //Reset Secondary Claw pitch and pick up third sample
+                .stopAndAdd(new InstantAction(() -> pitch.setPosition(neutralPitch)))
+                .strafeToLinearHeading(new Vector2d(-59, 21), Math.toRadians(0))
+                .stopAndAdd(secondaryClaw.closeClawAction())
+                //Drop Off third field sample
+                .waitSeconds(0.3)
+                .stopAndAdd(new InstantAction(() -> pitch.setPosition(0.65)))
+//                .stopAndAdd(new InstantAction(() -> backStop.setPosition(0.5)))
+                .setTangent(Math.toRadians(90))
+                .splineToLinearHeading(new Pose2d(new Vector2d(-50, 45), Math.toRadians(310)), Math.toRadians(90))
+                .stopAndAdd(secondaryClaw.openClawAction())
+                .waitSeconds(0.1)
+                //Fold claw, and retract arm
+                .stopAndAdd(new InstantAction(() -> yaw.setPosition(.5)))
+                .stopAndAdd(new InstantAction(() -> armExtender.setTargetPosition(100)))
+                //Pick up second specimen
+                .turnTo(Math.toRadians(90))
+                .strafeTo(new Vector2d(-50, 54))
+                .stopAndAdd(new InstantAction(() -> armExtender.setPower(0)))
+                .stopAndAdd(primaryClaw.closeClawAction())
+                .waitSeconds(grabDelay / 1000.0)
+                //Clip second specimen
+                .stopAndAdd(slider.doHighSpecimenLowBasketAction())
+                .strafeToLinearHeading(new Vector2d(3, 32.8 + 4), Math.toRadians(273))
+                .strafeTo(new Vector2d(3, 32.8))
+                .stopAndAdd(slider.clipSpecimenAutoAction())
+                .waitSeconds(clipDelay / 1000.0)
+                .stopAndAdd(primaryClaw.openClawAction())
+//                .stopAndAdd(new InstantAction(() -> backStop.setPosition(0.5)))
+                //Pick up third specimen
+                .stopAndAdd(slider.resetHeightAutoAction())
+                .strafeToLinearHeading(new Vector2d(-45, 56.5), Math.toRadians(90))
+                .stopAndAdd(primaryClaw.closeClawAction())
+                .waitSeconds(grabDelay / 1000.0)
+                //Clip third specimen
+                .stopAndAdd(slider.doHighSpecimenLowBasketAction())
+                .strafeToLinearHeading(new Vector2d(-3, 32.8 + 4), Math.toRadians(273))
+                .strafeTo(new Vector2d(-3, 32.8))
+                .stopAndAdd(slider.clipSpecimenAutoAction())
+                .waitSeconds(clipDelay / 1000.0)
+                .stopAndAdd(primaryClaw.openClawAction())
+                .stopAndAdd(slider.resetHeightAutoAction())
+                //Pick up fourth specimen
+                .strafeToLinearHeading(new Vector2d(-45, 56.5), Math.toRadians(90))
+                .stopAndAdd(primaryClaw.closeClawAction())
+                .waitSeconds(grabDelay / 1000.0)
+                //Clip fourth specimen
+                .stopAndAdd(slider.doHighSpecimenLowBasketAction())
+                .strafeToLinearHeading(new Vector2d(-6, 32.8 + 4), Math.toRadians(273))
+                .strafeTo(new Vector2d(-6, 32.8))
+                .stopAndAdd(slider.clipSpecimenAutoAction())
+                .waitSeconds(clipDelay / 1000.0)
+                .stopAndAdd(primaryClaw.openClawAction())
+                .stopAndAdd(slider.resetHeightAutoAction())
+                .build();
+
+
         while (!opModeIsActive() && !isStopRequested()) {
+            dl.imu.resetYaw();
+            sleep(50);
         }
         waitForStart();
         if (opModeIsActive()) {
-            backStop.setPosition(0);
-            pitch.setPosition(neutralPitch);
-            yaw.setPosition(neutralYaw);
-            //Extend out backstop for specimen grabbing
-            slider.doHighSpecimenLowBasket();
-            //Clip first specimen
-            telemetry.addLine("Clipping first specimen");
-            Actions.runBlocking(drive.actionBuilder(startingPose)
-                    .strafeToConstantHeading(new Vector2d(6, 36))
-                    .strafeToConstantHeading(new Vector2d(6, 32.5))
-                    .build());
-            armExtender.setPower(1);
-            armExtender.setTargetPosition(extendLength);
-            secondaryClaw.openClaw();
-            slider.clipSpecimenAuto();
-            sleep(clipDelay);
-            primaryClaw.openClaw();
-            slider.resetHeightAuto();
-            //go to pick up first field sample
-            telemetry.addLine("Going to pick up first field sample");
-            Actions.runBlocking(drive.actionBuilder(new Pose2d(6, 32.5, Math.toRadians(-90)))
-                    .strafeToLinearHeading(new Vector2d(-39, 34), Math.toRadians(0))
-                    .strafeTo(new Vector2d(-39, 21))
-                    .build());
-            secondaryClaw.closeClaw();
-            //Drop Off first field sample
-            telemetry.addLine("Dropping off first field sample");
-            sleep(250);
-            pitch.setPosition(0.65);
-            Actions.runBlocking(drive.actionBuilder(new Pose2d(-39, 21, Math.toRadians(0)))
-                    .strafeToLinearHeading(new Vector2d(-41, 50), Math.toRadians(310))
-                    .build());
-            secondaryClaw.openClaw();
-            //Reset Secondary Claw pitch and pick up second sample
-            telemetry.addLine("Picking up second sample");
-            pitch.setPosition(neutralPitch);
-            Actions.runBlocking(drive.actionBuilder(new Pose2d(new Vector2d(-41, 50), Math.toRadians(310)))
-                    .strafeToLinearHeading(new Vector2d(-50.5, 21), Math.toRadians(0))
-                    .build());
-            secondaryClaw.closeClaw();
-            //Drop Off second field sample
-            telemetry.addLine("Dropping off second field sample");
-            sleep(300);
-            pitch.setPosition(0.65);
-            Actions.runBlocking(drive.actionBuilder(new Pose2d(new Vector2d(-50.5, 21), Math.toRadians(0)))
-                    .strafeToLinearHeading(new Vector2d(-50.5, 50), Math.toRadians(310))
-                    .build());
-            secondaryClaw.openClaw();
-            //Reset Secondary Claw pitch and pick up third sample
-            telemetry.addLine("Picking up third sample");
-            pitch.setPosition(neutralPitch);
-            Actions.runBlocking(drive.actionBuilder(new Pose2d(new Vector2d(-50.5, 50), Math.toRadians(310)))
-                    .strafeToLinearHeading(new Vector2d(-59, 21), Math.toRadians(0))
-                    .build());
-            secondaryClaw.closeClaw();
-            //Drop Off third field sample
-            telemetry.addLine("Dropping off third field sample");
-            sleep(300);
-            pitch.setPosition(0.65);
-            Actions.runBlocking(drive.actionBuilder(new Pose2d(new Vector2d(-59, 21), Math.toRadians(0)))
-                    .setTangent(Math.toRadians(90))
-                    .splineToLinearHeading(new Pose2d(new Vector2d(-50, 50), Math.toRadians(310)), Math.toRadians(90))
-                    .build());
-            secondaryClaw.openClaw();
-            //Fold claw, and retract arm
-            yaw.setPosition(.5);
-            armExtender.setTargetPosition(100);
-            //Pick up first specimen
-            telemetry.addLine("Picking up first specimen");
-            Actions.runBlocking(drive.actionBuilder(new Pose2d(new Vector2d(-50, 50), Math.toRadians(310)))
-                    .turnTo(Math.toRadians(90))
-                    .strafeTo(new Vector2d(-50, testYValue))
-                    .build());
-            armExtender.setPower(0);
-            primaryClaw.closeClaw();
-            sleep(clipDelay);
-            //Clip first specimen
-            telemetry.addLine("Clipping first specimen");
-            slider.doHighSpecimenLowBasket();
-            Actions.runBlocking(drive.actionBuilder(new Pose2d(new Vector2d(-50, testYValue), Math.toRadians(90)))
-                    .setTangent(Math.toRadians(315))
-                    .splineToLinearHeading(new Pose2d(new Vector2d(3, testYValue2 + 2), Math.toRadians(270)), Math.toRadians(315))
-                    .strafeToLinearHeading(new Vector2d(3, testYValue2), Math.toRadians(270))
-                    .build());
-            slider.clipSpecimenAuto();
-            sleep(clipDelay + 100);
-            primaryClaw.openClaw();
-            //Pick up second specimen
-            telemetry.addLine("Picking up second specimen");
-            slider.resetHeightAuto();
-            Actions.runBlocking(drive.actionBuilder(new Pose2d(new Vector2d(3, testYValue2), Math.toRadians(270)))
-                    .setTangent(Math.toRadians(135))
-                    .splineToLinearHeading(new Pose2d(new Vector2d(testXValue, testYValue), Math.toRadians(90)), Math.toRadians(135))
-                    .build());
-            primaryClaw.closeClaw();
-            sleep(clipDelay);
-            //Clip second specimen
-            telemetry.addLine("Clipping second specimen");
-            slider.doHighSpecimenLowBasket();
-            Actions.runBlocking(drive.actionBuilder(new Pose2d(new Vector2d(testXValue, testYValue), Math.toRadians(90)))
-                    .setTangent(Math.toRadians(315))
-                    .splineToLinearHeading(new Pose2d(new Vector2d(-3, testYValue2 + 2), Math.toRadians(270)), Math.toRadians(315))
-                    .build());
-            slider.clipSpecimenAuto();
-            sleep(clipDelay + 100);
-            primaryClaw.openClaw();
-            slider.resetHeightAuto();
-            //Pick up third specimen
-            telemetry.addLine("Picking up third specimen");
-            Actions.runBlocking(drive.actionBuilder(new Pose2d(new Vector2d(3, testYValue2), Math.toRadians(270)))
-                    .setTangent(Math.toRadians(135))
-                    .splineToLinearHeading(new Pose2d(new Vector2d(testXValue, testYValue), Math.toRadians(135)), Math.toRadians(90))
-                    .build());
-            primaryClaw.closeClaw();
-            sleep(clipDelay);
-            //Clip third specimen
-            telemetry.addLine("Clipping third specimen");
-            slider.doHighSpecimenLowBasket();
-            Actions.runBlocking(drive.actionBuilder(new Pose2d(new Vector2d(testXValue, testYValue), Math.toRadians(90)))
-                    .setTangent(Math.toRadians(315))
-                    .splineToLinearHeading(new Pose2d(new Vector2d(-3, testYValue3), Math.toRadians(270)), Math.toRadians(315))
-                    .build());
-            slider.clipSpecimenAuto();
-            sleep(clipDelay + 100);
-            primaryClaw.openClaw();
-            slider.resetHeightAuto();
-
-
+            Actions.runBlocking(autonomous);
         }
     }
 }

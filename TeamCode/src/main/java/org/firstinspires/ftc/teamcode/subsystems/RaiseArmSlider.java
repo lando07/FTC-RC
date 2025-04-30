@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.InstantAction;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.TouchSensor;
@@ -121,5 +122,15 @@ public class RaiseArmSlider {
             }
         }
         raiseArmSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+    public InstantAction clipSpecimenAutoAction(){
+        return new InstantAction(this::clipSpecimenAuto);
+    }
+    public InstantAction resetHeightAutoAction(){
+        return new InstantAction(this::resetHeightAuto);
+    }
+    public InstantAction doHighSpecimenLowBasketAction(){
+        return new InstantAction(this::doHighSpecimenLowBasket);
     }
 }

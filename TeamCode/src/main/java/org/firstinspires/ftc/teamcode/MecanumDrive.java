@@ -82,6 +82,7 @@ public final class MecanumDrive {
     private final DownsampledWriter targetPoseWriter = new DownsampledWriter("TARGET_POSE", 50_000_000);
     private final DownsampledWriter driveCommandWriter = new DownsampledWriter("DRIVE_COMMAND", 50_000_000);
     private final DownsampledWriter mecanumCommandWriter = new DownsampledWriter("MECANUM_COMMAND", 50_000_000);
+
     public MecanumDrive(HardwareMap hardwareMap, Pose2d pose) {
         LynxFirmware.throwIfModulesAreOutdated(hardwareMap);
 
@@ -183,19 +184,19 @@ public final class MecanumDrive {
                 RevHubOrientationOnRobot.UsbFacingDirection.UP;
 
         // drive model parameters
-        public double inPerTick = 0.0334460338101;
-        public double lateralInPerTick = inPerTick;
-        public double trackWidthTicks = 658.9107385915254;
+        public double inPerTick = 0.03299725023;
+        public double lateralInPerTick = 0.03495145631;
+        public double trackWidthTicks = 664.1225086696732;
 
         // feedforward parameters (in tick units)
-        public double kS = 1.2148161627908172;
-        public double kV = 0.00414378711176407;
+        public double kS = 1.1888404969283126;
+        public double kV = 0.0041114707680265945;
         public double kA = 0.00002;
 
         // path profile parameters (in inches)
-        public double maxWheelVel = 80;
+        public double maxWheelVel = 90;
         public double minProfileAccel = -45;//haha braking go brr
-        public double maxProfileAccel = 60;
+        public double maxProfileAccel = 70;
 
         // turn profile parameters (in radians)
         public double maxAngVel = 55; // shared with path
