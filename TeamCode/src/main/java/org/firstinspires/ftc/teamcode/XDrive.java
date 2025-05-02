@@ -36,7 +36,7 @@ public class XDrive extends OpMode {
      * Stores the initial pitch offset when the game starts. The claw should be sticking outwards
      */
     public static double initialPitchOffset = 0.65;
-    public static boolean dynamicBraking = false;
+    public static boolean dynamicBrakingEnabled = false;
     private final axisBehavior armExtendAxis = axisBehavior.LEFT_STICK_Y;
     private final GamepadButton resetServoOrientationButton = GamepadButton.A;
     private final GamepadButton clawToggleButton = GamepadButton.B;
@@ -105,7 +105,7 @@ public class XDrive extends OpMode {
         controller2.update();
         driveTrain.updateDriveTrainBehavior();
         raiseArmSlider.update();
-        if (raiseArmSlider.getCurrentPosition() < -100 && dynamicBraking) {
+        if (raiseArmSlider.getCurrentPosition() < -100 && dynamicBrakingEnabled) {
             driveTrain.setBrakingMode(DcMotor.ZeroPowerBehavior.FLOAT);
         } else {
             driveTrain.setBrakingMode(DcMotor.ZeroPowerBehavior.BRAKE);

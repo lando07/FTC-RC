@@ -1,7 +1,12 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import static org.firstinspires.ftc.teamcode.MecanumDrive.PARAMS;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.bosch.BHI260IMU;
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.BNO055IMUNew;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -9,6 +14,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 @Config
@@ -29,7 +36,7 @@ public class DriveTrain {
     public static double axialGain = 1.0;
     public static double yawGain = 3;
     public static double yawMultiplier = 0.5;
-    private final BHI260IMU imu;
+    private final BNO055IMUNew imu;
     private final DcMotor frontLeft;
     private final DcMotor frontRight;
     private final DcMotor backLeft;
@@ -40,9 +47,14 @@ public class DriveTrain {
 
     public DriveTrain(OpMode opmode, GamepadController controller) {
         gamepad = controller;
-        imu = opmode.hardwareMap.get(BHI260IMU.class, "imu");
-        imu.initialize(new BHI260IMU.Parameters(new RevHubOrientationOnRobot(MecanumDrive.PARAMS.logoFacingDirection, MecanumDrive.PARAMS.usbFacingDirection)));
-        imu.resetYaw();
+        // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
+        // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
+        // and named "imu".
+        imu = opmode.hardwareMap.get(BNO055IMUNew.class, "imu 1");
+        BNO055IMUNew.Parameters parameters = new BNO055IMUNew.Parameters(new RevHubOrientationOnRobot(PARAMS.logoFacingDirection, PARAMS.usbFacingDirection));
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        imu.initialize(parameters);
+
         frontLeft = opmode.hardwareMap.get(DcMotorEx.class, "leftFront");
         frontRight = opmode.hardwareMap.get(DcMotorEx.class, "rightFront");
         backLeft = opmode.hardwareMap.get(DcMotorEx.class, "leftBack");
@@ -69,7 +81,7 @@ public class DriveTrain {
         final double axial = Math.pow(((int) (-gamepad.getAxisValue(axialAxis) * 10000) / 10000.0), axialGain);
         final double yaw = yawMultiplier * Math.pow(((int) (gamepad.getAxisValue(yawAxis) * 10000) / 10000.0), yawGain);
 
-        final double direction = -(Math.atan2(lateral, axial) + imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));// I have zero clue how this works
+        final double direction = -(Math.atan2(lateral, axial) + imu.getRobotYawPitchRollAngles().getYaw());// I have zero clue how this works
         final double speed = Math.min(1.0, Math.sqrt(lateral * lateral + axial * axial));//vector normalization(I think) + pythagorean theorem
         //I have no clue how this even works
         final double vCos = speed * Math.cos(direction + Math.PI / 4.0);
@@ -146,9 +158,6 @@ public class DriveTrain {
 
         halfSpeed = gamepad.getGamepadButtonValue(halfSpeedButton);
 
-        if (gamepad.getGamepadButtonValue(resetIMUButton) && !resetIMUButtonDisabled) {
-            imu.resetYaw();
-        }
         if (gamepad.getGamepadButtonValue(toggleDriveModeButton) && !toggleDriveModeButtonDisabled) {
             doClassicMecanumDrive();
         } else {
