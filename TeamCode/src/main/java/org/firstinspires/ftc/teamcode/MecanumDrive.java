@@ -49,6 +49,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.ImuOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -80,6 +81,7 @@ public final class MecanumDrive {
     public final VoltageSensor voltageSensor;
     public final LazyImu lazyImu;
     public final Localizer localizer;
+    public final HardwareMap hardwareMap;
     private final LinkedList<Pose2d> poseHistory = new LinkedList<>();
     private final DownsampledWriter estimatedPoseWriter = new DownsampledWriter("ESTIMATED_POSE", 50_000_000);
     private final DownsampledWriter targetPoseWriter = new DownsampledWriter("TARGET_POSE", 50_000_000);
@@ -105,11 +107,11 @@ public final class MecanumDrive {
 
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
-        lazyImu = new LazyImu(hardwareMap, "imu", new RevHubOrientationOnRobot(
-                PARAMS.logoFacingDirection, PARAMS.usbFacingDirection));
+        lazyImu = new LazyImu(hardwareMap, "imu 1", new RevHubOrientationOnRobot(PARAMS.logoFacingDirection, PARAMS.usbFacingDirection));
+
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
-
+        this.hardwareMap = hardwareMap;
         localizer = new DriveLocalizer(pose);
 
         FlightRecorder.write("MECANUM_PARAMS", PARAMS);
@@ -231,7 +233,7 @@ public final class MecanumDrive {
             rightBack = new OverflowEncoder(new RawEncoder(MecanumDrive.this.rightBack));
             rightFront = new OverflowEncoder(new RawEncoder(MecanumDrive.this.rightFront));
             //the typecast is to help counteract drift
-            imu = (BNO055IMUNew) lazyImu.get();
+            imu = hardwareMap.get(BNO055IMUNew.class, "imu 1");
             BNO055IMUNew.Parameters parameters = new BNO055IMUNew.Parameters(new RevHubOrientationOnRobot(PARAMS.logoFacingDirection, PARAMS.usbFacingDirection));
             parameters.calibrationDataFile = "BNO055IMUCalibration.json";
             imu.initialize(parameters);

@@ -81,9 +81,9 @@ public class DriveTrain {
         final double axial = Math.pow(((int) (-gamepad.getAxisValue(axialAxis) * 10000) / 10000.0), axialGain);
         final double yaw = yawMultiplier * Math.pow(((int) (gamepad.getAxisValue(yawAxis) * 10000) / 10000.0), yawGain);
 
-        final double direction = -(Math.atan2(lateral, axial) + imu.getRobotYawPitchRollAngles().getYaw());// I have zero clue how this works
+        final double direction = -(Math.atan2(lateral, axial) + imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));// I have zero clue how the math works
         final double speed = Math.min(1.0, Math.sqrt(lateral * lateral + axial * axial));//vector normalization(I think) + pythagorean theorem
-        //I have no clue how this even works
+        //Somehow we throw more trig at these values and then it works
         final double vCos = speed * Math.cos(direction + Math.PI / 4.0);
         final double vSin = speed * Math.sin(direction + Math.PI / 4.0);
         double lf = vCos + yaw;//These 4 lines calculate the motor powers
