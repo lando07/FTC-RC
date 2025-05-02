@@ -37,6 +37,7 @@ public class XDrive extends OpMode {
      */
     public static double initialPitchOffset = 0.65;
     public static boolean dynamicBrakingEnabled = false;
+    public static double backStopPosition = 0.03;
     private final axisBehavior armExtendAxis = axisBehavior.LEFT_STICK_Y;
     private final GamepadButton resetServoOrientationButton = GamepadButton.A;
     private final GamepadButton clawToggleButton = GamepadButton.B;
@@ -58,9 +59,8 @@ public class XDrive extends OpMode {
     @Override
     public void init() {
         controller1 = new GamepadController(gamepad1);
-
-
         controller2 = new GamepadController(gamepad2);
+
         controller2.configureBiStateButton(clawToggleButton, clawToggleBehavior);
         controller2.configureAxis(armExtendAxis);
         controller2.configureBiStateButton(resetServoOrientationButton, BiStateButtonBehavior.HOLD);
@@ -88,7 +88,7 @@ public class XDrive extends OpMode {
         secondaryClawYaw.setPosition(initialPitchOffset);//This starts the servo in the middle of both extrema
         secondaryClawPitch.setPosition(0.5);
 
-        backStop.setPosition(0);
+        backStop.setPosition(backStopPosition);
 
         raiseArmSlider.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         raiseArmSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -115,14 +115,12 @@ public class XDrive extends OpMode {
         secondaryClaw.update();
         doSecondaryClawPitch();
         doSecondaryClawYaw();
-
-
     }
 
     private void doSecondaryClawYaw() {
         int val = controller2.getTristateButtonValue(yawLeftButton);
         if (controller2.getGamepadButtonValue(resetServoOrientationButton)) {
-            secondaryClawYaw.setPosition(0.5);
+            secondaryClawYaw.setPosition(0);
             secondaryClawPitch.setPosition(initialPitchOffset);
         } else if (val != 0) {
             secondaryClawYaw.setPosition(secondaryClawYaw.getPosition() + (val * (yawSpeed / 100.0)));

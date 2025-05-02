@@ -100,6 +100,7 @@ public class RaiseArmSlider {
             raiseArmSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             raiseArmSlider.setTargetPosition(0);
             raiseArmSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            resetHeightAuto();
         } else {
             int value = gamepad.getTristateButtonValue(raiseArmButton);
             if (value != 0) {

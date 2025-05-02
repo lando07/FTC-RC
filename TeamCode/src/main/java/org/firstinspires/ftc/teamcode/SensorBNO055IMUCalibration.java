@@ -132,10 +132,8 @@ public class SensorBNO055IMUCalibration extends LinearOpMode
         parameters.loggingTag     = "IMU";
         imu = hardwareMap.get(BNO055IMU.class, "imu 1");
         imu.initialize(parameters);
-
         composeTelemetry();
         telemetry.log().add("Waiting for start...");
-
         // Wait until we're told to go
         while (!isStarted()) {
             telemetry.update();

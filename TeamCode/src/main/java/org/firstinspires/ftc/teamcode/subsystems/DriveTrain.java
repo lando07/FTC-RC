@@ -13,10 +13,14 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
+
+import java.util.Locale;
 
 @Config
 public class DriveTrain {
@@ -36,6 +40,7 @@ public class DriveTrain {
     public static double axialGain = 1.0;
     public static double yawGain = 3;
     public static double yawMultiplier = 0.5;
+    public static double speedMultiplier = 0.7;
     private final BNO055IMUNew imu;
     private final DcMotor frontLeft;
     private final DcMotor frontRight;
@@ -43,7 +48,6 @@ public class DriveTrain {
     private final DcMotor backRight;
     private boolean halfSpeed = false;
     private final GamepadController gamepad;
-
 
     public DriveTrain(OpMode opmode, GamepadController controller) {
         gamepad = controller;
@@ -77,8 +81,8 @@ public class DriveTrain {
     private void doFieldOrientedDrive() {
 
 
-        final double lateral = Math.pow(((int) (gamepad.getAxisValue(lateralAxis) * 10000) / 10000.0), lateralGain);
-        final double axial = Math.pow(((int) (-gamepad.getAxisValue(axialAxis) * 10000) / 10000.0), axialGain);
+        final double lateral = speedMultiplier * Math.pow(((int) (gamepad.getAxisValue(lateralAxis) * 10000) / 10000.0), lateralGain);
+        final double axial = speedMultiplier *Math.pow(((int) (-gamepad.getAxisValue(axialAxis) * 10000) / 10000.0), axialGain);
         final double yaw = yawMultiplier * Math.pow(((int) (gamepad.getAxisValue(yawAxis) * 10000) / 10000.0), yawGain);
 
         final double direction = -(Math.atan2(lateral, axial) + imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));// I have zero clue how the math works
@@ -110,8 +114,8 @@ public class DriveTrain {
         // Omni Mode uses right joystick to go forward & strafe, and left joystick to rotate.
         //Just like a drone
         //I decided to limit precision to 4 decimal places to counteract drift
-        double axial = ((int) (gamepad.getAxisValue(axialAxis) * 10000) / 10000.0);  // Note: pushing stick forward gives negative value
-        double lateral = ((int) (-gamepad.getAxisValue(lateralAxis) * 10000) / 10000.0);
+        double axial = speedMultiplier * ((int) (gamepad.getAxisValue(axialAxis) * 10000) / 10000.0);  // Note: pushing stick forward gives negative value
+        double lateral = speedMultiplier * ((int) (-gamepad.getAxisValue(lateralAxis) * 10000) / 10000.0);
         double yaw = yawMultiplier * ((int) (gamepad.getAxisValue(yawAxis) * 10000) / 10000.0 * yawMultiplier);
         //these are the magic 4 statements right here
         // Combine the joystick requests for each axis-motion to determine each wheel's power.
@@ -157,7 +161,9 @@ public class DriveTrain {
     public void updateDriveTrainBehavior() {
 
         halfSpeed = gamepad.getGamepadButtonValue(halfSpeedButton);
-
+        if(gamepad.getGamepadButtonValue(resetIMUButton)){
+            imu.resetYaw();
+        }
         if (gamepad.getGamepadButtonValue(toggleDriveModeButton) && !toggleDriveModeButtonDisabled) {
             doClassicMecanumDrive();
         } else {
@@ -165,6 +171,8 @@ public class DriveTrain {
         }
 
     }
-
+    public BNO055IMUNew getIMU(){
+        return imu;
+    }
 
 }
