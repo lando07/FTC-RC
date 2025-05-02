@@ -95,7 +95,7 @@ public class RaiseArmSlider {
     }
 
     public void update() {
-        if (touchSensor.isPressed() && !gamepad.getGamepadButtonValue(raiseArmButton)) {//this stops the motor from going any further down, but still allows it to go upward
+        if (touchSensor.isPressed() && (!gamepad.getGamepadButtonValue(raiseArmButton) && !gamepad.getGamepadButtonValue(highSpecimenLowBasketButton))) {//this stops the motor from going any further down, but still allows it to go upward
             raiseArmSlider.setPower(0);//The zero power behavior set to float so the motor power is cut when the slider is fully retracted
             raiseArmSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             raiseArmSlider.setTargetPosition(0);

@@ -19,15 +19,15 @@ import org.firstinspires.ftc.teamcode.subsystems.RaiseArmSlider;
 @Autonomous(name = "PrimaryAuto", group = "autonomous")
 public class PrimaryAutonomous extends LinearOpMode {
     public static double testYValue = 55;
-    public static double testYValue2 = 32.8;
-    public static double testYValue3 = 56.5;
+    public static double testYValue2 = 32.7;
+    public static double testYValue3 = 57;
     public static double testYValue4 = 45;
     public static double thirdSpecimenOffset = 3.5;
     public static double fourthSpecimenOffset = 3.5;
     public static double clipOffset = 3.5;
     public static double testXValue = -45;
     public static int clipDelay = 275;
-    public static int extendLength = 400;
+    public static int extendLength = 480;
     public static double neutralPitch = 0.1;
     public static double neutralYaw = 1;
     public static int grabDelay = 200;
@@ -35,7 +35,7 @@ public class PrimaryAutonomous extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        Pose2d startingPose = new Pose2d(-17.2, 62, Math.toRadians(-90));
+        Pose2d startingPose = new Pose2d(-17.2, 63, Math.toRadians(-90));
         MecanumDrive drive = new MecanumDrive(hardwareMap, startingPose);
         RaiseArmSlider slider = new RaiseArmSlider(this, "raiseArmSlider");
         DcMotor armExtender = hardwareMap.get(DcMotor.class, "armSlider");
@@ -111,37 +111,38 @@ public class PrimaryAutonomous extends LinearOpMode {
                 .waitSeconds(grabDelay / 1000.0)
                 //Clip second specimen
                 .stopAndAdd(slider.doHighSpecimenLowBasketAction())
-                .strafeToLinearHeading(new Vector2d(3, 32.8 + 4), Math.toRadians(273))
-                .strafeTo(new Vector2d(3, 32.8))
+                .strafeToLinearHeading(new Vector2d(3, 33 + 4), Math.toRadians(273))
+                .strafeTo(new Vector2d(3, 33))
                 .stopAndAdd(slider.clipSpecimenAutoAction())
                 .waitSeconds(clipDelay / 1000.0)
                 .stopAndAdd(primaryClaw.openClawAction())
 //                .stopAndAdd(new InstantAction(() -> backStop.setPosition(0.5)))
                 //Pick up third specimen
                 .stopAndAdd(slider.resetHeightAutoAction())
-                .strafeToLinearHeading(new Vector2d(-45, 56.5), Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(-45, 57), Math.toRadians(90))
                 .stopAndAdd(primaryClaw.closeClawAction())
                 .waitSeconds(grabDelay / 1000.0)
                 //Clip third specimen
                 .stopAndAdd(slider.doHighSpecimenLowBasketAction())
-                .strafeToLinearHeading(new Vector2d(-3, 32.8 + 4), Math.toRadians(273))
-                .strafeTo(new Vector2d(-3, 32.8))
+                .strafeToLinearHeading(new Vector2d(-3, 33 + 4), Math.toRadians(273))
+                .strafeTo(new Vector2d(-3, 33))
                 .stopAndAdd(slider.clipSpecimenAutoAction())
                 .waitSeconds(clipDelay / 1000.0)
                 .stopAndAdd(primaryClaw.openClawAction())
                 .stopAndAdd(slider.resetHeightAutoAction())
                 //Pick up fourth specimen
-                .strafeToLinearHeading(new Vector2d(-45, 56.5), Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(-45, 57), Math.toRadians(90))
                 .stopAndAdd(primaryClaw.closeClawAction())
                 .waitSeconds(grabDelay / 1000.0)
                 //Clip fourth specimen
                 .stopAndAdd(slider.doHighSpecimenLowBasketAction())
-                .strafeToLinearHeading(new Vector2d(-6, 32.8 + 4), Math.toRadians(273))
-                .strafeTo(new Vector2d(-6, 32.8))
+                .strafeToLinearHeading(new Vector2d(-6, testYValue2 + 4), Math.toRadians(273))
+                .strafeTo(new Vector2d(-6, testYValue2))
                 .stopAndAdd(slider.clipSpecimenAutoAction())
                 .waitSeconds(clipDelay / 1000.0)
                 .stopAndAdd(primaryClaw.openClawAction())
                 .stopAndAdd(slider.resetHeightAutoAction())
+                .strafeToLinearHeading(new Vector2d(-6,34), Math.toRadians(270))
                 .build();
 
 

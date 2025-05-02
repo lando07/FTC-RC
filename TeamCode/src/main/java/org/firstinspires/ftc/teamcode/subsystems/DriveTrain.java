@@ -24,9 +24,11 @@ public class DriveTrain {
     public static GamepadButton toggleDriveModeButton = GamepadButton.Y;
 
     public static boolean toggleDriveModeButtonDisabled = true;
+    public static boolean resetIMUButtonDisabled = false;
     public static double lateralGain = 1.0;
     public static double axialGain = 1.0;
     public static double yawGain = 3;
+    public static double yawMultiplier = 0.5;
     private final BHI260IMU imu;
     private final DcMotor frontLeft;
     private final DcMotor frontRight;
@@ -34,6 +36,7 @@ public class DriveTrain {
     private final DcMotor backRight;
     private boolean halfSpeed = false;
     private final GamepadController gamepad;
+
 
     public DriveTrain(OpMode opmode, GamepadController controller) {
         gamepad = controller;
@@ -64,7 +67,7 @@ public class DriveTrain {
 
         final double lateral = Math.pow(((int) (gamepad.getAxisValue(lateralAxis) * 10000) / 10000.0), lateralGain);
         final double axial = Math.pow(((int) (-gamepad.getAxisValue(axialAxis) * 10000) / 10000.0), axialGain);
-        final double yaw = Math.pow(((int) (gamepad.getAxisValue(yawAxis) * 10000) / 10000.0), yawGain);
+        final double yaw = yawMultiplier * Math.pow(((int) (gamepad.getAxisValue(yawAxis) * 10000) / 10000.0), yawGain);
 
         final double direction = -(Math.atan2(lateral, axial) + imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));// I have zero clue how this works
         final double speed = Math.min(1.0, Math.sqrt(lateral * lateral + axial * axial));//vector normalization(I think) + pythagorean theorem
@@ -97,7 +100,7 @@ public class DriveTrain {
         //I decided to limit precision to 4 decimal places to counteract drift
         double axial = ((int) (gamepad.getAxisValue(axialAxis) * 10000) / 10000.0);  // Note: pushing stick forward gives negative value
         double lateral = ((int) (-gamepad.getAxisValue(lateralAxis) * 10000) / 10000.0);
-        double yaw = ((int) (gamepad.getAxisValue(yawAxis) * 10000) / 10000.0);
+        double yaw = yawMultiplier * ((int) (gamepad.getAxisValue(yawAxis) * 10000) / 10000.0 * yawMultiplier);
         //these are the magic 4 statements right here
         // Combine the joystick requests for each axis-motion to determine each wheel's power.
         // Set up a variable for each drive wheel to save the power level for telemetry.
@@ -143,7 +146,7 @@ public class DriveTrain {
 
         halfSpeed = gamepad.getGamepadButtonValue(halfSpeedButton);
 
-        if (gamepad.getGamepadButtonValue(resetIMUButton)) {
+        if (gamepad.getGamepadButtonValue(resetIMUButton) && !resetIMUButtonDisabled) {
             imu.resetYaw();
         }
         if (gamepad.getGamepadButtonValue(toggleDriveModeButton) && !toggleDriveModeButtonDisabled) {

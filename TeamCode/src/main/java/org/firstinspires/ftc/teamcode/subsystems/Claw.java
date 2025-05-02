@@ -14,7 +14,7 @@ public class Claw {
     public static GamepadButton toggleButton = GamepadButton.B;
     public static BiStateButtonBehavior toggleBehavior = BiStateButtonBehavior.TOGGLE;
     private final Servo claw;
-    private boolean clawState;//false closed, true open
+    private boolean clawState;//false open, true closed, set in constructor
     private GamepadController controller;
 
     public Claw(@NonNull OpMode opMode, String hwName, GamepadController gamepad) {
