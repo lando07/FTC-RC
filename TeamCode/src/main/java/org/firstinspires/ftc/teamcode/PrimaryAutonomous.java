@@ -4,7 +4,6 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -20,7 +19,7 @@ import org.firstinspires.ftc.teamcode.subsystems.RaiseArmSlider;
 public class PrimaryAutonomous extends LinearOpMode {
     public static double testYValue = 21;
     public static double testYValue2 = 35;
-    public static double testYValue3 = 58;
+    public static double testYValue3 = 57;
     public static double testYValue4 = 45;
     public static double thirdSpecimenOffset = 3.5;
     public static double fourthSpecimenOffset = 3.5;

@@ -43,7 +43,7 @@ import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import java.io.File;
 import java.util.Locale;
 
-/*
+/**
  * This OpMode calibrates a BNO055 IMU per
  * "Section 3.11 Calibration" of the BNO055 specification.
  *
@@ -56,7 +56,7 @@ import java.util.Locale;
  * again at each run can help reduce the time that automatic calibration requires.
  *
  * This summary of the calibration process from Intel is informative:
- * http://iotdk.intel.com/docs/master/upm/classupm_1_1_b_n_o055.html
+ * <a href="http://iotdk.intel.com/docs/master/upm/classupm_1_1_b_n_o055.html">http://iotdk.intel.com/docs/master/upm/classupm_1_1_b_n_o055.html</a>
  *
  * "This device requires calibration in order to operate accurately. [...] Calibration data is
  * lost on a power cycle. See one of the examples for a description of how to calibrate the device,
@@ -92,8 +92,8 @@ import java.util.Locale;
  * References:
  * The AdafruitBNO055IMU Javadoc
  * The BNO055IMU.Parameters.calibrationDataFile Javadoc
- * The BNO055 product page: https://www.bosch-sensortec.com/bst/products/all_products/bno055
- * The BNO055 datasheet: https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bno055-ds000.pdf
+ * The BNO055 product page: <a href="https://www.bosch-sensortec.com/bst/products/all_products/bno055">BNO55</a>
+ * The BNO055 datasheet: <a href="https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bno055-ds000.pdf">Datasheet</a>
  */
 @TeleOp(name = "Sensor: BNO055 IMU Calibration", group = "Sensor")
 //@Disabled                            // Uncomment this to add to the OpMode list
