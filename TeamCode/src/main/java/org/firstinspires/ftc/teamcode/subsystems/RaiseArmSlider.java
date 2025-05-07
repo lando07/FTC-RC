@@ -16,6 +16,7 @@ public class RaiseArmSlider {
     public static int clipSpecimenOffsetAuto = 700;
     public static int clipSpecimenOffsetTeleOp = 425;
     public static int minHeightAuto = -125;
+    public static int minHeightTeleOp = -175;
     private final DcMotor raiseArmSlider;
     public GamepadButton raiseArmButton = GamepadButton.Y;
     public GamepadButton lowerArmButton = GamepadButton.X;
@@ -84,7 +85,10 @@ public class RaiseArmSlider {
         raiseArmSlider.setPower(power);
 
     }
-
+    public void resetHeightTeleOp(){
+        raiseArmSlider.setPower(1);
+        raiseArmSlider.setTargetPosition(minHeightTeleOp);
+    }
     public void setMode(DcMotor.RunMode mode) {
         raiseArmSlider.setMode(mode);
     }
@@ -100,7 +104,7 @@ public class RaiseArmSlider {
             raiseArmSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             raiseArmSlider.setTargetPosition(0);
             raiseArmSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            resetHeightAuto();
+            resetHeightTeleOp();
         } else {
             int value = gamepad.getTristateButtonValue(raiseArmButton);
             if (value != 0) {
@@ -112,7 +116,7 @@ public class RaiseArmSlider {
                     raiseArmSlider.setPower(1);
                     targetPos = raiseArmSlider.getCurrentPosition() - 200;
                 }
-                raiseArmSlider.setTargetPosition(Math.max(Math.min(2000, targetPos), -4050));
+                raiseArmSlider.setTargetPosition(Math.max(Math.min(2000, targetPos), highSpecimenLowBasket));
                 raiseArmSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
             if (gamepad.getGamepadButtonValue(clipSpecimenButton)) {

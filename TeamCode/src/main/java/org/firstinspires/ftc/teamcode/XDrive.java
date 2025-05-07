@@ -85,8 +85,8 @@ public class XDrive extends OpMode {
     public void start() {
         primaryClaw.openClaw();
         secondaryClaw.openClaw();
-        secondaryClawYaw.setPosition(initialPitchOffset);//This starts the servo in the middle of both extrema
-        secondaryClawPitch.setPosition(0.5);
+        secondaryClawYaw.setPosition(0.45);
+        secondaryClawPitch.setPosition(initialPitchOffset);
 
         backStop.setPosition(backStopPosition);
 
@@ -120,7 +120,7 @@ public class XDrive extends OpMode {
     private void doSecondaryClawYaw() {
         int val = controller2.getTristateButtonValue(yawLeftButton);
         if (controller2.getGamepadButtonValue(resetServoOrientationButton)) {
-            secondaryClawYaw.setPosition(0);
+            secondaryClawYaw.setPosition(0.45);
             secondaryClawPitch.setPosition(initialPitchOffset);
         } else if (val != 0) {
             secondaryClawYaw.setPosition(secondaryClawYaw.getPosition() + (val * (yawSpeed / 100.0)));

@@ -30,7 +30,8 @@ public class DriveTrain {
     public static double axialGain = 1.0;
     public static double yawGain = 3;
     public static double yawMultiplier = 0.5;
-    public static double speedMultiplier = 0.7;
+    public static double speedMultiplier = 0.9;
+    public static double lowSpeedMultiplier = 0.5;
     private final BNO055IMUNew imu;
     private final DcMotor frontLeft;
     private final DcMotor frontRight;
@@ -86,10 +87,10 @@ public class DriveTrain {
         double rr = vCos - yaw;
 
         if (halfSpeed) {
-            lf *= 0.5;
-            rf *= 0.5;
-            lr *= 0.5;
-            rr *= 0.5;
+            lf *= lowSpeedMultiplier;
+            rf *= lowSpeedMultiplier;
+            lr *= lowSpeedMultiplier;
+            rr *= lowSpeedMultiplier;
 
         }
         //Actually what makes the robot moves
@@ -129,10 +130,10 @@ public class DriveTrain {
         }
         //cuts speed in half
         if (halfSpeed) {
-            leftFrontPower *= 0.5;
-            rightFrontPower *= 0.5;
-            leftBackPower *= 0.5;
-            rightBackPower *= 0.5;
+            leftFrontPower *= lowSpeedMultiplier;
+            rightFrontPower *= lowSpeedMultiplier;
+            leftBackPower *= lowSpeedMultiplier;
+            rightBackPower *= lowSpeedMultiplier;
         }
 
         frontLeft.setPower(leftFrontPower);
