@@ -15,7 +15,7 @@ public class RaiseArmSlider {
     public static int highBasket = -4150;
     public static int clipSpecimenOffsetAuto = 700;
     public static int clipSpecimenOffsetTeleOp = 425;
-    public static int minHeightAuto = -125;
+    public static int minHeightAuto = -100;
     public static int minHeightTeleOp = -175;
     private final DcMotor raiseArmSlider;
     public GamepadButton raiseArmButton = GamepadButton.Y;
