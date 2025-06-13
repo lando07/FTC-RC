@@ -22,14 +22,14 @@ import org.opencv.core.Mat;
 @Autonomous(name = "PrimaryAuto", group = "autonomous")
 public class PrimaryAutonomous extends LinearOpMode {
     public static double testYValue = 64;
-    public static double testYValue2 = 34;
+    public static double testYValue2 = 31;
     public static double testYValue3 = 61.5;
-    public static double testYValue4 = 34;
+    public static double testYValue4 = 19.5;
     public static double testXValue = -41;
     public static int clipDelay = 200;
     public static int extendLength = 515;
     public static double neutralPitch = 0.15;
-    public static double neutralYaw = 1;
+    public static double neutralYaw = 0.9;
     public static int grabDelay = 75;
     public static int pickUpDelay = 200;
     public static int dropOffDelay = 100;
@@ -71,7 +71,7 @@ public class PrimaryAutonomous extends LinearOpMode {
                 .stopAndAdd(slider.resetHeightAutoAction())
                 //go to pick up first field sample
                 .strafeToLinearHeading(new Vector2d(-39, 36), Math.toRadians(0))
-                .strafeTo(new Vector2d(-39, 22))
+                .strafeTo(new Vector2d(-39, testYValue4))
                 .stopAndAdd(secondaryClaw.closeClawAction())
                 .waitSeconds(pickUpDelay/1000.0)
                 //Drop Off first field sample
@@ -80,7 +80,7 @@ public class PrimaryAutonomous extends LinearOpMode {
                 .stopAndAdd(secondaryClaw.openClawAction())
                 //Reset Secondary Claw pitch and pick up second sample
                 .stopAndAdd(new InstantAction(() -> pitch.setPosition(neutralPitch)))
-                .strafeToLinearHeading(new Vector2d(-49.5, 22), Math.toRadians(0))
+                .strafeToLinearHeading(new Vector2d(-49.5, testYValue4), Math.toRadians(0))
                 .stopAndAdd(secondaryClaw.closeClawAction())
                 .waitSeconds(pickUpDelay/1000.0)
                 //Drop Off second field sample
@@ -89,7 +89,7 @@ public class PrimaryAutonomous extends LinearOpMode {
                 .stopAndAdd(secondaryClaw.openClawAction())
                 //Reset Secondary Claw pitch and pick up third sample
                 .stopAndAdd(new InstantAction(() -> pitch.setPosition(neutralPitch)))
-                .strafeToLinearHeading(new Vector2d(-59, 22), Math.toRadians(0))
+                .strafeToLinearHeading(new Vector2d(-59, testYValue4), Math.toRadians(0))
                 .stopAndAdd(secondaryClaw.closeClawAction())
                 .waitSeconds(pickUpDelay/1000.0)
                 //Drop Off third field sample
@@ -103,14 +103,14 @@ public class PrimaryAutonomous extends LinearOpMode {
                 .stopAndAdd(new InstantAction(() -> yaw.setPosition(.5)))
                 .stopAndAdd(new InstantAction(() -> armExtender.setTargetPosition(100)))
                 //Pick up second specimen
-                .turnTo(Math.toRadians(90))
+                .turnTo(Math.toRadians(88))
                 .strafeTo(new Vector2d(-50, testYValue3))
                 .stopAndAdd(new InstantAction(() -> armExtender.setPower(0)))
                 .stopAndAdd(primaryClaw.closeClawAction())
                 .waitSeconds(grabDelay / 1000.0)
                 //Clip second specimen
                 .stopAndAdd(slider.doHighSpecimenLowBasketAction())
-                .strafeToSplineHeading(new Vector2d(0, testYValue4), Math.toRadians(273))
+                .strafeToSplineHeading(new Vector2d(0, testYValue2), Math.toRadians(273))
                 .stopAndAdd(slider.clipSpecimenAutoAction())
                 .waitSeconds(clipDelay / 1000.0)
                 .stopAndAdd(primaryClaw.openClawAction())
@@ -121,7 +121,7 @@ public class PrimaryAutonomous extends LinearOpMode {
                 .waitSeconds(grabDelay / 1000.0)
                 //Clip third specimen
                 .stopAndAdd(slider.doHighSpecimenLowBasketAction())
-                .strafeToLinearHeading(new Vector2d(-2, testYValue4), Math.toRadians(273))
+                .strafeToLinearHeading(new Vector2d(-2, testYValue2), Math.toRadians(273))
                 .stopAndAdd(slider.clipSpecimenAutoAction())
                 .waitSeconds(clipDelay / 1000.0)
                 .stopAndAdd(primaryClaw.openClawAction())
@@ -132,7 +132,7 @@ public class PrimaryAutonomous extends LinearOpMode {
                 .waitSeconds(grabDelay / 1000.0)
                 //Clip fourth specimen
                 .stopAndAdd(slider.doHighSpecimenLowBasketAction())
-                .strafeToLinearHeading(new Vector2d(-4, testYValue4), Math.toRadians(273))
+                .strafeToLinearHeading(new Vector2d(-4, testYValue2), Math.toRadians(273))
                 .stopAndAdd(slider.clipSpecimenAutoAction())
                 .waitSeconds(clipDelay / 1000.0)
                 .stopAndAdd(primaryClaw.openClawAction())
