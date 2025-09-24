@@ -108,6 +108,7 @@ public class DriveTrain {
         double axial = speedMultiplier * ((int) (gamepad.getAxisValue(axialAxis) * 10000) / 10000.0);  // Note: pushing stick forward gives negative value
         double lateral = speedMultiplier * ((int) (-gamepad.getAxisValue(lateralAxis) * 10000) / 10000.0);
         double yaw = yawMultiplier * ((int) (gamepad.getAxisValue(yawAxis) * 10000) / 10000.0 * yawMultiplier);
+
         //these are the magic 4 statements right here
         // Combine the joystick requests for each axis-motion to determine each wheel's power.
         // Set up a variable for each drive wheel to save the power level for telemetry.
