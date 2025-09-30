@@ -59,23 +59,23 @@ public class XDrive extends OpMode {
     @Override
     public void init() {
         controller1 = new GamepadController(gamepad1);
-        controller2 = new GamepadController(gamepad2);
+        //controller2 = new GamepadController(gamepad2);
 
-        controller2.configureBiStateButton(clawToggleButton, clawToggleBehavior);
-        controller2.configureAxis(armExtendAxis);
-        controller2.configureBiStateButton(resetServoOrientationButton, BiStateButtonBehavior.HOLD);
-        controller2.configureTristateButton(yawLeftButton, yawRightButton);
-        controller2.configureTristateButton(pitchUpButton, pitchDownButton);
-        armExtender = hardwareMap.get(DcMotor.class, "armSlider");
+        //controller2.configureBiStateButton(clawToggleButton, clawToggleBehavior);
+        //controller2.configureAxis(armExtendAxis);
+        //controller2.configureBiStateButton(resetServoOrientationButton, BiStateButtonBehavior.HOLD);
+        //controller2.configureTristateButton(yawLeftButton, yawRightButton);
+        //controller2.configureTristateButton(pitchUpButton, pitchDownButton);
+        //armExtender = hardwareMap.get(DcMotor.class, "armSlider");
         driveTrain = new DriveTrain(this, controller1);
 
-        primaryClaw = new Claw(this, "primaryClaw", controller2);
-        secondaryClaw = new Claw(this, "secondaryClaw", controller2);
-        secondaryClawYaw = hardwareMap.get(Servo.class, "yaw");
-        secondaryClawPitch = hardwareMap.get(Servo.class, "pitch");
-        backStop = hardwareMap.get(Servo.class, "backStop");
-        TouchSensor touchSensor = hardwareMap.get(TouchSensor.class, "touchSensor");
-        raiseArmSlider = new RaiseArmSlider(this, "raiseArmSlider", controller2, touchSensor);
+        //primaryClaw = new Claw(this, "primaryClaw", controller2);
+        //secondaryClaw = new Claw(this, "secondaryClaw", controller2);
+        //secondaryClawYaw = hardwareMap.get(Servo.class, "yaw");
+        //secondaryClawPitch = hardwareMap.get(Servo.class, "pitch");
+        //backStop = hardwareMap.get(Servo.class, "backStop");
+        //TouchSensor touchSensor = hardwareMap.get(TouchSensor.class, "touchSensor");
+        //raiseArmSlider = new RaiseArmSlider(this, "raiseArmSlider", controller2, touchSensor);
 
         telemetry.addData("Status:", "Initialized");
         telemetry.update();
