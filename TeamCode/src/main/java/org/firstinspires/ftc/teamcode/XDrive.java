@@ -83,38 +83,38 @@ public class XDrive extends OpMode {
 
     @Override
     public void start() {
-        primaryClaw.openClaw();
-        secondaryClaw.openClaw();
-        secondaryClawYaw.setPosition(0.45);
-        secondaryClawPitch.setPosition(initialPitchOffset);
+        //primaryClaw.openClaw();
+        //secondaryClaw.openClaw();
+        //secondaryClawYaw.setPosition(0.45);
+        //secondaryClawPitch.setPosition(initialPitchOffset);
 
-        backStop.setPosition(backStopPosition);
+//        backStop.setPosition(backStopPosition);
 
-        raiseArmSlider.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        raiseArmSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        raiseArmSlider.setTargetPosition(0);
-        raiseArmSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        raiseArmSlider.setPower(1);
+//        raiseArmSlider.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+//        raiseArmSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        raiseArmSlider.setTargetPosition(0);
+//        raiseArmSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        raiseArmSlider.setPower(1);
 
-        armExtender.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        armExtender.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     @Override
     public void loop() {
         controller1.update();
-        controller2.update();
+//        controller2.update();
         driveTrain.updateDriveTrainBehavior();
-        raiseArmSlider.update();
-        if (raiseArmSlider.getCurrentPosition() < -100 && dynamicBrakingEnabled) {
-            driveTrain.setBrakingMode(DcMotor.ZeroPowerBehavior.FLOAT);
-        } else {
-            driveTrain.setBrakingMode(DcMotor.ZeroPowerBehavior.BRAKE);
-        }
-        doArmExtension();
-        primaryClaw.update();
-        secondaryClaw.update();
-        doSecondaryClawPitch();
-        doSecondaryClawYaw();
+//        raiseArmSlider.update();
+//        if (raiseArmSlider.getCurrentPosition() < -100 && dynamicBrakingEnabled) {
+//            driveTrain.setBrakingMode(DcMotor.ZeroPowerBehavior.FLOAT);
+//        } else {
+//            driveTrain.setBrakingMode(DcMotor.ZeroPowerBehavior.BRAKE);
+//        }
+//        doArmExtension();
+//        primaryClaw.update();
+//        secondaryClaw.update();
+//        doSecondaryClawPitch();
+//        doSecondaryClawYaw();
     }
 
     private void doSecondaryClawYaw() {
