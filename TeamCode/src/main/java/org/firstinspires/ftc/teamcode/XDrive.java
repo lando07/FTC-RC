@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -20,9 +21,9 @@ import org.firstinspires.ftc.teamcode.subsystems.axisBehavior;
 /**
  * Ok, so this is our omega be-all-end-all class.
  */
-
+@Disabled
 @Config
-@TeleOp(name = "XDrive", group = "Robot")
+@TeleOp(name = "XDriveINTO THE DEEP", group = "Robot")
 public class XDrive extends OpMode {
     /**
      * Stores the speed to change claw pitch, do not do values greater than 5, the servo isn't fast enough
@@ -59,23 +60,23 @@ public class XDrive extends OpMode {
     @Override
     public void init() {
         controller1 = new GamepadController(gamepad1);
-        //controller2 = new GamepadController(gamepad2);
+        controller2 = new GamepadController(gamepad2);
 
-        //controller2.configureBiStateButton(clawToggleButton, clawToggleBehavior);
-        //controller2.configureAxis(armExtendAxis);
-        //controller2.configureBiStateButton(resetServoOrientationButton, BiStateButtonBehavior.HOLD);
-        //controller2.configureTristateButton(yawLeftButton, yawRightButton);
-        //controller2.configureTristateButton(pitchUpButton, pitchDownButton);
-        //armExtender = hardwareMap.get(DcMotor.class, "armSlider");
+        controller2.configureBiStateButton(clawToggleButton, clawToggleBehavior);
+        controller2.configureAxis(armExtendAxis);
+        controller2.configureBiStateButton(resetServoOrientationButton, BiStateButtonBehavior.HOLD);
+        controller2.configureTristateButton(yawLeftButton, yawRightButton);
+        controller2.configureTristateButton(pitchUpButton, pitchDownButton);
+        armExtender = hardwareMap.get(DcMotor.class, "armSlider");
         driveTrain = new DriveTrain(this, controller1);
 
-        //primaryClaw = new Claw(this, "primaryClaw", controller2);
-        //secondaryClaw = new Claw(this, "secondaryClaw", controller2);
-        //secondaryClawYaw = hardwareMap.get(Servo.class, "yaw");
-        //secondaryClawPitch = hardwareMap.get(Servo.class, "pitch");
-        //backStop = hardwareMap.get(Servo.class, "backStop");
-        //TouchSensor touchSensor = hardwareMap.get(TouchSensor.class, "touchSensor");
-        //raiseArmSlider = new RaiseArmSlider(this, "raiseArmSlider", controller2, touchSensor);
+        primaryClaw = new Claw(this, "primaryClaw", controller2);
+        secondaryClaw = new Claw(this, "secondaryClaw", controller2);
+        secondaryClawYaw = hardwareMap.get(Servo.class, "yaw");
+        secondaryClawPitch = hardwareMap.get(Servo.class, "pitch");
+        backStop = hardwareMap.get(Servo.class, "backStop");
+        TouchSensor touchSensor = hardwareMap.get(TouchSensor.class, "touchSensor");
+        raiseArmSlider = new RaiseArmSlider(this, "raiseArmSlider", controller2, touchSensor);
 
         telemetry.addData("Status:", "Initialized");
         telemetry.update();
@@ -83,38 +84,38 @@ public class XDrive extends OpMode {
 
     @Override
     public void start() {
-        //primaryClaw.openClaw();
-        //secondaryClaw.openClaw();
-        //secondaryClawYaw.setPosition(0.45);
-        //secondaryClawPitch.setPosition(initialPitchOffset);
+        primaryClaw.openClaw();
+        secondaryClaw.openClaw();
+        secondaryClawYaw.setPosition(0.45);
+        secondaryClawPitch.setPosition(initialPitchOffset);
 
-//        backStop.setPosition(backStopPosition);
+        backStop.setPosition(backStopPosition);
 
-//        raiseArmSlider.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-//        raiseArmSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        raiseArmSlider.setTargetPosition(0);
-//        raiseArmSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        raiseArmSlider.setPower(1);
+        raiseArmSlider.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        raiseArmSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        raiseArmSlider.setTargetPosition(0);
+        raiseArmSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        raiseArmSlider.setPower(1);
 
-//        armExtender.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        armExtender.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     @Override
     public void loop() {
         controller1.update();
-//        controller2.update();
+        controller2.update();
         driveTrain.updateDriveTrainBehavior();
-//        raiseArmSlider.update();
-//        if (raiseArmSlider.getCurrentPosition() < -100 && dynamicBrakingEnabled) {
-//            driveTrain.setBrakingMode(DcMotor.ZeroPowerBehavior.FLOAT);
-//        } else {
-//            driveTrain.setBrakingMode(DcMotor.ZeroPowerBehavior.BRAKE);
-//        }
-//        doArmExtension();
-//        primaryClaw.update();
-//        secondaryClaw.update();
-//        doSecondaryClawPitch();
-//        doSecondaryClawYaw();
+        raiseArmSlider.update();
+        if (raiseArmSlider.getCurrentPosition() < -100 && dynamicBrakingEnabled) {
+            driveTrain.setBrakingMode(DcMotor.ZeroPowerBehavior.FLOAT);
+        } else {
+            driveTrain.setBrakingMode(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
+        doArmExtension();
+        primaryClaw.update();
+        secondaryClaw.update();
+        doSecondaryClawPitch();
+        doSecondaryClawYaw();
     }
 
     private void doSecondaryClawYaw() {
