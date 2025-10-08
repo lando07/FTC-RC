@@ -7,7 +7,7 @@ import com.noahbres.meepmeep.roadrunner.Constraints;
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
-public class PrimaryMeepMeep {
+public class PrimaryMeepMeepIntoTheDeep {
     public static double testYValue = 61.5;
     public static double testYValue2 = 33;
     public static double testYValue3 = 61.5;
