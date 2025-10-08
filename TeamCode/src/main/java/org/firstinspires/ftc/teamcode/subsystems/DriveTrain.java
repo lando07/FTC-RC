@@ -24,7 +24,7 @@ public class DriveTrain {
     public static GamepadButton halfSpeedButton = GamepadButton.RIGHT_BUMPER;
     public static GamepadButton toggleDriveModeButton = GamepadButton.Y;
 
-    public static boolean toggleDriveModeButtonDisabled = true;
+    public static boolean toggleDriveModeButtonDisabled = false;
     public static boolean resetIMUButtonDisabled = false;
     public static double lateralGain = 1.0;
     public static double axialGain = 1.0;
@@ -161,7 +161,7 @@ public class DriveTrain {
     public void updateDriveTrainBehavior() {
 
         halfSpeed = gamepad.getGamepadButtonValue(halfSpeedButton);
-        if(gamepad.getGamepadButtonValue(resetIMUButton)){
+        if(gamepad.getGamepadButtonValue(resetIMUButton) && !resetIMUButtonDisabled){
             imu.resetYaw();
         }
         if (gamepad.getGamepadButtonValue(toggleDriveModeButton) && !toggleDriveModeButtonDisabled) {

@@ -11,7 +11,7 @@ public class PrimaryMeepMeepDECODE {
 
     public static void main(String[] args) {
         System.setProperty("sun.java2d.opengl", "true");
-        MeepMeep meepMeep = new MeepMeep(1100);
+        MeepMeep meepMeep = new MeepMeep(700);
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(90, 70, 55, 60, 14)
