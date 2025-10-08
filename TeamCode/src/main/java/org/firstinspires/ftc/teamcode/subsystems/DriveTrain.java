@@ -54,12 +54,20 @@ public class DriveTrain {
         frontRight = opmode.hardwareMap.get(DcMotorEx.class, "rightFront");
         backLeft = opmode.hardwareMap.get(DcMotorEx.class, "leftBack");
         backRight = opmode.hardwareMap.get(DcMotorEx.class, "rightBack");
+
+
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//helps with coasting
+        frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         controller.configureAxis(lateralAxis);
         controller.configureAxis(axialAxis);
         controller.configureAxis(yawAxis);
