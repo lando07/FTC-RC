@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -11,6 +12,7 @@ import org.firstinspires.ftc.teamcode.subsystems.GamepadController;
 /**
  * Main TeleOp class for X-Drive robot with a shooter.
  */
+@Disabled
 @TeleOp(name = "xdrive25shooter", group = "Robot")
 // @Disabled // I've commented this out so you can run the OpMode
 public class xdrive25shooter extends LinearOpMode { // Changed to LinearOpMode

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -18,7 +19,7 @@ public class PrimaryAutoDECODE extends LinearOpMode {
         MecanumDrive.DriveLocalizer dl = (MecanumDrive.DriveLocalizer) drive.localizer;
 
         Action autonomous = drive.actionBuilder(startingPose)
-                //insert autonomous code here
+                .strafeToConstantHeading(new Vector2d(0, 10))
                 .build();
 
         while(!opModeIsActive() && !isStopRequested()){
