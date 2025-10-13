@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.subsystems.GamepadController;
 /**
  * Ok, so this is our omega be-all-end-all class.
  */
-
+@Deprecated
 @Disabled
 @Config
 @TeleOp(name = "xdrive2025", group = "Robot")

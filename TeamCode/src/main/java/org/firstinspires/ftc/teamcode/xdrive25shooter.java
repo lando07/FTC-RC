@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.subsystems.GamepadController;
 /**
  * Main TeleOp class for X-Drive robot with a shooter.
  */
+@Deprecated
 @Disabled
 @TeleOp(name = "xdrive25shooter", group = "Robot")
 // @Disabled // I've commented this out so you can run the OpMode

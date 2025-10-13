@@ -28,7 +28,7 @@ public class XDriveDECODE extends OpMode {
         controller1.configureBiStateButton(launcherButton,launcherButtonBehavior);
 //        controller2 = new GamepadController(gamepad2);
         driveTrain = new DriveTrain(this, controller1);
-        launcher = hardwareMap.get(DcMotorEx.class, "launcher");
+        launcher = hardwareMap.get(DcMotorEx.class, "shooterMotor");
         telemetry.addData("Status", "Initialized");
         telemetry.update();
     }

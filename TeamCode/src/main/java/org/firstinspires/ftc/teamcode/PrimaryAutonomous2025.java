@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.RaiseArmSlider;
 
+@Deprecated
 @Config
 @Disabled
 @Autonomous(name = "PrimaryAuto2025", group = "autonomous")

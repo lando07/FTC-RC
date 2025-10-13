@@ -51,6 +51,7 @@ import com.qualcomm.robotcore.hardware.Servo;
  */
 
 //REMEMBER, CHANGES WILL ***NOT*** TAKE EFFECT UNTIL THE CODE IS PUSHED TO THE PHONE!
+@Deprecated
 @Disabled
 @TeleOp(name = "Tank Drive", group = "Robot")
 public class TankDrive extends OpMode {
