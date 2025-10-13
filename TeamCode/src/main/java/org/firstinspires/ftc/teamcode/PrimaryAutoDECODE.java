@@ -19,8 +19,7 @@ public class PrimaryAutoDECODE extends LinearOpMode {
         MecanumDrive.DriveLocalizer dl = (MecanumDrive.DriveLocalizer) drive.localizer;
 
         Action autonomous = drive.actionBuilder(startingPose)
-                //insert autonomous code here
-                .strafeToConstantHeading(new Vector2d(-52,-16))
+
                 .build();
 
         while(!opModeIsActive() && !isStopRequested()){

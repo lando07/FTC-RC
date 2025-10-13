@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode;
 //MISSION CRITICAL IMPORTS, these import the controller variables, and allow the
 // phone to recognize our class as executable, will probably never need to be updated
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -50,6 +51,7 @@ import com.qualcomm.robotcore.hardware.Servo;
  */
 
 //REMEMBER, CHANGES WILL ***NOT*** TAKE EFFECT UNTIL THE CODE IS PUSHED TO THE PHONE!
+@Disabled
 @TeleOp(name = "Tank Drive", group = "Robot")
 public class TankDrive extends OpMode {
     /* Declare OpMode members. */
