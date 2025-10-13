@@ -24,7 +24,7 @@ public class PrimaryMeepMeepDECODE {
                 // Corrected line
                 .strafeToLinearHeading(new Vector2d(-52, 20), Math.toRadians(90))
                 .strafeToLinearHeading(new Vector2d(-0, 30), Math.toRadians(90))
-                .strafeToLinearHeading(new Vector2d(-34, -16), Math.toRadians(90))
+
 
 
                 .build());
