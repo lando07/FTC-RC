@@ -19,9 +19,6 @@ public class PrimaryAutoDECODE extends LinearOpMode {
         MecanumDrive.DriveLocalizer dl = (MecanumDrive.DriveLocalizer) drive.localizer;
 
         Action autonomous = drive.actionBuilder(startingPose)
-<<<<<<< Updated upstream
-
-=======
                 //insert autonomous code here
                 .strafeToConstantHeading(new Vector2d(-52,-16))
                 .strafeToLinearHeading(new Vector2d(0,-16),Math.toRadians(0))
@@ -29,7 +26,6 @@ public class PrimaryAutoDECODE extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(-52, 20), Math.toRadians(90))
                 .strafeToLinearHeading(new Vector2d(-0, 30), Math.toRadians(90))
                 .strafeToLinearHeading(new Vector2d(-34, -16), Math.toRadians(90))
->>>>>>> Stashed changes
                 .build();
 
         while(!opModeIsActive() && !isStopRequested()){
