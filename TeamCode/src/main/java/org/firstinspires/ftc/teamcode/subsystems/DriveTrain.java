@@ -43,29 +43,29 @@ public class DriveTrain {
     private final GamepadController gamepad;
 
     // --- State Variables ---
-    private boolean isFieldOrientedMode = true;
+    public static boolean isFieldOrientedMode = true;
 
     /**
      * Initializes the IMU and motors for use.
      *
-     * @param opmode     the OpMode from any TeleOp Class
+     * @param opMode     the OpMode from any TeleOp Class
      * @param controller the controller to be used for user input
      */
-    public DriveTrain(OpMode opmode, GamepadController controller) {
+    public DriveTrain(OpMode opMode, GamepadController controller) {
         gamepad = controller;
         // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
         // on a Core Device Interface Module, configured to be a sensor of type "BNO55",
         // and named "imu 1".
-        imu = opmode.hardwareMap.get(BNO055IMUNew.class, "imu 1");
+        imu = opMode.hardwareMap.get(BNO055IMUNew.class, "imu 1");
         BNO055IMUNew.Parameters parameters = new BNO055IMUNew.Parameters(new RevHubOrientationOnRobot(PARAMS.logoFacingDirection, PARAMS.usbFacingDirection));
         parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // precalibrated data to increase accuracy
         imu.initialize(parameters); //actually starts the IMU
 
         // Retrieve and initialize the motors
-        frontLeft = opmode.hardwareMap.get(DcMotorEx.class, "leftFront");
-        frontRight = opmode.hardwareMap.get(DcMotorEx.class, "rightFront");
-        backLeft = opmode.hardwareMap.get(DcMotorEx.class, "leftBack");
-        backRight = opmode.hardwareMap.get(DcMotorEx.class, "rightBack");
+        frontLeft = opMode.hardwareMap.get(DcMotorEx.class, "leftFront");
+        frontRight = opMode.hardwareMap.get(DcMotorEx.class, "rightFront");
+        backLeft = opMode.hardwareMap.get(DcMotorEx.class, "leftBack");
+        backRight = opMode.hardwareMap.get(DcMotorEx.class, "rightBack");
 
         //Set left motors to reverse, and all to brake mode when power is zero
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
