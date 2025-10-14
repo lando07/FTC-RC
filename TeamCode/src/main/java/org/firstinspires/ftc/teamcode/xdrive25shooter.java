@@ -1,16 +1,19 @@
 package org.firstinspires.ftc.teamcode;
 
 
-
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+
 import org.firstinspires.ftc.teamcode.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.GamepadController;
 
 /**
- * Main TeleOp class for X-Drive robot with a shooter.
+ * <ul>
+ *      <li>DO NOT USE, this has been superseded by XDriveDECODE</li>
+ *      <li>Main TeleOp class for X-Drive robot with a shooter.</li>
+ * </ul>
  */
 @Deprecated
 @Disabled
@@ -55,17 +58,11 @@ public class xdrive25shooter extends LinearOpMode { // Changed to LinearOpMode
             boolean right_triggerIsPressed = gamepad1.right_trigger > 0.1;
 
             // Check if the trigger is pressed now but wasn't pressed in the previous loop
-            if (gamepad1.right_trigger > 0.1)
-            {
+            if (gamepad1.right_trigger > 0.1) {
                 shooterMotor.setPower(1.0);
-            }
-            else
-            {
+            } else {
                 shooterMotor.setPower(0.0);
             }
-
-
-
 
 
             // --- Telemetry ---

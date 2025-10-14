@@ -20,8 +20,8 @@ import org.opencv.core.Mat;
 
 @Disabled
 @Config
-@Autonomous(name = "PrimaryAuto", group = "autonomous")
-public class PrimaryAutonomous extends LinearOpMode {
+@Autonomous(name = "PrimaryAutoIntoTheDeep", group = "autonomous")
+public class PrimaryAutonomousIntoTheDeep extends LinearOpMode {
     public static double testYValue = 64;
     public static double testYValue2 = 31;
     public static double testYValue3 = 61.5;

@@ -12,10 +12,10 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.RaiseArmSlider;
 
-@Config
 @Disabled
-@Autonomous(name = "SecondaryAuto", group = "autonomous")
-public class SecondaryAutonomous extends LinearOpMode {
+@Config
+@Autonomous(name = "SecondaryAutoIntoTheDeep", group = "autonomous")
+public class SecondaryAutonomousIntoTheDeep extends LinearOpMode {
     public static double testYValue = 60;
 
     public static double testXvalue = 60;

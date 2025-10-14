@@ -18,14 +18,13 @@ import org.firstinspires.ftc.teamcode.subsystems.GamepadController;
 //import org.firstinspires.ftc.teamcode.subsystems.axisBehavior;
 
 /**
- * Ok, so this is our omega be-all-end-all class.
+ * DO NOT USE, this file has been superseded by XDriveDecode and is no longer needed
  */
 @Deprecated
 @Disabled
 @Config
 @TeleOp(name = "xdrive2025", group = "Robot")
-public class
-xdrive2025 extends OpMode
+public class xdrive2025 extends OpMode
 {
 
     public static boolean dynamicBrakingEnabled = false;

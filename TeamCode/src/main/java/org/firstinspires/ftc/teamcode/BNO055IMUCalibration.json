@@ -1,1 +1,13 @@
-{"dxAccel":0,"dxGyro":-1,"dxMag":0,"dyAccel":0,"dyGyro":0,"dyMag":0,"dzAccel":0,"dzGyro":0,"dzMag":0,"radiusAccel":1000,"radiusMag":480}
+{
+  "dxAccel": 0,
+  "dxGyro": -1,
+  "dxMag": 0,
+  "dyAccel": 0,
+  "dyGyro": 0,
+  "dyMag": 0,
+  "dzAccel": 0,
+  "dzGyro": 0,
+  "dzMag": 0,
+  "radiusAccel": 1000,
+  "radiusMag": 480
+}

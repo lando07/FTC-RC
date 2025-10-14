@@ -24,9 +24,8 @@ import org.firstinspires.ftc.teamcode.subsystems.axisBehavior;
 
 @Disabled
 @Config
-@TeleOp(name = "XDrive", group = "Robot")
-public class
-XDrive extends OpMode {
+@TeleOp(name = "XDriveIntoTheDeep", group = "Robot")
+public class XDriveIntoTheDeep extends OpMode {
     /**
      * Stores the speed to change claw pitch, do not do values greater than 5, the servo isn't fast enough
      */
