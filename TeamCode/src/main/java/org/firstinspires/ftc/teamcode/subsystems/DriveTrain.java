@@ -104,9 +104,9 @@ public class DriveTrain {
     private void doFieldOrientedDrive() {
 
 
-        final double lateral = getProcessedAxisValue(lateralAxis, lateralGain);
-        final double axial = -getProcessedAxisValue(axialAxis, axialGain);
-        final double yaw = getProcessedAxisValue(yawAxis, yawGain);
+        final double lateral = speedMultiplier * getProcessedAxisValue(lateralAxis, lateralGain);
+        final double axial = speedMultiplier * -getProcessedAxisValue(axialAxis, axialGain);
+        final double yaw = yawMultiplier * getProcessedAxisValue(yawAxis, yawGain);
 
         //convert rectangular stick inputs to polar coordinates
         final double heading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
@@ -141,9 +141,9 @@ public class DriveTrain {
         // Omni Mode uses right joystick to go forward & strafe, and left joystick to rotate.
         //Just like a drone
         //I decided to limit precision to 4 decimal places to counteract drift
-        final double lateral = getProcessedAxisValue(lateralAxis, lateralGain);
-        final double axial = -getProcessedAxisValue(axialAxis, axialGain);
-        final double yaw = getProcessedAxisValue(yawAxis, yawGain);
+        final double lateral = speedMultiplier * getProcessedAxisValue(lateralAxis, lateralGain);
+        final double axial = speedMultiplier * -getProcessedAxisValue(axialAxis, axialGain);
+        final double yaw = yawMultiplier * getProcessedAxisValue(yawAxis, yawGain);
 
         //these are the magic 4 statements right here
         // Combine the joystick requests for each axis-motion to determine each wheel's power.

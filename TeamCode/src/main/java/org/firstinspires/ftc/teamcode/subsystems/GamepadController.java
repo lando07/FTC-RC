@@ -314,9 +314,9 @@ class TristateButtonState {
     void update(boolean positivePressed, boolean negativePressed) {
         isPositivePressed = positivePressed;
         isNegativePressed = negativePressed;
-        if (positivePressed && !negativePressed) {
+        if (isPositivePressed && !isNegativePressed) {
             value = 1;
-        } else if (!positivePressed && negativePressed) {
+        } else if (!isPositivePressed && isNegativePressed) {
             value = -1;
         } else {
             // This handles both the case where no buttons are pressed and
