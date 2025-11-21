@@ -18,12 +18,7 @@ public class PrimaryMeepMeepDECODE {
                 .build();
         myBot.runAction(myBot.getDrive().actionBuilder(startingPose)
 
-                .strafeToConstantHeading(new Vector2d(-52,-16))
-                .strafeToLinearHeading(new Vector2d(0,-16),Math.toRadians(0))
-                // Drive from (0,-16) to (-52, 20) while turning to face 90 degrees (straight upfield)
-                // Corrected line
-                .strafeToLinearHeading(new Vector2d(-52, 20), Math.toRadians(90))
-                .strafeToLinearHeading(new Vector2d(-0, 30), Math.toRadians(90))
+
 
 
 
