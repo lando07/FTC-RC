@@ -30,6 +30,7 @@ public class XDriveDECODE extends OpMode {
     private DcMotor shooterMotor;
     private DcMotor intakeMotor;
     public static axisBehavior launcherAxis = axisBehavior.RIGHT_TRIGGER;
+    public static axisBehavior reverseLauncherAxis = axisBehavior.LEFT_TRIGGER;
 
     // --- Shooter Power and Voltage Compensation ---
     // 1. SET YOUR SHOOTER POWER HERE (e.g., 0.80 for 80%)
@@ -52,13 +53,13 @@ public class XDriveDECODE extends OpMode {
         driveTrain = new DriveTrain(this, controller1);
 
         // Controller 2 Trigger Configuration
-        controller2.configureAxis(axisBehavior.RIGHT_TRIGGER);
-        controller2.configureAxis(axisBehavior.LEFT_TRIGGER);
+        controller2.configureAxis(launcherAxis);
+        controller2.configureAxis(reverseLauncherAxis);
 
         // --- Hardware Initialization ---
         shooterMotor = hardwareMap.get(DcMotor.class, "shooterMotor");
         shooterMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-
+        feedServos = new feedServoLauncher(this, controller2);
         intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
 
         // Initialize the VoltageSensor from the hardware map
@@ -117,9 +118,9 @@ public class XDriveDECODE extends OpMode {
         double shooterPower = 0.0;
 
         // 2. Triggers now act as on/off buttons for the fixed power setting
-        if (controller2.getAxisValue(axisBehavior.RIGHT_TRIGGER) > 0.1) { // Fire forward
+        if (controller2.getAxisValue(launcherAxis) > 0.1) { // Fire forward
             shooterPower = SHOOTER_POWER_SETTING;
-        } else if (controller2.getAxisValue(axisBehavior.LEFT_TRIGGER) > 0.1) { // Fire reverse
+        } else if (controller2.getAxisValue(reverseLauncherAxis) > 0.1) { // Fire reverse
             shooterPower = -SHOOTER_POWER_SETTING;
         }
 
