@@ -7,7 +7,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
+import org.firstinspires.ftc.teamcode.subsystems.BiStateButtonBehavior;
 import org.firstinspires.ftc.teamcode.subsystems.DriveTrain;
+import org.firstinspires.ftc.teamcode.subsystems.GamepadButton;
 import org.firstinspires.ftc.teamcode.subsystems.GamepadController;
 import org.firstinspires.ftc.teamcode.subsystems.axisBehavior;
 import org.firstinspires.ftc.teamcode.subsystems.feedServoLauncher;
@@ -31,6 +33,8 @@ public class XDriveDECODE extends OpMode {
     private DcMotor intakeMotor;
     public static axisBehavior launcherAxis = axisBehavior.RIGHT_TRIGGER;
     public static axisBehavior reverseLauncherAxis = axisBehavior.LEFT_TRIGGER;
+    public static GamepadButton feedForwardButton = GamepadButton.RIGHT_BUMPER;
+    public static GamepadButton feedBackwardButton = GamepadButton.LEFT_BUMPER;
 
     // --- Shooter Power and Voltage Compensation ---
     // 1. SET YOUR SHOOTER POWER HERE (e.g., 0.80 for 80%)
@@ -55,7 +59,8 @@ public class XDriveDECODE extends OpMode {
         // Controller 2 Trigger Configuration
         controller2.configureAxis(launcherAxis);
         controller2.configureAxis(reverseLauncherAxis);
-
+        controller2.configureBiStateButton(feedForwardButton, BiStateButtonBehavior.HOLD);
+        controller2.configureBiStateButton(feedBackwardButton, BiStateButtonBehavior.HOLD);
         // --- Hardware Initialization ---
         shooterMotor = hardwareMap.get(DcMotor.class, "shooterMotor");
         shooterMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -105,9 +110,9 @@ public class XDriveDECODE extends OpMode {
     private void computeIntakeMotorDirection(){
         // Set power for intake motor (A/B buttons)
         intakePower = 0;
-        if (gamepad2.a) {
+        if (controller2.getGamepadButtonValue(feedForwardButton)) {
             intakePower = 1.0;
-        } else if (gamepad2.b) {
+        } else if (controller2.getGamepadButtonValue(feedBackwardButton)) {
             intakePower = -1.0;
         }
         intakeMotor.setPower(intakePower);
