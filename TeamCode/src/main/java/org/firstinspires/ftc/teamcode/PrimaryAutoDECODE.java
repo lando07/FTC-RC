@@ -7,7 +7,7 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-
+@Deprecated
 @Config
 @Autonomous(name = "PrimaryAutonomousDECODE", group="autonomous")
 public class PrimaryAutoDECODE extends LinearOpMode {

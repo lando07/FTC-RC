@@ -5,12 +5,12 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.GamepadController;
 import org.firstinspires.ftc.teamcode.subsystems.axisBehavior;
+import org.firstinspires.ftc.teamcode.subsystems.feedServoLauncher;
 
 /**
  * This year's TeleOp for the robot
@@ -18,19 +18,18 @@ import org.firstinspires.ftc.teamcode.subsystems.axisBehavior;
 @Config
 @TeleOp(name = "XDriveDECODE", group = "Robot")
 public class XDriveDECODE extends OpMode {
-    // Motors
+    /**
+     * Stores the drivetrain subsystem object which handles all movement and motor power
+     */
     private DriveTrain driveTrain;
+    /**
+     * Stores the controller keybinds and configurations
+     */
     private GamepadController controller1, controller2;
+    private feedServoLauncher feedServos;
     private DcMotor shooterMotor;
     private DcMotor intakeMotor;
-
-    // Servos
-    private Servo servo1, servo2, servo3, servo4;
-
-    // Servo Positions
-    public static double SERVO_FORWARD_POS = 1.0;
-    public static double SERVO_REVERSE_POS = 0.0;
-    public static double SERVO_NEUTRAL_POS = 0.5;
+    public static axisBehavior launcherAxis = axisBehavior.RIGHT_TRIGGER;
 
     // --- Shooter Power and Voltage Compensation ---
     // 1. SET YOUR SHOOTER POWER HERE (e.g., 0.80 for 80%)
@@ -39,9 +38,15 @@ public class XDriveDECODE extends OpMode {
     private VoltageSensor batteryVoltageSensor;
     public static double NOMINAL_VOLTAGE = 12.5; // The baseline voltage for compensation
 
+    private double compensatedShooterPower;
+    private double currentVoltage;
+    private double intakePower;
+
     @Override
     public void init() {
-        // Gamepad and Drivetrain Initialization
+        //Initialize subsystems and controllers here
+        //Always create objects before configuring them, or you will get
+        //a null pointer exception
         controller1 = new GamepadController(gamepad1);
         controller2 = new GamepadController(gamepad2);
         driveTrain = new DriveTrain(this, controller1);
@@ -55,11 +60,6 @@ public class XDriveDECODE extends OpMode {
         shooterMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
-
-        servo1 = hardwareMap.get(Servo.class, "servo1");
-        servo2 = hardwareMap.get(Servo.class, "servo2");
-        servo3 = hardwareMap.get(Servo.class, "servo3");
-        servo4 = hardwareMap.get(Servo.class, "servo4");
 
         // Initialize the VoltageSensor from the hardware map
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
@@ -78,7 +78,8 @@ public class XDriveDECODE extends OpMode {
     public void start() {
         driveTrain.setBrakingMode(DcMotor.ZeroPowerBehavior.BRAKE);
     }
-
+    //NOTE: Due to the way this codebase is designed, loop() should only be running subsystems or very primitive motor
+    //controls, such as setting power.
     @Override
     public void loop() {
         // Update controllers
@@ -87,64 +88,53 @@ public class XDriveDECODE extends OpMode {
 
         // Update drivetrain
         driveTrain.updateDriveTrainBehavior();
-
-        // --- Shooter Motor Logic with Fixed Power and Voltage Compensation ---
-        double shooterPower = 0.0;
-
-        // 2. Triggers now act as on/off buttons for the fixed power setting
-        if (gamepad2.right_trigger > 0.1) { // Fire forward
-            shooterPower = SHOOTER_POWER_SETTING;
-        } else if (gamepad2.left_trigger > 0.1) { // Fire reverse
-            shooterPower = -SHOOTER_POWER_SETTING;
-        }
-
-        // 3. Apply voltage compensation
-        double currentVoltage = batteryVoltageSensor.getVoltage();
-        if (currentVoltage < 8.0) { // Safety check
-            currentVoltage = NOMINAL_VOLTAGE;
-        }
-        double voltageCompensationFactor = NOMINAL_VOLTAGE / currentVoltage;
-        double compensatedShooterPower = shooterPower * voltageCompensationFactor;
-
-        // Clip the final power to the valid range [-1.0, 1.0]
-        compensatedShooterPower = Math.max(-1.0, Math.min(1.0, compensatedShooterPower));
-
-        shooterMotor.setPower(compensatedShooterPower);
-
-        // Set power for intake motor (A/B buttons)
-        double intakePower = 0;
-        if (gamepad2.right_bumper) {
-            intakePower = 1.0;
-        } else if (gamepad2.left_bumper) {
-            intakePower = -1.0;
-        }
-        intakeMotor.setPower(intakePower);
-
+        computeIntakeMotorDirection();
+        doShooterMotorWithVoltageCompensation();
         // Set positions for the four servos based on bumpers
-        if (gamepad2.left_bumper) {
-            servo1.setPosition(SERVO_FORWARD_POS);
-            servo4.setPosition(SERVO_REVERSE_POS);
-            servo2.setPosition(SERVO_FORWARD_POS);
-            servo3.setPosition(SERVO_REVERSE_POS);
-        } else if (gamepad2.right_bumper) {
-            servo1.setPosition(SERVO_REVERSE_POS);
-            servo4.setPosition(SERVO_FORWARD_POS);
-            servo2.setPosition(SERVO_REVERSE_POS);
-            servo3.setPosition(SERVO_FORWARD_POS);
-        } else {
-            servo1.setPosition(SERVO_NEUTRAL_POS);
-            servo2.setPosition(SERVO_NEUTRAL_POS);
-            servo3.setPosition(SERVO_NEUTRAL_POS);
-            servo4.setPosition(SERVO_NEUTRAL_POS);
-        }
+        feedServos.updateFeedServoLauncherBehavior();
 
         // --- Update Telemetry ---
         telemetry.addData("Shooter Power Setting", "%.0f%%", SHOOTER_POWER_SETTING * 100);
         telemetry.addData("Compensated Power", "%.2f (Active)", compensatedShooterPower);
         telemetry.addData("Battery Voltage", "%.2f V", currentVoltage);
         telemetry.addData("Intake Power", intakePower);
-        telemetry.addData("Servo 1/4 Pos", servo1.getPosition());
-        telemetry.addData("Servo 2/3 Pos", servo2.getPosition());
+        telemetry.addData("Left Servo Pos: ", feedServos.getLeftServoPositions());
+        telemetry.addData("Right Servo Pos", feedServos.getRightServoPositions());
+    }
+    private void computeIntakeMotorDirection(){
+        // Set power for intake motor (A/B buttons)
+        intakePower = 0;
+        if (gamepad2.a) {
+            intakePower = 1.0;
+        } else if (gamepad2.b) {
+            intakePower = -1.0;
+        }
+        intakeMotor.setPower(intakePower);
+    }
+
+    private void doShooterMotorWithVoltageCompensation(){
+        // --- Shooter Motor Logic with Fixed Power and Voltage Compensation ---
+        double shooterPower = 0.0;
+
+        // 2. Triggers now act as on/off buttons for the fixed power setting
+        if (controller2.getAxisValue(axisBehavior.RIGHT_TRIGGER) > 0.1) { // Fire forward
+            shooterPower = SHOOTER_POWER_SETTING;
+        } else if (controller2.getAxisValue(axisBehavior.LEFT_TRIGGER) > 0.1) { // Fire reverse
+            shooterPower = -SHOOTER_POWER_SETTING;
+        }
+
+        // 3. Apply voltage compensation
+        currentVoltage = batteryVoltageSensor.getVoltage();
+        if (currentVoltage < 8.0) { // Safety check
+            currentVoltage = NOMINAL_VOLTAGE;
+        }
+        double voltageCompensationFactor = NOMINAL_VOLTAGE / currentVoltage;
+        compensatedShooterPower = shooterPower * voltageCompensationFactor;
+
+        // Clip the final power to the valid range [-1.0, 1.0]
+        compensatedShooterPower = Math.max(-1.0, Math.min(1.0, compensatedShooterPower));
+
+        shooterMotor.setPower(compensatedShooterPower);
     }
 
     @Override
@@ -154,9 +144,6 @@ public class XDriveDECODE extends OpMode {
         intakeMotor.setPower(0);
 
         // Ensure servos stop moving
-        servo1.setPosition(SERVO_NEUTRAL_POS);
-        servo2.setPosition(SERVO_NEUTRAL_POS);
-        servo3.setPosition(SERVO_NEUTRAL_POS);
-        servo4.setPosition(SERVO_NEUTRAL_POS);
+        feedServos.stop();
     }
 }

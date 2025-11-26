@@ -5,7 +5,7 @@ import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.Servo;
 
 /**
  * Subsystem to control the feed servos to supply a whiffle ball to the launcher motor
@@ -17,10 +17,6 @@ public class feedServoLauncher {
      */
     private final GamepadController gamepad;
     /**
-     * The timestamp (in milliseconds) when the feed cycle started.
-     */
-    private volatile long feedCycleStartTime;
-    /**
      * The duration (in milliseconds) for which the feed servos should run.
      * This can be configured via the FTC Dashboard.
      */
@@ -30,18 +26,16 @@ public class feedServoLauncher {
      * - true: The feed cycle is currently active and servos are (or should be) running.
      * - false: The system is idle and waiting for a button press.
      */
-    private boolean isFeedCycleActive = false;
+    public static GamepadButton feedForwardButton = GamepadButton.LEFT_BUMPER;
+    public static GamepadButton feedReverseButton = GamepadButton.RIGHT_BUMPER;
 
-    private final CRServo feedServoLeft;
-    private final CRServo feedServoRight;
-    /**
-     * How the feed button should behave, not recommended to change due to how the button is implemented
-     */
-    public static BiStateButtonBehavior feedButtonBehavior = BiStateButtonBehavior.HOLD;
-    /**
-     * The button to read from to control the feed servos
-     */
-    public static GamepadButton feedButton = GamepadButton.LEFT_BUMPER;
+
+    private final Servo feedServoFrontLeft, feedServoFrontRight, feedServoBackLeft, feedServoBackRight;
+    // Servos
+    // Servo Positions
+    public static double SERVO_FORWARD_POS = 1.0;
+    public static double SERVO_REVERSE_POS = 0.0;
+    public static double SERVO_NEUTRAL_POS = 0.5;
 
     /**
      * Creates a feedServoLauncher object and initializes the feed servos
@@ -51,17 +45,19 @@ public class feedServoLauncher {
      */
     public feedServoLauncher(OpMode opMode, GamepadController controller) {
         gamepad = controller;
-        feedServoLeft = opMode.hardwareMap.get(CRServo.class, "feedServoLeft");
-        feedServoRight = opMode.hardwareMap.get(CRServo.class, "feedServoRight");
-        feedServoLeft.setDirection(CRServo.Direction.FORWARD);
-        feedServoRight.setDirection(CRServo.Direction.REVERSE);
-        gamepad.configureBiStateButton(feedButton, feedButtonBehavior);
+        feedServoFrontLeft = opMode.hardwareMap.get(Servo.class, "feedServoFrontLeft");
+        feedServoFrontRight = opMode.hardwareMap.get(Servo.class, "feedServoFrontRight");
+        feedServoBackLeft = opMode.hardwareMap.get(Servo.class, "feedServoBackLeft");
+        feedServoBackRight = opMode.hardwareMap.get(Servo.class, "feedServoBackRight");
+        gamepad.configureTristateButton(feedForwardButton, feedReverseButton);
 
     }
 
     public void stop() {
-        feedServoLeft.setPower(0);
-        feedServoRight.setPower(0);
+        feedServoFrontLeft.setPosition(SERVO_NEUTRAL_POS);
+        feedServoBackLeft.setPosition(SERVO_NEUTRAL_POS);
+        feedServoBackRight.setPosition(SERVO_NEUTRAL_POS);
+        feedServoFrontRight.setPosition(SERVO_NEUTRAL_POS);
     }
 
     /**
@@ -69,29 +65,41 @@ public class feedServoLauncher {
      * This method should be called once per loop in an OpMode
      */
     public void updateFeedServoLauncherBehavior() {
-        // State 1: The feed cycle is currently active.
-        if (isFeedCycleActive) {
-            long elapsedTime = System.currentTimeMillis() - feedCycleStartTime;
-            // Check if the timer has expired.
-            if (elapsedTime >= duration) {
-                // Stop the servos and reset the state to idle.
-                feedServoLeft.setPower(0);
-                feedServoRight.setPower(0);
-                isFeedCycleActive = false;
-            }
-            // If the timer has not expired, do nothing and let the servos continue running.
+        int feedState = gamepad.getTristateButtonValue(feedForwardButton);
+        if(feedState == 1) {
+            feedServoFrontRight.setPosition(SERVO_FORWARD_POS);
+            feedServoBackRight.setPosition(SERVO_FORWARD_POS);
+            feedServoFrontLeft.setPosition(SERVO_REVERSE_POS);
+            feedServoBackLeft.setPosition(SERVO_REVERSE_POS);
         }
-        // State 2: The system is idle and waiting for input.
-        else {
-            // Check for a new button press to start the cycle.
-            if (gamepad.getGamepadButtonValue(feedButton)) {
-                // Start the feed cycle.
-                isFeedCycleActive = true;
-                feedCycleStartTime = System.currentTimeMillis();
-                feedServoLeft.setPower(1);
-                feedServoRight.setPower(1);
-            }
+        else if(feedState == -1){
+            feedServoFrontRight.setPosition(SERVO_REVERSE_POS);
+            feedServoBackRight.setPosition(SERVO_REVERSE_POS);
+            feedServoFrontLeft.setPosition(SERVO_FORWARD_POS);
+            feedServoBackLeft.setPosition(SERVO_FORWARD_POS);
         }
+        else{
+            feedServoFrontLeft.setPosition(SERVO_NEUTRAL_POS);
+            feedServoBackLeft.setPosition(SERVO_NEUTRAL_POS);
+            feedServoBackRight.setPosition(SERVO_NEUTRAL_POS);
+            feedServoFrontRight.setPosition(SERVO_NEUTRAL_POS);
+        }
+    }
+
+    /**
+     * Gets feedServoPositions for left servos, both act as the same so only one needs to be read
+     * @return the position of the left servos
+     */
+    public double getLeftServoPositions(){
+        return feedServoFrontLeft.getPosition();
+    }
+
+    /**
+     * Gets feedServoPositions for right servos, both act as the same so only one needs to be read
+     * @return the position of the right servos
+     */
+    public double getRightServoPositions(){
+        return feedServoFrontRight.getPosition();
     }
 
     /**
@@ -99,15 +107,7 @@ public class feedServoLauncher {
      * to prevent any other actions from happening
      */
     public void feedBall(@NonNull LinearOpMode autonomousOpMode) {
-        feedServoLeft.setPower(1);
-        feedServoRight.setPower(1);
-        long startTime = System.currentTimeMillis();
-        while (autonomousOpMode.opModeIsActive() && (System.currentTimeMillis() - startTime < duration)) {
-            // This empty loop hangs the thread for the specified duration
-            // while remaining responsive to the OpMode stopping.
-        }
-        feedServoLeft.setPower(0);
-        feedServoRight.setPower(0);
+
     }
 
 
