@@ -23,6 +23,10 @@ public class RedLargeAutoDecode extends LinearOpMode {
         DcMotorEx launcher = hardwareMap.get(DcMotorEx.class, "launcher");
         Servo servo1 = hardwareMap.get(Servo.class, "servo1");
         Servo servo2 = hardwareMap.get(Servo.class, "servo2");
+        Servo servo3 = hardwareMap.get(Servo.class, "servo3");
+        Servo servo4 = hardwareMap.get(Servo.class, "servo4");
+
+
 
             launcher.setDirection(DcMotorEx.Direction.REVERSE);
             // Using setPower to match TeleOp, so RUN_USING_ENCODER is not needed.
@@ -30,6 +34,8 @@ public class RedLargeAutoDecode extends LinearOpMode {
         double servoOffPosition = 0.5;
         servo1.setPosition(servoOffPosition);
         servo2.setPosition(servoOffPosition);
+        servo3.setPosition(servoOffPosition);
+        servo4.setPosition(servoOffPosition);
         // --- End of Initialization ---
 
         MecanumDrive.DriveLocalizer dl = (MecanumDrive.DriveLocalizer) drive.localizer;
@@ -37,51 +43,7 @@ public class RedLargeAutoDecode extends LinearOpMode {
         Action autonomous = drive.actionBuilder(startingPose)
                 // Current Path
 
-                // --- Autonomous Launch Sequence ---
-                // 1. Spin up the launcher motor using setPower to match TeleOp
-                .stopAndAdd(new InstantAction(() -> launcher.setPower(0.50)))// Using the power from XDriveDECODE
-                .waitSeconds(3.3) // Wait 1.5s for the launcher to reach speed
 
-                // 2. Push the note into the launcher
-                .stopAndAdd(new InstantAction(() -> servo1.setPosition(0.0)))
-                .stopAndAdd(new InstantAction(() -> servo2.setPosition(1.0)))
-                .waitSeconds(0.7) // Wait for the servo to extend
-
-                // 3. Retract the servo
-                .stopAndAdd(new InstantAction(() -> servo1.setPosition(servoOffPosition)))
-                .stopAndAdd(new InstantAction(() -> servo2.setPosition(servoOffPosition)))
-                .waitSeconds(3.0) // Wait for the servo to retract
-
-                .stopAndAdd(new InstantAction(() -> servo1.setPosition(0.0)))
-                .stopAndAdd(new InstantAction(() -> servo2.setPosition(1.0)))
-                .waitSeconds(0.7) // Wait for the servo to extend
-
-                // 3. Retract the servo
-                .stopAndAdd(new InstantAction(() -> servo1.setPosition(servoOffPosition)))
-                .stopAndAdd(new InstantAction(() -> servo2.setPosition(servoOffPosition)))
-                .waitSeconds(3.0) // Wait for the servo to retract
-
-                .stopAndAdd(new InstantAction(() -> servo1.setPosition(0.0)))
-                .stopAndAdd(new InstantAction(() -> servo2.setPosition(1.0)))
-                .waitSeconds(0.7) // Wait for the servo to extend
-
-                // 3. Retract the servo
-                .stopAndAdd(new InstantAction(() -> servo1.setPosition(servoOffPosition)))
-                .stopAndAdd(new InstantAction(() -> servo2.setPosition(servoOffPosition)))
-                .waitSeconds(0.5) // Wait for the servo to retract
-
-                .stopAndAdd(new InstantAction(() -> servo1.setPosition(servoOffPosition)))
-                .stopAndAdd(new InstantAction(() -> servo2.setPosition(servoOffPosition)))
-                .waitSeconds(3.0) // Wait for the servo to retract
-
-                .stopAndAdd(new InstantAction(() -> servo1.setPosition(0.0)))
-                .stopAndAdd(new InstantAction(() -> servo2.setPosition(1.0)))
-                .waitSeconds(0.7) // Wait for the servo to extend
-                // 4. Turn off the launcher
-                .stopAndAdd(new InstantAction(() -> launcher.setPower(0)))
-
-                //.strafeToConstantHeading(new Vector2d(7.5, 5.6))
-                .strafeToConstantHeading(new Vector2d(14.7, 15.7))
                 // --- End of Launch Sequence ---
 
                 .build();

@@ -23,6 +23,8 @@ public class BlueLargeAutoDecode extends LinearOpMode {
         DcMotorEx launcher = hardwareMap.get(DcMotorEx.class, "launcher");
         Servo servo1 = hardwareMap.get(Servo.class, "servo1");
         Servo servo2 = hardwareMap.get(Servo.class, "servo2");
+        Servo servo3 = hardwareMap.get(Servo.class, "servo3");
+        Servo servo4 = hardwareMap.get(Servo.class, "servo4");
 
             launcher.setDirection(DcMotorEx.Direction.REVERSE);
             // Using setPower to match TeleOp, so RUN_USING_ENCODER is not needed.
@@ -30,6 +32,8 @@ public class BlueLargeAutoDecode extends LinearOpMode {
         double servoOffPosition = 0.5;
         servo1.setPosition(servoOffPosition);
         servo2.setPosition(servoOffPosition);
+        servo3.setPosition(servoOffPosition);
+        servo4.setPosition(servoOffPosition);
         // --- End of Initialization ---
 
         Action autonomous = drive.actionBuilder(startingPose)

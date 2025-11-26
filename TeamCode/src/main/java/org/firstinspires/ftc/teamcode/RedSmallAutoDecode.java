@@ -16,13 +16,17 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class RedSmallAutoDecode extends LinearOpMode {
     @Override
     public void runOpMode(){
-        Pose2d startingPose = new Pose2d(59.6,16,Math.toRadians(180));
+        Pose2d startingPose = new Pose2d(57.8,12.7,Math.toRadians(180));
         MecanumDrive drive = new MecanumDrive(hardwareMap, startingPose);
 
         // --- Initialize Launcher and Servos ---
         DcMotorEx launcher = hardwareMap.get(DcMotorEx.class, "launcher");
         Servo servo1 = hardwareMap.get(Servo.class, "servo1");
         Servo servo2 = hardwareMap.get(Servo.class, "servo2");
+        Servo servo3 = hardwareMap.get(Servo.class, "servo3");
+        Servo servo4 = hardwareMap.get(Servo.class, "servo4");
+
+
 
             launcher.setDirection(DcMotorEx.Direction.REVERSE);
             // Using setPower to match TeleOp, so RUN_USING_ENCODER is not needed.
@@ -30,64 +34,44 @@ public class RedSmallAutoDecode extends LinearOpMode {
         double servoOffPosition = 0.5;
         servo1.setPosition(servoOffPosition);
         servo2.setPosition(servoOffPosition);
+        servo3.setPosition(servoOffPosition);
+        servo4.setPosition(servoOffPosition);
         // --- End of Initialization ---
 
         MecanumDrive.DriveLocalizer dl = (MecanumDrive.DriveLocalizer) drive.localizer;
 
         Action autonomous = drive.actionBuilder(startingPose)
-                //.waitSeconds(12.2)
-                .strafeToConstantHeading(new Vector2d(38, -16))
+
                 // Current Path
-                .waitSeconds(12.2)
-                .strafeToConstantHeading(new Vector2d(-15.5, 16))
-                .turn(Math.toRadians(-50))
-                .strafeToConstantHeading(new Vector2d(-50.8, 48.5))
+                .strafeToConstantHeading(new Vector2d(36.3,12.7))
+                .turn(Math.toRadians(-90))
 
-                // --- Autonomous Launch Sequence ---
-                // 1. Spin up the launcher motor using setPower to match TeleOp
-               // .stopAndAdd(new InstantAction(() -> launcher.setPower(0.50)))// Using the power from XDriveDECODE
-                 .waitSeconds(3.3)// Wait 1.5s for the launcher to reach speed
+                .strafeToConstantHeading(new Vector2d(34.8,56.2))
+                .strafeToConstantHeading(new Vector2d(35.9,24.4))
+                .turn(Math.toRadians(90))
+                .strafeToConstantHeading(new Vector2d(-31.0,24.2))
+                .turn(Math.toRadians(-54))
+                .strafeToConstantHeading(new Vector2d(-51.2,48.9))
 
-                // 2. Push the note into the launcher
-                .stopAndAdd(new InstantAction(() -> servo1.setPosition(0.0)))
-                .stopAndAdd(new InstantAction(() -> servo2.setPosition(1.0)))
-                .waitSeconds(0.7) // Wait for the servo to extend
+                .strafeToConstantHeading(new Vector2d(-31.4,24.2))
+                .turn(Math.toRadians(-127))
+                .strafeToConstantHeading(new Vector2d(12.7,24.2))
+                .turn(Math.toRadians(92))
 
-                // 3. Retract the servo
-                .stopAndAdd(new InstantAction(() -> servo1.setPosition(servoOffPosition)))
-                .stopAndAdd(new InstantAction(() -> servo2.setPosition(servoOffPosition)))
-                .waitSeconds(3.0) // Wait for the servo to retract
+                .strafeToConstantHeading(new Vector2d(11.7,54.6))
+                .strafeToConstantHeading(new Vector2d(12.7,24.2))
+                .turn(Math.toRadians(92))
+                .strafeToConstantHeading(new Vector2d(-31.6,24.4))
+                .turn(Math.toRadians(-54))
+                .strafeToConstantHeading(new Vector2d(-51.2,48.9))
 
-                .stopAndAdd(new InstantAction(() -> servo1.setPosition(0.0)))
-                .stopAndAdd(new InstantAction(() -> servo2.setPosition(1.0)))
-                .waitSeconds(0.7) // Wait for the servo to extend
+                .strafeToConstantHeading(new Vector2d(-31.4,24.2))
+                .turn(Math.toRadians(-127))
+                .strafeToConstantHeading(new Vector2d(-12.3,24.2))
+                .turn(Math.toRadians(92))
 
-                // 3. Retract the servo
-                .stopAndAdd(new InstantAction(() -> servo1.setPosition(servoOffPosition)))
-                .stopAndAdd(new InstantAction(() -> servo2.setPosition(servoOffPosition)))
-                .waitSeconds(3.0) // Wait for the servo to retract
 
-                .stopAndAdd(new InstantAction(() -> servo1.setPosition(0.0)))
-                .stopAndAdd(new InstantAction(() -> servo2.setPosition(1.0)))
-                .waitSeconds(0.7) // Wait for the servo to extend
 
-                // 3. Retract the servo
-                .stopAndAdd(new InstantAction(() -> servo1.setPosition(servoOffPosition)))
-                .stopAndAdd(new InstantAction(() -> servo2.setPosition(servoOffPosition)))
-                .waitSeconds(0.5) // Wait for the servo to retract
-
-                .stopAndAdd(new InstantAction(() -> servo1.setPosition(servoOffPosition)))
-                .stopAndAdd(new InstantAction(() -> servo2.setPosition(servoOffPosition)))
-                .waitSeconds(3.0) // Wait for the servo to retract
-
-                .stopAndAdd(new InstantAction(() -> servo1.setPosition(0.0)))
-                .stopAndAdd(new InstantAction(() -> servo2.setPosition(1.0)))
-                .waitSeconds(0.7) // Wait for the servo to extend
-                // 4. Turn off the launcher
-                .stopAndAdd(new InstantAction(() -> launcher.setPower(0)))
-
-                .strafeToConstantHeading(new Vector2d(20, 20))
-               // .turn(Math.toRadians(-185))
                 // --- End of Launch Sequence ---
 
                 .build();

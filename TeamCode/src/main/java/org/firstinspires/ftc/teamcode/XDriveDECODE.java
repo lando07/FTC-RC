@@ -34,7 +34,7 @@ public class XDriveDECODE extends OpMode {
 
     // --- Shooter Power and Voltage Compensation ---
     // 1. SET YOUR SHOOTER POWER HERE (e.g., 0.80 for 80%)
-    public static double SHOOTER_POWER_SETTING = 0.80;
+    public static double SHOOTER_POWER_SETTING = 0.52;
 
     private VoltageSensor batteryVoltageSensor;
     public static double NOMINAL_VOLTAGE = 12.5; // The baseline voltage for compensation
@@ -113,9 +113,9 @@ public class XDriveDECODE extends OpMode {
 
         // Set power for intake motor (A/B buttons)
         double intakePower = 0;
-        if (gamepad2.a) {
+        if (gamepad2.right_bumper) {
             intakePower = 1.0;
-        } else if (gamepad2.b) {
+        } else if (gamepad2.left_bumper) {
             intakePower = -1.0;
         }
         intakeMotor.setPower(intakePower);

@@ -7,7 +7,7 @@ import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 public class PrimaryMeepMeepDECODE {
-    public static Pose2d startingPose = new Pose2d(-50,-50,Math.toRadians(45));
+    public static Pose2d startingPose = new Pose2d(61.8,-12.5,Math.toRadians(180));
 
     public static void main(String[] args) {
         System.setProperty("sun.java2d.opengl", "true");
@@ -17,6 +17,78 @@ public class PrimaryMeepMeepDECODE {
                 .setConstraints(90, 70, 55, 60, 14)
                 .build();
         myBot.runAction(myBot.getDrive().actionBuilder(startingPose)
+               //Current Path
+                .strafeToConstantHeading(new Vector2d(36.3,-12.7))
+                .turn(Math.toRadians(90))
+
+                .strafeToConstantHeading(new Vector2d(35.0,-56.0))
+                .strafeToConstantHeading(new Vector2d(36.3,-12.7))
+                .turn(Math.toRadians(-90))
+                .strafeToConstantHeading(new Vector2d(-30.8,-15.1))
+                .turn(Math.toRadians(54))
+                .strafeToConstantHeading(new Vector2d(-53.4,-46.1))
+
+                .strafeToConstantHeading(new Vector2d(-30.8,-15.1))
+                .turn(Math.toRadians(127))
+                .strafeToConstantHeading(new Vector2d(10.5,-13.5))
+                .turn(Math.toRadians(-92))
+
+                .strafeToConstantHeading(new Vector2d(11.5,-51.4))
+                .strafeToConstantHeading(new Vector2d(10.5,-13.5))
+                .turn(Math.toRadians(-92))
+                .strafeToConstantHeading(new Vector2d(-30.8,-15.1))
+                .turn(Math.toRadians(54))
+                .strafeToConstantHeading(new Vector2d(-53.4,-46.1))
+                .strafeToConstantHeading(new Vector2d(-30.8,-15.1))
+                .turn(Math.toRadians(127))
+                .strafeToConstantHeading(new Vector2d(-12.5,-14.1))
+                .turn(Math.toRadians(-90))
+                .strafeToConstantHeading(new Vector2d(-12.5,-37.5))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
