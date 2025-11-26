@@ -7,7 +7,7 @@ import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 public class PrimaryMeepMeepDECODE {
-    public static Pose2d startingPose = new Pose2d(61.8,-12.5,Math.toRadians(180));
+    public static Pose2d startingPose = new Pose2d(-53.1,46.1,Math.toRadians(-52));
 
     public static void main(String[] args) {
         System.setProperty("sun.java2d.opengl", "true");
@@ -18,32 +18,60 @@ public class PrimaryMeepMeepDECODE {
                 .build();
         myBot.runAction(myBot.getDrive().actionBuilder(startingPose)
                //Current Path
-                .strafeToConstantHeading(new Vector2d(36.3,-12.7))
-                .turn(Math.toRadians(90))
 
-                .strafeToConstantHeading(new Vector2d(35.0,-56.0))
-                .strafeToConstantHeading(new Vector2d(36.3,-12.7))
-                .turn(Math.toRadians(-90))
-                .strafeToConstantHeading(new Vector2d(-30.8,-15.1))
-                .turn(Math.toRadians(54))
-                .strafeToConstantHeading(new Vector2d(-53.4,-46.1))
+                .strafeToConstantHeading(new Vector2d(-32.2,23.2))
+                .turn(Math.toRadians(-127))
+                .strafeToConstantHeading(new Vector2d(-12.3,23.0))
+                .turn(Math.toRadians(92))
 
-                .strafeToConstantHeading(new Vector2d(-30.8,-15.1))
-                .turn(Math.toRadians(127))
-                .strafeToConstantHeading(new Vector2d(10.5,-13.5))
-                .turn(Math.toRadians(-92))
+                .strafeToConstantHeading(new Vector2d(-11.9,51.4))
+                .strafeToConstantHeading(new Vector2d(-12.3,23.0))
+                .turn(Math.toRadians(91))
+                .strafeToConstantHeading(new Vector2d(-32.2,23.2))
+                .turn(Math.toRadians(-56))
+                .strafeToConstantHeading(new Vector2d(-53.1,46.1))
 
-                .strafeToConstantHeading(new Vector2d(11.5,-51.4))
-                .strafeToConstantHeading(new Vector2d(10.5,-13.5))
-                .turn(Math.toRadians(-92))
-                .strafeToConstantHeading(new Vector2d(-30.8,-15.1))
-                .turn(Math.toRadians(54))
-                .strafeToConstantHeading(new Vector2d(-53.4,-46.1))
-                .strafeToConstantHeading(new Vector2d(-30.8,-15.1))
-                .turn(Math.toRadians(127))
-                .strafeToConstantHeading(new Vector2d(-12.5,-14.1))
-                .turn(Math.toRadians(-90))
-                .strafeToConstantHeading(new Vector2d(-12.5,-37.5))
+                .strafeToConstantHeading(new Vector2d(-32.2,23.2))
+                .turn(Math.toRadians(-127))
+                .strafeToConstantHeading(new Vector2d(11.3,23.4))
+                .turn(Math.toRadians(92))
+
+                .strafeToConstantHeading(new Vector2d(11.9,50.0))
+                .strafeToConstantHeading(new Vector2d(11.3,23.4))
+                .turn(Math.toRadians(92))
+                .strafeToConstantHeading(new Vector2d(-32.2,23.2))
+                .turn(Math.toRadians(-56))
+                .strafeToConstantHeading(new Vector2d(-53.1,46.1))
+                .strafeToConstantHeading(new Vector2d(-32.2,23.2))
+                .turn(Math.toRadians(-127))
+                .strafeToConstantHeading(new Vector2d(35.3,23.8))
+                .turn(Math.toRadians(92))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
