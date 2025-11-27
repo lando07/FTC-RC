@@ -16,7 +16,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class RedLargeAutoDecode extends LinearOpMode {
     @Override
     public void runOpMode(){
-        Pose2d startingPose = new Pose2d(-52.0,46.1,Math.toRadians(-232));
+        Pose2d startingPose = new Pose2d(-53.1,46.1,Math.toRadians(-52));
         MecanumDrive drive = new MecanumDrive(hardwareMap, startingPose);
 
         // --- Initialize Launcher and Servos ---
