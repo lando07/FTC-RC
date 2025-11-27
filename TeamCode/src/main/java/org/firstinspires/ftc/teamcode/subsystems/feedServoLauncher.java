@@ -14,7 +14,7 @@ public class feedServoLauncher {
     /**
      * The controller to use for user input
      */
-    private final GamepadController gamepad;
+    private GamepadController gamepad;
     /**
      * The duration (in milliseconds) for which the feed servos should run.
      * This can be configured via the FTC Dashboard.
@@ -35,7 +35,13 @@ public class feedServoLauncher {
     public static double SERVO_FORWARD_POS = 1.0;
     public static double SERVO_REVERSE_POS = 0.0;
     public static double SERVO_NEUTRAL_POS = 0.5;
+    public feedServoLauncher(OpMode opMode){
 
+        feedServoFrontLeft = opMode.hardwareMap.get(Servo.class, "servo1");
+        feedServoFrontRight = opMode.hardwareMap.get(Servo.class, "servo2");
+        feedServoBackLeft = opMode.hardwareMap.get(Servo.class, "servo3");
+        feedServoBackRight = opMode.hardwareMap.get(Servo.class, "servo4");
+    }
     /**
      * Creates a feedServoLauncher object and initializes the feed servos
      *
