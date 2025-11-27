@@ -1,9 +1,8 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import androidx.annotation.NonNull;
-
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.InstantAction;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -26,8 +25,8 @@ public class feedServoLauncher {
      * - true: The feed cycle is currently active and servos are (or should be) running.
      * - false: The system is idle and waiting for a button press.
      */
-    public static GamepadButton feedForwardButton = GamepadButton.LEFT_BUMPER;
-    public static GamepadButton feedReverseButton = GamepadButton.RIGHT_BUMPER;
+    public static GamepadButton feedForwardButton = GamepadButton.RIGHT_BUMPER;
+    public static GamepadButton feedReverseButton = GamepadButton.LEFT_BUMPER;
 
 
     private final Servo feedServoFrontLeft, feedServoFrontRight, feedServoBackLeft, feedServoBackRight;
@@ -45,10 +44,11 @@ public class feedServoLauncher {
      */
     public feedServoLauncher(OpMode opMode, GamepadController controller) {
         gamepad = controller;
-        feedServoFrontLeft = opMode.hardwareMap.get(Servo.class, "feedServoFrontLeft");
-        feedServoFrontRight = opMode.hardwareMap.get(Servo.class, "feedServoFrontRight");
-        feedServoBackLeft = opMode.hardwareMap.get(Servo.class, "feedServoBackLeft");
-        feedServoBackRight = opMode.hardwareMap.get(Servo.class, "feedServoBackRight");
+        //TODO: wire servos according to their initialization below
+        feedServoFrontLeft = opMode.hardwareMap.get(Servo.class, "servo1");
+        feedServoFrontRight = opMode.hardwareMap.get(Servo.class, "servo2");
+        feedServoBackLeft = opMode.hardwareMap.get(Servo.class, "servo3");
+        feedServoBackRight = opMode.hardwareMap.get(Servo.class, "servo4");
         gamepad.configureTristateButton(feedForwardButton, feedReverseButton);
 
     }
@@ -65,24 +65,16 @@ public class feedServoLauncher {
      * This method should be called once per loop in an OpMode
      */
     public void updateFeedServoLauncherBehavior() {
+        //TODO: Implement touchSensor to stop servos once intake is complete
         int feedState = gamepad.getTristateButtonValue(feedForwardButton);
         if(feedState == 1) {
-            feedServoFrontRight.setPosition(SERVO_FORWARD_POS);
-            feedServoBackRight.setPosition(SERVO_FORWARD_POS);
-            feedServoFrontLeft.setPosition(SERVO_REVERSE_POS);
-            feedServoBackLeft.setPosition(SERVO_REVERSE_POS);
+            intakeBall();
         }
         else if(feedState == -1){
-            feedServoFrontRight.setPosition(SERVO_REVERSE_POS);
-            feedServoBackRight.setPosition(SERVO_REVERSE_POS);
-            feedServoFrontLeft.setPosition(SERVO_FORWARD_POS);
-            feedServoBackLeft.setPosition(SERVO_FORWARD_POS);
+            rejectBall();
         }
         else{
-            feedServoFrontLeft.setPosition(SERVO_NEUTRAL_POS);
-            feedServoBackLeft.setPosition(SERVO_NEUTRAL_POS);
-            feedServoBackRight.setPosition(SERVO_NEUTRAL_POS);
-            feedServoFrontRight.setPosition(SERVO_NEUTRAL_POS);
+            stopIntake();
         }
     }
 
@@ -106,8 +98,35 @@ public class feedServoLauncher {
      * Autonomous method to feed a ball to the launcher, intentionally hangs the entire autonomous
      * to prevent any other actions from happening
      */
-    public void feedBall(@NonNull LinearOpMode autonomousOpMode) {
-
+    public Action intakeBallAction() {
+        return new InstantAction(this::intakeBall);
+    }
+    private void intakeBall() {
+        //TODO: Fix Servo directions
+        feedServoFrontRight.setPosition(SERVO_FORWARD_POS);
+        feedServoBackRight.setPosition(SERVO_FORWARD_POS);
+        feedServoFrontLeft.setPosition(SERVO_REVERSE_POS);
+        feedServoBackLeft.setPosition(SERVO_REVERSE_POS);
+    }
+    public Action rejectBallAction(){
+        return new InstantAction(this::rejectBall);
+    }
+    private void rejectBall(){
+        //TODO: Fix Servo directions
+        feedServoFrontRight.setPosition(SERVO_FORWARD_POS);
+        feedServoBackRight.setPosition(SERVO_FORWARD_POS);
+        feedServoFrontLeft.setPosition(SERVO_REVERSE_POS);
+        feedServoBackLeft.setPosition(SERVO_REVERSE_POS);
+    }
+    public Action stopIntakeAction(){
+        return new InstantAction(this::stopIntake);
+    }
+    private void stopIntake(){
+        //TODO: Fix Servo directions
+        feedServoFrontLeft.setPosition(SERVO_NEUTRAL_POS);
+        feedServoBackLeft.setPosition(SERVO_NEUTRAL_POS);
+        feedServoBackRight.setPosition(SERVO_NEUTRAL_POS);
+        feedServoFrontRight.setPosition(SERVO_NEUTRAL_POS);
     }
 
 
