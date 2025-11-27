@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
@@ -12,11 +11,11 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @Config
-@Autonomous(name = "BlueLargeAutoDecode", group="autonomous")
-public class BlueLargeAutoDecode extends LinearOpMode {
+@Autonomous(name = "Blue Launch Zone", group="autonomous")
+public class BlueLaunchZoneAuto extends LinearOpMode {
     @Override
     public void runOpMode(){
-        Pose2d startingPose = new Pose2d(-52.0,-46.1,Math.toRadians(232));
+        Pose2d startingPose = new Pose2d(-52.0,-46.1, Math.toRadians(232));
         MecanumDrive drive = new MecanumDrive(hardwareMap, startingPose);
 
         // --- Initialize Launcher and Servos ---

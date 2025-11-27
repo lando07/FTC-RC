@@ -1,4 +1,4 @@
-package com.example.meepmeeptesting;
+package com.example.meepmeeptesting.DECODE;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
@@ -6,7 +6,7 @@ import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
-public class PrimaryMeepMeepDECODE {
+public class RedLaunchZoneDECODE {
     public static Pose2d startingPose = new Pose2d(-53.1,46.1,Math.toRadians(-52));
 
     public static void main(String[] args) {

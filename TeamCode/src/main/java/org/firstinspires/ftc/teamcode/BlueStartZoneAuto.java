@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.acmerobotics.roadrunner.Pose2d;
@@ -12,8 +11,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @Config
-@Autonomous(name = "BlueSmallAutoDecode", group="autonomous")
-public class BlueSmallAutoDecode extends LinearOpMode {
+@Autonomous(name = "Blue Start Zone", group="autonomous")
+public class BlueStartZoneAuto extends LinearOpMode {
     @Override
     public void runOpMode(){
         double originalMaxWheelVel = MecanumDrive.PARAMS.maxWheelVel;

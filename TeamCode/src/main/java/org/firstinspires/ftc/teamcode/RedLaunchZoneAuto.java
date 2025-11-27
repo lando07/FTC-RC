@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
@@ -12,8 +11,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @Config
-@Autonomous(name = "RedLargeAutoDecode", group="autonomous")
-public class RedLargeAutoDecode extends LinearOpMode {
+@Autonomous(name = "Red Launch Zone", group="autonomous")
+public class RedLaunchZoneAuto extends LinearOpMode {
     @Override
     public void runOpMode(){
         Pose2d startingPose = new Pose2d(-53.1,46.1,Math.toRadians(-52));
