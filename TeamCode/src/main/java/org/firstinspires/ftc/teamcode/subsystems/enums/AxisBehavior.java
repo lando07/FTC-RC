@@ -1,11 +1,12 @@
-package org.firstinspires.ftc.teamcode.subsystems;
+package org.firstinspires.ftc.teamcode.subsystems.enums;
 
 import androidx.annotation.NonNull;
 
 /**
  * All supported axes on the controller
+ * @author Landon Smith
  */
-public enum axisBehavior {
+public enum AxisBehavior {
     LEFT_STICK_X("Left Stick X-Axis"),
     LEFT_STICK_Y("Left Stick Y-Axis"),
     RIGHT_STICK_X("Right Stick X-Axis"),
@@ -14,7 +15,7 @@ public enum axisBehavior {
     RIGHT_TRIGGER("Right Trigger");
     private final String displayName;
 
-    axisBehavior(String displayName) {
+    AxisBehavior(String displayName) {
         this.displayName = displayName;
     }
 

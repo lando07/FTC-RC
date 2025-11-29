@@ -10,6 +10,12 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
+/**
+ * Autonomous Program for when the robot starts on the red team,
+ * at the start zone.
+ * @author Thu
+ * @author Mentor Landon Smith
+ */
 @Config
 @Autonomous(name = "Red Start Zone", group="autonomous")
 public class RedStartZoneAuto extends LinearOpMode {

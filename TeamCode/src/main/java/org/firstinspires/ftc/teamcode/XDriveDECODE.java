@@ -7,15 +7,17 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
-import org.firstinspires.ftc.teamcode.subsystems.BiStateButtonBehavior;
 import org.firstinspires.ftc.teamcode.subsystems.DriveTrain;
-import org.firstinspires.ftc.teamcode.subsystems.GamepadButton;
+import org.firstinspires.ftc.teamcode.subsystems.FeedServoLauncher;
 import org.firstinspires.ftc.teamcode.subsystems.GamepadController;
-import org.firstinspires.ftc.teamcode.subsystems.axisBehavior;
-import org.firstinspires.ftc.teamcode.subsystems.feedServoLauncher;
+import org.firstinspires.ftc.teamcode.subsystems.enums.AxisBehavior;
+import org.firstinspires.ftc.teamcode.subsystems.enums.BiStateButtonBehavior;
+import org.firstinspires.ftc.teamcode.subsystems.enums.GamepadButton;
 
 /**
  * This year's TeleOp for the robot
+ * @author Thu
+ * @author Mentor Landon Smith
  */
 @Config
 @TeleOp(name = "XDriveDECODE", group = "Robot")
@@ -28,11 +30,11 @@ public class XDriveDECODE extends OpMode {
      * Stores the controller keybinds and configurations
      */
     private GamepadController controller1, controller2;
-    private feedServoLauncher feedServos;
+    private FeedServoLauncher feedServos;
     private DcMotor shooterMotor;
     private DcMotor intakeMotor;
-    public static axisBehavior launcherAxis = axisBehavior.RIGHT_TRIGGER;
-    public static axisBehavior reverseLauncherAxis = axisBehavior.LEFT_TRIGGER;
+    public static AxisBehavior launcherAxis = AxisBehavior.RIGHT_TRIGGER;
+    public static AxisBehavior reverseLauncherAxis = AxisBehavior.LEFT_TRIGGER;
     public static GamepadButton feedForwardButton = GamepadButton.RIGHT_BUMPER;
     public static GamepadButton feedBackwardButton = GamepadButton.LEFT_BUMPER;
 
@@ -64,7 +66,7 @@ public class XDriveDECODE extends OpMode {
         // --- Hardware Initialization ---
         shooterMotor = hardwareMap.get(DcMotor.class, "shooterMotor");
         shooterMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        feedServos = new feedServoLauncher(this, controller2);
+        feedServos = new FeedServoLauncher(this, controller2);
         intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
 
         // Initialize the VoltageSensor from the hardware map

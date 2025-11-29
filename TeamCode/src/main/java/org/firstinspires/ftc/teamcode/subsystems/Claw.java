@@ -7,6 +7,14 @@ import com.acmerobotics.roadrunner.InstantAction;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.subsystems.enums.BiStateButtonBehavior;
+import org.firstinspires.ftc.teamcode.subsystems.enums.GamepadButton;
+
+/**
+ * This class was used in FTC Into the Deep to control
+ * the behavior of the claws used to grab specimens and samples.
+ * @author Landon Smith
+ */
 @Config
 public class Claw {
     public static double OPEN = 0.55;

@@ -11,17 +11,21 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.subsystems.enums.AxisBehavior;
+import org.firstinspires.ftc.teamcode.subsystems.enums.BiStateButtonBehavior;
+import org.firstinspires.ftc.teamcode.subsystems.enums.GamepadButton;
 
 /**
  * This is the main class to control the 4 motors on the drive train. It has dual-functionality,
  * since it can both drive with a constant heading and a field-relative heading.
+ * @author Landon Smith
  */
 @Config
 public class DriveTrain {
     // --- Public Configuration Variables ---
-    public static axisBehavior lateralAxis = axisBehavior.LEFT_STICK_X;
-    public static axisBehavior axialAxis = axisBehavior.LEFT_STICK_Y;
-    public static axisBehavior yawAxis = axisBehavior.RIGHT_STICK_X;
+    public static AxisBehavior lateralAxis = AxisBehavior.LEFT_STICK_X;
+    public static AxisBehavior axialAxis = AxisBehavior.LEFT_STICK_Y;
+    public static AxisBehavior yawAxis = AxisBehavior.RIGHT_STICK_X;
     public static GamepadButton resetIMUButton = GamepadButton.X;
     public static GamepadButton lowSpeedButton = GamepadButton.RIGHT_BUMPER;
     public static GamepadButton toggleDriveModeButton = GamepadButton.Y;
@@ -218,7 +222,7 @@ public class DriveTrain {
      * @param gain The exponent to apply to the input, for adding a response curve.
      * @return The processed joystick value.
      */
-    private double getProcessedAxisValue(axisBehavior axis, double gain) {
+    private double getProcessedAxisValue(AxisBehavior axis, double gain) {
         double rawValue = gamepad.getAxisValue(axis);
         // Truncate to 4 decimal places to reduce joystick drift
         double truncatedValue = (int) (rawValue * 10000) / 10000.0;

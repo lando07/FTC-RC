@@ -1,9 +1,10 @@
-package org.firstinspires.ftc.teamcode.subsystems;
+package org.firstinspires.ftc.teamcode.subsystems.enums;
 
 import androidx.annotation.NonNull;
 
 /**
  * Represents the behaviors that can be assigned to a button.
+ * @author Landon Smith
  */
 public enum BiStateButtonBehavior {
     TOGGLE("Toggle"),

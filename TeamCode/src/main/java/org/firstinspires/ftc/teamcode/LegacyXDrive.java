@@ -6,6 +6,7 @@ import static org.firstinspires.ftc.teamcode.subsystems.RaiseArmSlider.highSpeci
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.bosch.BHI260IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -50,7 +51,7 @@ import org.firstinspires.ftc.teamcode.subsystems.RaiseArmSlider;
  *   </li>
  * </ul>
  */
-
+@Disabled
 @Config
 @TeleOp(name = "LegacyXDrive", group = "Robot")
 public class LegacyXDrive extends OpMode {

@@ -3,18 +3,15 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-
-//import org.firstinspires.ftc.teamcode.subsystems.BiStateButtonBehavior;
 import org.firstinspires.ftc.teamcode.subsystems.DriveTrain;
-//import org.firstinspires.ftc.teamcode.subsystems.GamepadButton;
 import org.firstinspires.ftc.teamcode.subsystems.GamepadController;
-//import org.firstinspires.ftc.teamcode.subsystems.axisBehavior;
+//import org.firstinspires.ftc.teamcode.subsystems.enums.AxisBehavior;
 
 /**
  * DO NOT USE, this file has been superseded by XDriveDecode and is no longer needed
@@ -28,7 +25,7 @@ public class xdrive2025 extends OpMode
 
     public static boolean dynamicBrakingEnabled = false;
    // public static double backStopPosition = 0.03;
-  //  private final axisBehavior armExtendAxis = axisBehavior.LEFT_STICK_Y;
+  //  private final AxisBehavior armExtendAxis = AxisBehavior.LEFT_STICK_Y;
    // private final GamepadButton resetServoOrientationButton = GamepadButton.A;
    // private final GamepadButton clawToggleButton = GamepadButton.B;
   //  private final BiStateButtonBehavior clawToggleBehavior = BiStateButtonBehavior.TOGGLE;

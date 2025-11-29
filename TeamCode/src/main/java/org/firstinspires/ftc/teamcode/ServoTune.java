@@ -4,6 +4,10 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
+/**
+ * Incredibly simple teleop used to tune servos with a joystick
+ * @author Landon Smith
+ */
 @TeleOp(name = "Servo Tune", group = "TeleOp")
 public class ServoTune extends OpMode {
     private Servo testServo;
