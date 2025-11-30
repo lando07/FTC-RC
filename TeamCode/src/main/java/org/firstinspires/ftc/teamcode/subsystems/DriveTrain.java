@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.teamcode.MecanumDrive.PARAMS;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.bosch.BNO055IMUNew;
+import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -11,6 +12,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.subsystems.enums.AxisBehavior;
 import org.firstinspires.ftc.teamcode.subsystems.enums.BiStateButtonBehavior;
 import org.firstinspires.ftc.teamcode.subsystems.enums.GamepadButton;
@@ -29,6 +31,9 @@ public class DriveTrain {
     public static GamepadButton resetIMUButton = GamepadButton.X;
     public static GamepadButton lowSpeedButton = GamepadButton.RIGHT_BUMPER;
     public static GamepadButton toggleDriveModeButton = GamepadButton.Y;
+    public static GoBildaPinpointDriver.EncoderDirection xEncoderDirection = GoBildaPinpointDriver.EncoderDirection.FORWARD;
+    public static GoBildaPinpointDriver.EncoderDirection yEncoderDirection = GoBildaPinpointDriver.EncoderDirection.FORWARD;
+    public static boolean usePinpointIMU = false;
     public static boolean toggleDriveModeButtonDisabled = false;
     public static boolean resetIMUButtonDisabled = false;
     public static double lateralGain = 1.0;
@@ -39,7 +44,8 @@ public class DriveTrain {
     public static double lowSpeedMultiplier = 0.5;
 
     // --- Private Subsystem Components ---
-    private final BNO055IMUNew imu;
+    private GoBildaPinpointDriver pinpoint;
+    private BNO055IMUNew imu;
     private final DcMotor frontLeft;
     private final DcMotor frontRight;
     private final DcMotor backLeft;
@@ -57,13 +63,23 @@ public class DriveTrain {
      */
     public DriveTrain(OpMode opMode, GamepadController controller) {
         gamepad = controller;
-        // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
-        // on a Core Device Interface Module, configured to be a sensor of type "BNO55",
-        // and named "imu 1".
-        imu = opMode.hardwareMap.get(BNO055IMUNew.class, "imu 1");
-        BNO055IMUNew.Parameters parameters = new BNO055IMUNew.Parameters(new RevHubOrientationOnRobot(PARAMS.logoFacingDirection, PARAMS.usbFacingDirection));
-        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // precalibrated data to increase accuracy
-        imu.initialize(parameters); //actually starts the IMU
+        //Branch condition depending on current IMU mode(prefer pinpoint due to drastically higher accuracy)
+        if(usePinpointIMU){
+            pinpoint = opMode.hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
+            pinpoint.setOffsets(-84.0, -168.0, DistanceUnit.MM);
+            pinpoint.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
+            pinpoint.setEncoderDirections(xEncoderDirection, yEncoderDirection);
+            pinpoint.resetPosAndIMU();
+        }
+        else {
+            // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
+            // on a Core Device Interface Module, configured to be a sensor of type "BNO55",
+            // and named "imu 1".
+            imu = opMode.hardwareMap.get(BNO055IMUNew.class, "imu 1");
+            BNO055IMUNew.Parameters parameters = new BNO055IMUNew.Parameters(new RevHubOrientationOnRobot(PARAMS.logoFacingDirection, PARAMS.usbFacingDirection));
+            parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // precalibrated data to increase accuracy
+            imu.initialize(parameters); //actually starts the IMU
+        }
 
         // Retrieve and initialize the motors
         frontLeft = opMode.hardwareMap.get(DcMotorEx.class, "leftFront");
@@ -112,8 +128,16 @@ public class DriveTrain {
         final double axial = speedMultiplier * -getProcessedAxisValue(axialAxis, axialGain);
         final double yaw = yawMultiplier * getProcessedAxisValue(yawAxis, yawGain);
 
+        double heading;
+        //Branch condition if using pinpoint imu
+        if(usePinpointIMU){
+            heading = pinpoint.getHeading(AngleUnit.RADIANS);
+        }
+        else{
+            heading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+
+        }
         //convert rectangular stick inputs to polar coordinates
-        final double heading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
         final double direction = -(Math.atan2(lateral, axial) + heading);//find angle theta to compensate
         final double speed = Math.min(1.0, Math.sqrt(lateral * lateral + axial * axial));//find radius(magnitude)
         //Rotate movement vectors by 45 degrees to align with mecanum wheel rollers
@@ -202,7 +226,12 @@ public class DriveTrain {
      */
     public void updateDriveTrainBehavior() {
         if (!resetIMUButtonDisabled && gamepad.getGamepadButtonValue(resetIMUButton)) {
-            imu.resetYaw();
+            if(usePinpointIMU) {
+                pinpoint.resetPosAndIMU();
+            }
+            else{
+                imu.resetYaw();
+            }
         }
 
         // The TOGGLE button flips its state each press. We use this to switch our drive mode.
@@ -233,7 +262,7 @@ public class DriveTrain {
     /**
      * Sets the power for all four drive motors, applying the half-speed multiplier if active.
      */
-    public void setMotorPowers(double lf, double rf, double lb, double rb) {
+    private void setMotorPowers(double lf, double rf, double lb, double rb) {
         boolean lowSpeed = gamepad.getGamepadButtonValue(lowSpeedButton);
         double currentSpeedMultiplier = lowSpeed ? lowSpeedMultiplier : 1.0;
 
