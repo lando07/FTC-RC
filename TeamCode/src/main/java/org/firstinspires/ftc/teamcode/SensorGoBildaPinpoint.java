@@ -22,7 +22,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -71,6 +70,7 @@ public class SensorGoBildaPinpoint extends OpMode {
         telemetry.addData("X coordinate (IN)", pose2D.getX(DistanceUnit.INCH));
         telemetry.addData("Y coordinate (IN)", pose2D.getY(DistanceUnit.INCH));
         telemetry.addData("Heading angle (DEGREES)", pose2D.getHeading(AngleUnit.DEGREES));
+        telemetry.addLine("If one of your coordinates is the opposite sign (going positive when needs to be negative).\n Reverse the encoder on lines 103-104");
     }
 
     public void configurePinpoint(){
