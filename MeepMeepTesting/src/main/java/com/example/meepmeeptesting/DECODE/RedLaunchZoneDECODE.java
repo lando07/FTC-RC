@@ -8,7 +8,7 @@ import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 public class RedLaunchZoneDECODE {
     public static Pose2d startingPose = new Pose2d(-53.1,46.1,Math.toRadians(-52));
-
+//TODO : fix rotation
     public static void main(String[] args) {
         System.setProperty("sun.java2d.opengl", "true");
         MeepMeep meepMeep = new MeepMeep(700);
