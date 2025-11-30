@@ -1,9 +1,10 @@
-package org.firstinspires.ftc.teamcode.subsystems;
+package org.firstinspires.ftc.teamcode.subsystems.enums;
 
 import androidx.annotation.NonNull;
 
 /**
  * Represents the buttons of an Xbox-style controller.
+ * @author Landon Smith
  */
 public enum GamepadButton {
     A("A"),

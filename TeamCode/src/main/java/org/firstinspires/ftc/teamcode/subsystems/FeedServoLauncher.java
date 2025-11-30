@@ -6,11 +6,14 @@ import com.acmerobotics.roadrunner.InstantAction;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.subsystems.enums.GamepadButton;
+
 /**
  * Subsystem to control the feed servos to supply a whiffle ball to the launcher motor
+ * @author Mentor Landon Smith
  */
 @Config
-public class feedServoLauncher {
+public class FeedServoLauncher {
     /**
      * The controller to use for user input
      */
@@ -35,7 +38,7 @@ public class feedServoLauncher {
     public static double SERVO_FORWARD_POS = 1.0;
     public static double SERVO_REVERSE_POS = 0.0;
     public static double SERVO_NEUTRAL_POS = 0.5;
-    public feedServoLauncher(OpMode opMode){
+    public FeedServoLauncher(OpMode opMode){
 
         feedServoFrontLeft = opMode.hardwareMap.get(Servo.class, "servo1");
         feedServoFrontRight = opMode.hardwareMap.get(Servo.class, "servo2");
@@ -43,12 +46,12 @@ public class feedServoLauncher {
         feedServoBackRight = opMode.hardwareMap.get(Servo.class, "servo4");
     }
     /**
-     * Creates a feedServoLauncher object and initializes the feed servos
+     * Creates a FeedServoLauncher object and initializes the feed servos
      *
      * @param opMode     the TeleOp opMode
      * @param controller the controller to use for user input
      */
-    public feedServoLauncher(OpMode opMode, GamepadController controller) {
+    public FeedServoLauncher(OpMode opMode, GamepadController controller) {
         gamepad = controller;
         //TODO: wire servos according to their initialization below
         feedServoFrontLeft = opMode.hardwareMap.get(Servo.class, "servo1");

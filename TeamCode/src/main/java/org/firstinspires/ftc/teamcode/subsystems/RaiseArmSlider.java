@@ -8,6 +8,15 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
+import org.firstinspires.ftc.teamcode.subsystems.enums.BiStateButtonBehavior;
+import org.firstinspires.ftc.teamcode.subsystems.enums.GamepadButton;
+
+/**
+ * Albeit poorly documented, this class was used in FTC Into the Deep
+ * to controll the gobilda slider to raise a claw and clip specimens
+ * along with grabbing them from the wall provided by the human player
+ * @author Landon Smith
+ */
 @Config
 public class RaiseArmSlider {
 

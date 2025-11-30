@@ -15,6 +15,15 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.RaiseArmSlider;
 
+/**
+ * The UIL State Semi-Finalist Autonomous,
+ * it made use of many test values that needed to change
+ * as different floor mats had different levels of hardness and
+ * slip, which affected the how the motor encoders
+ * tracked the robot positioning since we did not have odometry
+ * wheels in FTC Into the DEEP
+ * @author Landon Smith
+ */
 @Disabled
 @Config
 @Autonomous(name = "PrimaryAutoIntoTheDeep", group = "autonomous")

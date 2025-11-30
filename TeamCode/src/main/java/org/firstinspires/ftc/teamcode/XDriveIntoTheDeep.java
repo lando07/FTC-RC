@@ -9,17 +9,18 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
-import org.firstinspires.ftc.teamcode.subsystems.BiStateButtonBehavior;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.DriveTrain;
-import org.firstinspires.ftc.teamcode.subsystems.GamepadButton;
 import org.firstinspires.ftc.teamcode.subsystems.GamepadController;
 import org.firstinspires.ftc.teamcode.subsystems.RaiseArmSlider;
-import org.firstinspires.ftc.teamcode.subsystems.axisBehavior;
+import org.firstinspires.ftc.teamcode.subsystems.enums.AxisBehavior;
+import org.firstinspires.ftc.teamcode.subsystems.enums.BiStateButtonBehavior;
+import org.firstinspires.ftc.teamcode.subsystems.enums.GamepadButton;
 
 
 /**
  * Ok, so this is our omega be-all-end-all class.
+ * @author Landon Smith
  */
 
 @Disabled
@@ -40,7 +41,7 @@ public class XDriveIntoTheDeep extends OpMode {
     public static double initialPitchOffset = 0.65;
     public static boolean dynamicBrakingEnabled = false;
     public static double backStopPosition = 0.03;
-    private final axisBehavior armExtendAxis = axisBehavior.LEFT_STICK_Y;
+    private final AxisBehavior armExtendAxis = AxisBehavior.LEFT_STICK_Y;
     private final GamepadButton resetServoOrientationButton = GamepadButton.A;
     private final GamepadButton clawToggleButton = GamepadButton.B;
     private final BiStateButtonBehavior clawToggleBehavior = BiStateButtonBehavior.TOGGLE;

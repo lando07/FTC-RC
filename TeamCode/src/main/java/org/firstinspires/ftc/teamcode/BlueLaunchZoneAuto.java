@@ -4,20 +4,22 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.InstantFunction;
-import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.RaceAction;
-import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.subsystems.feedServoLauncher;
+import org.firstinspires.ftc.teamcode.subsystems.FeedServoLauncher;
 
+/**
+ * Autonomous Program for when the robot starts on the blue team,
+ * at the launch zone.
+ * @author Thu
+ * @author Mentor Landon Smith
+ */
 @Config
 @Autonomous(name = "Blue Launch Zone", group="autonomous")
 public class BlueLaunchZoneAuto extends LinearOpMode {
@@ -28,7 +30,7 @@ public class BlueLaunchZoneAuto extends LinearOpMode {
         MecanumDrive drive = new MecanumDrive(hardwareMap, startingPose);
         // --- Initialize Launcher and Servos ---
         DcMotorEx launcher = hardwareMap.get(DcMotorEx.class, "launcher");
-        feedServoLauncher feedServos = new feedServoLauncher(this);
+        FeedServoLauncher feedServos = new FeedServoLauncher(this);
         launcher.setDirection(DcMotorEx.Direction.REVERSE);
         //This is how you create an action with specific behavior that is not defined anywhere else
         InstantAction waitUntilSufficentLauncherVelocity = new InstantAction(new InstantFunction() {

@@ -2,12 +2,17 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.teamcode.subsystems.enums.AxisBehavior;
+import org.firstinspires.ftc.teamcode.subsystems.enums.BiStateButtonBehavior;
+import org.firstinspires.ftc.teamcode.subsystems.enums.GamepadButton;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 /**
  * Represents a gamepad, providing an interface for accessing button and analog states.
+ * @author Landon Smith
  */
 public class GamepadController {
     /**
@@ -18,12 +23,12 @@ public class GamepadController {
     /**
      * Mapping for Tristate buttons
      */
-    private final Map<GamepadButton, TristateButtonState> tristateButtonStates = new HashMap<>();
+    private final Map<GamepadButton, TriStateButtonState> tristateButtonStates = new HashMap<>();
 
     /**
      * Mapping for analog states and joysticks
      */
-    private final Map<axisBehavior, AxisState> axisStates = new HashMap<>();
+    private final Map<AxisBehavior, AxisState> axisStates = new HashMap<>();
     /**
      * Stores the OpMode gamepad which either refers to gamepad1 or gamepad2
      */
@@ -57,14 +62,14 @@ public class GamepadController {
         }
         checkButtonNotAlreadyConfigured(buttonPositive);
         checkButtonNotAlreadyConfigured(buttonNegative);
-        tristateButtonStates.put(buttonPositive, new TristateButtonState(buttonPositive, buttonNegative));
+        tristateButtonStates.put(buttonPositive, new TriStateButtonState(buttonPositive, buttonNegative));
     }
 
     /**
      * Configures an axis for reading data.
      * @throws IllegalArgumentException if the axis is already configured.
      */
-    public void configureAxis(axisBehavior axis) {
+    public void configureAxis(AxisBehavior axis) {
         if (axisStates.containsKey(axis)){
             throw new IllegalArgumentException("Axis " + axis + " already configured.");
         }
@@ -80,7 +85,7 @@ public class GamepadController {
             throw new IllegalArgumentException("Button " + button + " is already configured as a bi-state button.");
         }
         // Check if the button is part of any tristate configuration
-        for (TristateButtonState state : tristateButtonStates.values()) {
+        for (TriStateButtonState state : tristateButtonStates.values()) {
             if (state.buttonPositive == button || state.buttonNegative == button) {
                 throw new IllegalArgumentException("Button " + button + " is already part of a tri-state configuration.");
             }
@@ -97,7 +102,7 @@ public class GamepadController {
     }
 
     private void updateRawAxisStates() {
-        for (axisBehavior axis : axisStates.keySet()) {
+        for (AxisBehavior axis : axisStates.keySet()) {
             switch (axis) {
                 case LEFT_STICK_X:
                     Objects.requireNonNull(axisStates.get(axis)).update(gamepad.left_stick_x);
@@ -123,7 +128,7 @@ public class GamepadController {
     }
 
     private void updateRawTristateButtonStates() {
-        for (TristateButtonState state : tristateButtonStates.values()) {
+        for (TriStateButtonState state : tristateButtonStates.values()) {
             state.update(getButtonState(state.buttonPositive), getButtonState(state.buttonNegative));
         }
     }
@@ -197,7 +202,7 @@ public class GamepadController {
      * @throws NoSuchElementException if no tri-state button is configured with this positive button.
      */
     public int getTristateButtonValue(GamepadButton buttonPositive) {
-        TristateButtonState state = tristateButtonStates.get(buttonPositive);
+        TriStateButtonState state = tristateButtonStates.get(buttonPositive);
         if (state == null) {
             throw new NoSuchElementException("Tristate button group starting with " + buttonPositive + " not configured. Ensure you call configureTristateButton() first.");
         }
@@ -211,7 +216,7 @@ public class GamepadController {
      * @return The double value of the axis, ranges from [-1.0, 1.0].
      * @throws NoSuchElementException if the axis is not configured.
      */
-    public double getAxisValue(axisBehavior axis) {
+    public double getAxisValue(AxisBehavior axis) {
         AxisState state = axisStates.get(axis);
         if (state == null) {
             throw new NoSuchElementException("Axis " + axis + " not configured. Ensure you call configureAxis() first.");
@@ -221,6 +226,7 @@ public class GamepadController {
 }
 /**
  * Represents the state of a button on the gamepad.
+ * @author Landon Smith
  */
 class ButtonState {
     /**
@@ -276,8 +282,9 @@ class ButtonState {
 /**
  * Represents a ButtonState, but for buttons that work in a TRI_STATE pattern.
  * It has two input buttons for state: One sets to -1, the other sets to 1
+ * @author Landon Smith
  */
-class TristateButtonState {
+class TriStateButtonState {
     /**
      * Stores the button, that if pressed, will return 1
      */
@@ -298,13 +305,13 @@ class TristateButtonState {
      * @param buttonPositive the button, if pressed, to return 1
      * @param buttonNegative the button, if pressed, to return -1
      */
-    TristateButtonState(GamepadButton buttonPositive, GamepadButton buttonNegative) {
+    TriStateButtonState(GamepadButton buttonPositive, GamepadButton buttonNegative) {
         this.buttonPositive = buttonPositive;
         this.buttonNegative = buttonNegative;
     }
 
     /**
-     * Updates the TristateButtonState's value based on the two button inputs.
+     * Updates the TriStateButtonState's value based on the two button inputs.
      * - Sets value to 1 if only the positive button is pressed.
      * - Sets value to -1 if only the negative button is pressed.
      * - Sets value to 0 if neither or both buttons are pressed.
@@ -328,6 +335,7 @@ class TristateButtonState {
 
 /**
  * Represents the state of an analog trigger or joystick axis on the gamepad.
+ * @author Landon Smith
  */
 class AxisState {
     volatile double value;

@@ -2,14 +2,20 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
-import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
+/**
+ * Autonomous Program for when the robot starts on the blue team,
+ * at the start zone.
+ * @author Thu
+ * @author Mentor Landon Smith
+ */
 @Config
 @Autonomous(name = "Blue Start Zone", group="autonomous")
 public class BlueStartZoneAuto extends LinearOpMode {
