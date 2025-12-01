@@ -10,6 +10,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.subsystems.FeedServoLauncher;
+
 /**
  * Autonomous Program for when the robot starts on the blue team,
  * at the start zone.
@@ -30,20 +32,10 @@ public class BlueStartZoneAuto extends LinearOpMode {
 
             // --- Initialize Launcher and Servos ---
             DcMotorEx launcher = hardwareMap.get(DcMotorEx.class, "launcher");
-            Servo servo1 = hardwareMap.get(Servo.class, "servo1");
-            Servo servo2 = hardwareMap.get(Servo.class, "servo2");
-            Servo servo3 = hardwareMap.get(Servo.class, "servo3");
-            Servo servo4 = hardwareMap.get(Servo.class, "servo4");
-
-
             launcher.setDirection(DcMotorEx.Direction.REVERSE);
-            // Using setPower to match TeleOp, so RUN_USING_ENCODER is not needed.
+            FeedServoLauncher feedServos = new FeedServoLauncher(this);
+            feedServos.stop();
 
-            double servoOffPosition = 0.5;
-            servo1.setPosition(servoOffPosition);
-            servo2.setPosition(servoOffPosition);
-            servo3.setPosition(servoOffPosition);
-            servo4.setPosition(servoOffPosition);
 
             // --- End of Initialization ---
 
