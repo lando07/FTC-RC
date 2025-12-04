@@ -36,7 +36,7 @@ public class RedLaunchZoneAuto extends LinearOpMode {
         MecanumDrive drive = new MecanumDrive(hardwareMap, startingPose);
 
         // --- Initialize Launcher and Servos ---
-        DcMotorEx launcher = hardwareMap.get(DcMotorEx.class, "launcher");
+        DcMotorEx shooterMotor = hardwareMap.get(DcMotorEx.class, "shooterMotor");
         FeedServoLauncher feedServos = new FeedServoLauncher(this);
         feedServos.stop();
         //This is how you create an action with specific behavior that is not defined anywhere else
@@ -46,11 +46,11 @@ public class RedLaunchZoneAuto extends LinearOpMode {
             @Override
             public boolean run(@NonNull TelemetryPacket p) {
                 if (!initialized) {
-                    launcher.setPower(1);
+                    shooterMotor.setPower(1);
                     initialized = true;
                 }
-                p.put("launcherVelocity: ", launcher.getVelocity());
-                return launcher.getVelocity(AngleUnit.DEGREES) > minimumLauncherVelocity;
+                p.put("launcherVelocity: ", shooterMotor.getVelocity());
+                return shooterMotor.getVelocity(AngleUnit.DEGREES) > minimumLauncherVelocity;
             }
         };
 
@@ -60,7 +60,7 @@ public class RedLaunchZoneAuto extends LinearOpMode {
                 new SleepAction(1.000),
                 feedServos.stopIntakeAction());
 
-        launcher.setDirection(DcMotorEx.Direction.REVERSE);
+        shooterMotor.setDirection(DcMotorEx.Direction.REVERSE);
 
         // --- End of Initialization ---
 

@@ -28,8 +28,8 @@ public class FeedServoLauncher {
      * - true: The feed cycle is currently active and servos are (or should be) running.
      * - false: The system is idle and waiting for a button press.
      */
-    public static GamepadButton feedForwardButton = GamepadButton.RIGHT_BUMPER;
-    public static GamepadButton feedReverseButton = GamepadButton.LEFT_BUMPER;
+    public static GamepadButton feedForwardButton = GamepadButton.LEFT_BUMPER;
+    public static GamepadButton feedReverseButton = GamepadButton.RIGHT_BUMPER;
 
 
     private final Servo feedServoFrontLeft, feedServoFrontRight, feedServoBackLeft, feedServoBackRight;
@@ -113,8 +113,8 @@ public class FeedServoLauncher {
     private void intakeBall() {
         //TODO: Fix Servo directions
         feedServoFrontRight.setPosition(SERVO_FORWARD_POS);
-        feedServoBackRight.setPosition(SERVO_FORWARD_POS);
-        feedServoFrontLeft.setPosition(SERVO_REVERSE_POS);
+        feedServoBackRight.setPosition(SERVO_REVERSE_POS);
+        feedServoFrontLeft.setPosition(SERVO_FORWARD_POS);
         feedServoBackLeft.setPosition(SERVO_REVERSE_POS);
     }
     public Action rejectBallAction(){
@@ -122,10 +122,10 @@ public class FeedServoLauncher {
     }
     private void rejectBall(){
         //TODO: Fix Servo directions
-        feedServoFrontRight.setPosition(SERVO_FORWARD_POS);
+        feedServoFrontRight.setPosition(SERVO_REVERSE_POS);
         feedServoBackRight.setPosition(SERVO_FORWARD_POS);
         feedServoFrontLeft.setPosition(SERVO_REVERSE_POS);
-        feedServoBackLeft.setPosition(SERVO_REVERSE_POS);
+        feedServoBackLeft.setPosition(SERVO_FORWARD_POS);
     }
     public Action stopIntakeAction(){
         return new InstantAction(this::stopIntake);

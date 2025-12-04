@@ -35,8 +35,8 @@ public class XDriveDECODE extends OpMode {
     private DcMotor intakeMotor;
     public static AxisBehavior launcherAxis = AxisBehavior.RIGHT_TRIGGER;
     public static AxisBehavior reverseLauncherAxis = AxisBehavior.LEFT_TRIGGER;
-    public static GamepadButton feedForwardButton = GamepadButton.RIGHT_BUMPER;
-    public static GamepadButton feedBackwardButton = GamepadButton.LEFT_BUMPER;
+    public static GamepadButton feedForwardButton = GamepadButton.A;
+    public static GamepadButton feedBackwardButton = GamepadButton.B;
 
     // --- Shooter Power and Voltage Compensation ---
     // 1. SET YOUR SHOOTER POWER HERE (e.g., 0.80 for 80%)
