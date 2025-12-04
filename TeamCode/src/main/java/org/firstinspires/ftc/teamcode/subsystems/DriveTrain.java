@@ -53,7 +53,7 @@ public class DriveTrain {
     private final GamepadController gamepad;
 
     // --- State Variables ---
-    public static boolean isFieldOrientedMode = true;
+    public static boolean isFieldOrientedMode = false;
 
     /**
      * Initializes the IMU and motors for use.
