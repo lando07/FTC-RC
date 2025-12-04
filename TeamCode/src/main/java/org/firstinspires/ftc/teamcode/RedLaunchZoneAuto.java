@@ -36,7 +36,7 @@ public class RedLaunchZoneAuto extends LinearOpMode {
         MecanumDrive drive = new MecanumDrive(hardwareMap, startingPose);
 
         // --- Initialize Launcher and Servos ---
-        DcMotorEx launcher = hardwareMap.get(DcMotorEx.class, "launcher");
+        DcMotorEx launcher = hardwareMap.get(DcMotorEx.class, "shooterMotor");
         FeedServoLauncher feedServos = new FeedServoLauncher(this);
         feedServos.stop();
         //This is how you create an action with specific behavior that is not defined anywhere else

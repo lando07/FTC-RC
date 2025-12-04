@@ -28,7 +28,7 @@ public class RedStartZoneAuto extends LinearOpMode {
         MecanumDrive drive = new MecanumDrive(hardwareMap, startingPose);
 
         // --- Initialize Launcher and Servos ---
-        DcMotorEx launcher = hardwareMap.get(DcMotorEx.class, "launcher");
+        DcMotorEx launcher = hardwareMap.get(DcMotorEx.class, "shooterMotor");
         FeedServoLauncher feedServos = new FeedServoLauncher(this);
         feedServos.stop();
         launcher.setDirection(DcMotorEx.Direction.REVERSE);
