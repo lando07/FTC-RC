@@ -40,33 +40,33 @@ public class RedStartZoneAuto extends LinearOpMode {
         Action autonomous = drive.actionBuilder(startingPose)
 
                 // Current Path
-                .strafeToConstantHeading(new Vector2d(36.3, 12.7))
+                .strafeToConstantHeading(new Vector2d(36.3,12.7))
                 .turn(Math.toRadians(-90))
 
-                .strafeToConstantHeading(new Vector2d(34.8, 56.2))
-                .strafeToConstantHeading(new Vector2d(35.9, 24.4))
-                .turn(Math.toRadians(90))
-                .strafeToConstantHeading(new Vector2d(-31.0, 24.2))
-                .turn(Math.toRadians(-54))
-                .strafeToConstantHeading(new Vector2d(-51.2, 48.9))
+                .strafeToConstantHeading(new Vector2d(34.8,56.2))
+                .strafeToConstantHeading(new Vector2d(35.9,24.4))
 
-                .strafeToConstantHeading(new Vector2d(-31.4, 24.2))
-                .turn(Math.toRadians(-127))
-                .strafeToConstantHeading(new Vector2d(12.7, 24.2))
-                .turn(Math.toRadians(92))
+                .strafeToLinearHeading(new Vector2d(-32.2,23.2), Math.toRadians(90))
 
-                .strafeToConstantHeading(new Vector2d(11.7, 54.6))
-                .strafeToConstantHeading(new Vector2d(12.7, 24.2))
-                .turn(Math.toRadians(92))
-                .strafeToConstantHeading(new Vector2d(-31.6, 24.4))
-                .turn(Math.toRadians(-54))
-                .strafeToConstantHeading(new Vector2d(-51.2, 48.9))
+                .turn(Math.toRadians(40))
+                .strafeToConstantHeading(new Vector2d(-51.2,48.9))
 
-                .strafeToConstantHeading(new Vector2d(-31.4, 24.2))
-                .turn(Math.toRadians(-127))
-                .strafeToConstantHeading(new Vector2d(-12.3, 24.2))
-                .turn(Math.toRadians(92))
+                .strafeToLinearHeading(new Vector2d(-32.2,23.2), Math.toRadians(90))
 
+
+                .strafeToConstantHeading(new Vector2d(12.7,24.2))
+
+                .strafeToConstantHeading(new Vector2d(11.7,54.6))
+                .strafeToConstantHeading(new Vector2d(12.7,24.2))
+                .strafeToLinearHeading(new Vector2d(-32.2,23.2), Math.toRadians(90))
+
+
+                .turn(Math.toRadians(40))
+                .strafeToConstantHeading(new Vector2d(-51.2,48.9))
+
+                .strafeToLinearHeading(new Vector2d(-32.2,23.2), Math.toRadians(90))
+
+                .strafeToConstantHeading(new Vector2d(6.9,24.0))
 
                 // --- End of Launch Sequence ---
 

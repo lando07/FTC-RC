@@ -25,7 +25,7 @@ public class BlueStartZoneAuto extends LinearOpMode {
     public void runOpMode(){
         double originalMaxWheelVel = MecanumDrive.PARAMS.maxWheelVel;
         try {
-            MecanumDrive.PARAMS.maxWheelVel = originalMaxWheelVel * 0.9;
+            MecanumDrive.PARAMS.maxWheelVel = originalMaxWheelVel * 0.3;
 
             Pose2d startingPose = new Pose2d(61.8, -12.5, Math.toRadians(180));
             MecanumDrive drive = new MecanumDrive(hardwareMap, startingPose);
@@ -46,7 +46,6 @@ public class BlueStartZoneAuto extends LinearOpMode {
 
                     .strafeToConstantHeading(new Vector2d(35.0,-56.0))
                     .strafeToConstantHeading(new Vector2d(36.3,-12.7))
-                    .strafeToLinearHeading(new Vector2d(32.2,-23.2), Math.toRadians(-90))
                     .turn(Math.toRadians(-90))
                     .strafeToConstantHeading(new Vector2d(-30.8,-15.1))
                     .turn(Math.toRadians(54))
@@ -68,7 +67,6 @@ public class BlueStartZoneAuto extends LinearOpMode {
                     .strafeToConstantHeading(new Vector2d(-12.5,-14.1))
                     .turn(Math.toRadians(-90))
                     .strafeToConstantHeading(new Vector2d(-12.5,-37.5))
-
 
 
 

@@ -40,7 +40,7 @@ public class XDriveDECODE extends OpMode {
 
     // --- Shooter Power and Voltage Compensation ---
     // 1. SET YOUR SHOOTER POWER HERE (e.g., 0.80 for 80%)
-    public static double SHOOTER_POWER_SETTING = 0.52;
+    public static double SHOOTER_POWER_SETTING = .55;
 
     private VoltageSensor batteryVoltageSensor;
     public static double NOMINAL_VOLTAGE = 12.5; // The baseline voltage for compensation

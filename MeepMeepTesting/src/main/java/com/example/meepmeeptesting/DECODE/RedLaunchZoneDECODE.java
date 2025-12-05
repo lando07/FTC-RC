@@ -1,14 +1,18 @@
 package com.example.meepmeeptesting.DECODE;
 
+
+import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
+
 public class RedLaunchZoneDECODE {
     public static Pose2d startingPose = new Pose2d(-53.1,46.1,Math.toRadians(-232));
 //TODO : fix rotation
+
     public static void main(String[] args) {
         System.setProperty("sun.java2d.opengl", "true");
         MeepMeep meepMeep = new MeepMeep(700);
@@ -18,14 +22,12 @@ public class RedLaunchZoneDECODE {
                 .build();
         myBot.runAction(myBot.getDrive().actionBuilder(startingPose)
                //Current Path
-
+                // Launch Sequence
                 .strafeToLinearHeading(new Vector2d(-32.2,23.2), Math.toRadians(90))
-                .strafeToConstantHeading(new Vector2d(-12.3,23.0))
-
-                .strafeToConstantHeading(new Vector2d(-11.9,51.4))
               .strafeToConstantHeading(new Vector2d(-12.3,23.0))
-                .strafeToLinearHeading(new Vector2d(-32.2,23.2), Math.toRadians(90))
-                .turn(Math.toRadians(38))
+                .strafeToConstantHeading(new Vector2d(-11.9,52.0))
+
+                .strafeToLinearHeading(new Vector2d(-32.2,23.2), Math.toRadians(-232))
                 .strafeToConstantHeading(new Vector2d(-32.2,23.2))
                 .strafeToConstantHeading(new Vector2d(-53.1,46.1))
 

@@ -17,27 +17,7 @@ public class BlueLaunchZoneDECODE {
         myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(-52.0,-46.1, Math.toRadians(232)))
                 //Put actions here
                 //This strafe the robot to a corrdinate with a set heading
-                .strafeToLinearHeading(new Vector2d(-32.2,-23.2), Math.toRadians(-90))
-                .strafeToConstantHeading(new Vector2d(-12.3,-23.0))
 
-                .strafeToConstantHeading(new Vector2d(-11.9,-51.4))
-                .strafeToConstantHeading(new Vector2d(-12.3,-23.0))
-
-                .strafeToLinearHeading(new Vector2d(-32.2,-23.2), Math.toRadians(232))
-                .strafeToConstantHeading(new Vector2d(-53.1,-46.1))
-
-                .strafeToLinearHeading(new Vector2d(-32.2,-23.2), Math.toRadians(-90))
-
-                .strafeToConstantHeading(new Vector2d(11.3,-23.4))
-
-                .strafeToConstantHeading(new Vector2d(11.9,-50.0))
-                .strafeToConstantHeading(new Vector2d(11.3,-23.4))
-                .strafeToLinearHeading(new Vector2d(-32.2,-23.2), Math.toRadians(232))
-                .strafeToConstantHeading(new Vector2d(-53.1,-46.1))
-
-                .strafeToLinearHeading(new Vector2d(-32.2,-23.2), Math.toRadians(-90))
-
-                .strafeToConstantHeading(new Vector2d(35.3,-23.8))
 
 
                 .build());
