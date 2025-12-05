@@ -29,7 +29,10 @@ import org.firstinspires.ftc.teamcode.subsystems.FeedServoLauncher;
 @Autonomous(name = "Red Launch Zone", group = "autonomous")
 public class RedLaunchZoneAuto extends LinearOpMode {
     public static int minimumLauncherVelocity = 15;//Degrees per second
+public static void main(String[] args) {
 
+
+}
     @Override
     public void runOpMode() {
         Pose2d startingPose = new Pose2d(-53.1, 46.1, Math.toRadians(-52));

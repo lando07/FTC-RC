@@ -46,6 +46,7 @@ public class BlueStartZoneAuto extends LinearOpMode {
 
                     .strafeToConstantHeading(new Vector2d(35.0,-56.0))
                     .strafeToConstantHeading(new Vector2d(36.3,-12.7))
+                    .strafeToLinearHeading(new Vector2d(32.2,-23.2), Math.toRadians(-90))
                     .turn(Math.toRadians(-90))
                     .strafeToConstantHeading(new Vector2d(-30.8,-15.1))
                     .turn(Math.toRadians(54))
