@@ -39,7 +39,10 @@ public static void main(String[] args) {
         MecanumDrive drive = new MecanumDrive(hardwareMap, startingPose);
 
         // --- Initialize Launcher and Servos ---
+
         DcMotorEx shooterMotor = hardwareMap.get(DcMotorEx.class, "shooterMotor");
+
+        DcMotorEx launcher = hardwareMap.get(DcMotorEx.class, "shooterMotor");
         FeedServoLauncher feedServos = new FeedServoLauncher(this);
         feedServos.stop();
         //This is how you create an action with specific behavior that is not defined anywhere else

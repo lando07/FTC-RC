@@ -31,7 +31,7 @@ public class BlueStartZoneAuto extends LinearOpMode {
             MecanumDrive drive = new MecanumDrive(hardwareMap, startingPose);
 
             // --- Initialize Launcher and Servos ---
-            DcMotorEx launcher = hardwareMap.get(DcMotorEx.class, "launcher");
+            DcMotorEx launcher = hardwareMap.get(DcMotorEx.class, "shooterMotor");
             launcher.setDirection(DcMotorEx.Direction.REVERSE);
             FeedServoLauncher feedServos = new FeedServoLauncher(this);
             feedServos.stop();
