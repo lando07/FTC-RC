@@ -29,10 +29,6 @@ import org.firstinspires.ftc.teamcode.subsystems.FeedServoLauncher;
 @Autonomous(name = "Red Launch Zone", group = "autonomous")
 public class RedLaunchZoneAuto extends LinearOpMode {
     public static int minimumLauncherVelocity = 15;//Degrees per second
-public static void main(String[] args) {
-
-
-}
     @Override
     public void runOpMode() {
         Pose2d startingPose = new Pose2d(-53.1, 46.1, Math.toRadians(-232));
@@ -74,27 +70,27 @@ public static void main(String[] args) {
 
         Action autonomous = drive.actionBuilder(startingPose)
                 // Current Path
-                .strafeToLinearHeading(new Vector2d(-32.2,23.2), Math.toRadians(90))
-                .strafeToConstantHeading(new Vector2d(-12.3,23.0))
-                .strafeToConstantHeading(new Vector2d(-11.9,52.0))
+               // .strafeToLinearHeading(new Vector2d(-32.2,23.2), Math.toRadians(90))
+               // .strafeToConstantHeading(new Vector2d(-12.3,23.0))
+                //.strafeToConstantHeading(new Vector2d(-11.9,52.0))
 
-                .strafeToLinearHeading(new Vector2d(-32.2,23.2), Math.toRadians(-232))
-                .strafeToConstantHeading(new Vector2d(-32.2,23.2))
-                .strafeToConstantHeading(new Vector2d(-53.1,46.1))
+                //.strafeToLinearHeading(new Vector2d(-32.2,23.2), Math.toRadians(-232))
+                //.strafeToConstantHeading(new Vector2d(-32.2,23.2))
+               // .strafeToConstantHeading(new Vector2d(-53.1,46.1))
 
-                .strafeToConstantHeading(new Vector2d(-32.2,23.2))
+               // .strafeToConstantHeading(new Vector2d(-32.2,23.2))
 
-                .strafeToLinearHeading(new Vector2d(11.3,23.4), Math.toRadians(90))
+               // .strafeToLinearHeading(new Vector2d(11.3,23.4), Math.toRadians(90))
 
-                .strafeToConstantHeading(new Vector2d(11.9,50.0))
-                .strafeToConstantHeading(new Vector2d(11.3,23.4))
-                .strafeToLinearHeading(new Vector2d(-32.2,23.2), Math.toRadians(90))
-                .turn(Math.toRadians(38))
-                .strafeToConstantHeading(new Vector2d(-32.2,23.2))
-                .strafeToConstantHeading(new Vector2d(-53.1,46.1))
-                .strafeToLinearHeading(new Vector2d(-32.2,23.2), Math.toRadians(90))
+                //.strafeToConstantHeading(new Vector2d(11.9,50.0))
+               // .strafeToConstantHeading(new Vector2d(11.3,23.4))
+               // .strafeToLinearHeading(new Vector2d(-32.2,23.2), Math.toRadians(90))
+               // .turn(Math.toRadians(38))
+               // .strafeToConstantHeading(new Vector2d(-32.2,23.2))
+               // .strafeToConstantHeading(new Vector2d(-53.1,46.1))
+                //.strafeToLinearHeading(new Vector2d(-32.2,23.2), Math.toRadians(90))
 
-                .strafeToConstantHeading(new Vector2d(35.3,23.8))
+               // .strafeToConstantHeading(new Vector2d(35.3,23.8))
 
                 // --- End of Launch Sequence ---
 
