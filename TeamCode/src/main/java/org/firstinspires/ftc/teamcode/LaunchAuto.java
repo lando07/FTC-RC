@@ -34,17 +34,17 @@ public class LaunchAuto extends LinearOpMode {
         FeedServoLauncher feedServos = new FeedServoLauncher(this);
         feedServos.stop();
         shooterMotor.setDirection(DcMotorEx.Direction.REVERSE);
-        MecanumDrive.DriveLocalizer dl = (MecanumDrive.DriveLocalizer) drive.localizer;
+        PinpointLocalizer dl = (PinpointLocalizer) drive.localizer;
         Action autonomous = drive.actionBuilder(startingPose)
-                .stopAndAdd(new InstantAction(() -> intakeMotor.setPower(1)))
-                .waitSeconds(.5)
-                .strafeTo(new Vector2d(-53.1,46.1))
-                .stopAndAdd(new InstantAction(() -> intakeMotor.setPower(0)))
+//                .stopAndAdd(new InstantAction(() -> intakeMotor.setPower(1)))
+//                .waitSeconds(.5)
+//                .stopAndAdd(new InstantAction(() -> intakeMotor.setPower(0)))
                 .stopAndAdd(new InstantAction(() -> shooterMotor.setPower(0.55)))
                 .waitSeconds(3)
                 .stopAndAdd(feedServos.intakeBallAction())
                 .stopAndAdd(new InstantAction(() -> intakeMotor.setPower(-1)))
                 .waitSeconds(.2)
+//                .strafeTo(new Vector2d(-53.1,46.1))
                 .stopAndAdd(feedServos.stopIntakeAction())
                 .waitSeconds(1)
                 .stopAndAdd(new InstantAction(() -> intakeMotor.setPower(0)))
@@ -56,10 +56,9 @@ public class LaunchAuto extends LinearOpMode {
                 .stopAndAdd(new InstantAction(() -> intakeMotor.setPower(-1)))
                 .stopAndAdd(feedServos.intakeBallAction())
                 .waitSeconds(3)
-                .strafeToConstantHeading(new Vector2d(-47, 22))
+//                .strafeToConstantHeading(new Vector2d(-47, 22))
                 .build();
         while (!opModeIsActive() && !isStopRequested()) {
-            dl.imu.resetYaw();
             sleep(50);
         }
 
