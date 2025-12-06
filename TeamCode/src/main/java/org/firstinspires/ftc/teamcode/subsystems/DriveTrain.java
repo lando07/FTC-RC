@@ -235,7 +235,7 @@ public class DriveTrain {
         }
 
         // The TOGGLE button flips its state each press. We use this to switch our drive mode.
-        isFieldOrientedMode = toggleDriveModeButtonDisabled || !gamepad.getGamepadButtonValue(toggleDriveModeButton);
+        isFieldOrientedMode = toggleDriveModeButtonDisabled || gamepad.getGamepadButtonValue(toggleDriveModeButton);
 
         if (isFieldOrientedMode) {
             doFieldOrientedDrive();

@@ -67,8 +67,8 @@ public class SensorGoBildaPinpoint extends OpMode {
         pinpoint.update();
         Pose2D pose2D = pinpoint.getPosition();
 
-        telemetry.addData("X coordinate (IN)", pose2D.getX(DistanceUnit.INCH));
-        telemetry.addData("Y coordinate (IN)", pose2D.getY(DistanceUnit.INCH));
+        telemetry.addData("X coordinate (CM)", pose2D.getX(DistanceUnit.CM));
+        telemetry.addData("Y coordinate (CM)", pose2D.getY(DistanceUnit.CM));
         telemetry.addData("Heading angle (DEGREES)", pose2D.getHeading(AngleUnit.DEGREES));
         telemetry.addLine("If one of your coordinates is the opposite sign (going positive when needs to be negative).\n Reverse the encoder on lines 103-104");
     }
@@ -83,7 +83,7 @@ public class SensorGoBildaPinpoint extends OpMode {
         *  The Y pod offset refers to how far forwards from the tracking point the Y (strafe) odometry pod is.
         *  Forward of center is a positive number, backwards is a negative number.
         */
-        pinpoint.setOffsets(-84.0, -168.0, DistanceUnit.MM); //these are tuned for 3110-0002-0001 Product Insight #1
+        pinpoint.setOffsets(-5, 15, DistanceUnit.CM); //these are tuned for 3110-0002-0001 Product Insight #1
 
         /*
          * Set the kind of pods used by your robot. If you're using goBILDA odometry pods, select either
@@ -99,7 +99,7 @@ public class SensorGoBildaPinpoint extends OpMode {
          * increase when you move the robot forward. And the Y (strafe) pod should increase when
          * you move the robot to the left.
          */
-        pinpoint.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD,
+        pinpoint.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.REVERSED,
                                       GoBildaPinpointDriver.EncoderDirection.FORWARD);
 
         /*

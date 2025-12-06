@@ -108,7 +108,7 @@ public final class MecanumDrive {
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
-        localizer = new DriveLocalizer(pose);
+        localizer = new PinpointLocalizer(hardwareMap, PARAMS.inPerTick, pose);
 
         FlightRecorder.write("MECANUM_PARAMS", PARAMS);
     }
@@ -185,32 +185,32 @@ public final class MecanumDrive {
                 RevHubOrientationOnRobot.UsbFacingDirection.UP;
 
         // drive model parameters
-        public double inPerTick = 0.03299725023;
-        public double lateralInPerTick = 0.03495145631;
-        public double trackWidthTicks = 664.1225086696732;
+        public static double inPerTick = 0.00197899259778;
+        public double lateralInPerTick = inPerTick;
+        public static double trackWidthTicks = 664.1225086696732;
 
         // feedforward parameters (in tick units)
-        public double kS = 1.1888404969283126;
-        public double kV = 0.0041114707680265945;
-        public double kA = 0.00002;
+        public static double kS = 1.1888404969283126;
+        public static double kV = 0.0041114707680265945;
+        public static double kA = 0.00002;
 
         // path profile parameters (in inches)
-        public double maxWheelVel = 75;
-        public double minProfileAccel = -40;//haha braking go brr
-        public double maxProfileAccel = 70;
+        public static double maxWheelVel = 75;
+        public static double minProfileAccel = -40;//haha braking go brr
+        public static double maxProfileAccel = 70;
 
         // turn profile parameters (in radians)
-        public double maxAngVel = 55; // shared with path
-        public double maxAngAccel = 60;
+        public static double maxAngVel = 55; // shared with path
+        public static double maxAngAccel = 60;
 
         // path controller gains
-        public double axialGain = 6;
-        public double lateralGain = 6;
-        public double headingGain = 6; // shared with turn
+        public static double axialGain = 6;
+        public static double lateralGain = 6;
+        public static double headingGain = 6; // shared with turn
 
-        public double axialVelGain = 0.0;
-        public double lateralVelGain = 0.0;
-        public double headingVelGain = 0.0; // shared with turn
+        public static double axialVelGain = 0.0;
+        public static double lateralVelGain = 0.0;
+        public static double headingVelGain = 0.0; // shared with turn
     }
 
     public class DriveLocalizer implements Localizer {
