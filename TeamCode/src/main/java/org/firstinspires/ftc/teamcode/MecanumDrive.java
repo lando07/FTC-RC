@@ -187,11 +187,11 @@ public final class MecanumDrive {
         // drive model parameters
         public double inPerTick = 0.00197899259778;
         public double lateralInPerTick = inPerTick;
-        public double trackWidthTicks = 664.1225086696732;
+        public double trackWidthTicks = 7009.778201933154;
 
         // feedforward parameters (in tick units)
-        public double kS = 1.1888404969283126;
-        public double kV = 0.0041114707680265945;
+        public double kS =  1.6497690145536303;
+        public double kV =  0.00024974827188984456;
         public double kA = 0.00002;
 
         // path profile parameters (in inches)
@@ -204,9 +204,9 @@ public final class MecanumDrive {
         public double maxAngAccel = 60;
 
         // path controller gains
-        public double axialGain = 6;
-        public double lateralGain = 6;
-        public double headingGain = 6; // shared with turn
+        public double axialGain = 0;
+        public double lateralGain = 0;
+        public double headingGain = 0; // shared with turn
 
         public double axialVelGain = 0.0;
         public double lateralVelGain = 0.0;
@@ -231,8 +231,8 @@ public final class MecanumDrive {
             //the typecast is to help counteract drift
             imu = (BHI260IMU) lazyImu.get();
 
-            leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-            leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+            rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+            rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
             this.pose = pose;
         }
 

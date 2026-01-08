@@ -49,10 +49,11 @@ public class RedLaunchZoneAuto extends LinearOpMode {
             public boolean run(@NonNull TelemetryPacket p) {
                 if (!initialized) {
                     shooterMotor.setPower(1);
+                    shooterMotor.setVelocity(minimumLauncherVelocity, AngleUnit.DEGREES);
                     initialized = true;
                 }
                 p.put("launcherVelocity: ", shooterMotor.getVelocity());
-                return shooterMotor.getVelocity(AngleUnit.DEGREES) > minimumLauncherVelocity;
+                return shooterMotor.getVelocity(AngleUnit.DEGREES) >= minimumLauncherVelocity;
             }
         };
 

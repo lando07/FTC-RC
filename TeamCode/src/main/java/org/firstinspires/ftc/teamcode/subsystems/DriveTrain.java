@@ -40,7 +40,7 @@ public class DriveTrain {
     public static double axialGain = 1.0;
     public static double yawGain = 3.0;
     public static double yawMultiplier = 0.5;
-    public static double speedMultiplier = 0.9;
+    public static double speedMultiplier = 1;
     public static double lowSpeedMultiplier = 0.5;
 
     // --- Private Subsystem Components ---
@@ -66,7 +66,7 @@ public class DriveTrain {
         //Branch condition depending on current IMU mode(prefer pinpoint due to drastically higher accuracy)
         if(usePinpointIMU){
             pinpoint = opMode.hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
-            pinpoint.setOffsets(-84.0, -168.0, DistanceUnit.MM);
+            pinpoint.setOffsets(3.81, 15.765, DistanceUnit.CM);
             pinpoint.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
             pinpoint.setEncoderDirections(xEncoderDirection, yEncoderDirection);
             pinpoint.resetPosAndIMU();
@@ -124,9 +124,9 @@ public class DriveTrain {
     private void doFieldOrientedDrive() {
 
 
-        final double lateral = speedMultiplier * getProcessedAxisValue(lateralAxis, lateralGain);
+        final double lateral = speedMultiplier * -getProcessedAxisValue(lateralAxis, lateralGain);
         final double axial = speedMultiplier * -getProcessedAxisValue(axialAxis, axialGain);
-        final double yaw = yawMultiplier * getProcessedAxisValue(yawAxis, yawGain);
+        final double yaw = yawMultiplier * -getProcessedAxisValue(yawAxis, yawGain);
 
         double heading;
         //Branch condition if using pinpoint imu
@@ -169,9 +169,9 @@ public class DriveTrain {
         // Omni Mode uses right joystick to go forward & strafe, and left joystick to rotate.
         //Just like a drone
         //I decided to limit precision to 4 decimal places to counteract drift
-        final double lateral = speedMultiplier * getProcessedAxisValue(lateralAxis, lateralGain);
+        final double lateral = speedMultiplier * -getProcessedAxisValue(lateralAxis, lateralGain);
         final double axial = speedMultiplier * -getProcessedAxisValue(axialAxis, axialGain);
-        final double yaw = yawMultiplier * getProcessedAxisValue(yawAxis, yawGain);
+        final double yaw = yawMultiplier * -getProcessedAxisValue(yawAxis, yawGain);
 
         //these are the magic 4 statements right here
         // Combine the joystick requests for each axis-motion to determine each wheel's power.

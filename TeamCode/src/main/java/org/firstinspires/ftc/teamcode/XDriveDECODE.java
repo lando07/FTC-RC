@@ -4,9 +4,11 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.FeedServoLauncher;
 import org.firstinspires.ftc.teamcode.subsystems.GamepadController;
@@ -31,8 +33,8 @@ public class XDriveDECODE extends OpMode {
      */
     private GamepadController controller1, controller2;
     private FeedServoLauncher feedServos;
-    private DcMotor shooterMotor;
-    private DcMotor intakeMotor;
+    private DcMotorEx shooterMotor;
+    private DcMotorEx intakeMotor;
     public static AxisBehavior launcherAxis = AxisBehavior.RIGHT_TRIGGER;
     public static AxisBehavior reverseLauncherAxis = AxisBehavior.LEFT_TRIGGER;
     public static GamepadButton feedForwardButton = GamepadButton.A;
@@ -64,10 +66,10 @@ public class XDriveDECODE extends OpMode {
         controller2.configureBiStateButton(feedForwardButton, BiStateButtonBehavior.HOLD);
         controller2.configureBiStateButton(feedBackwardButton, BiStateButtonBehavior.HOLD);
         // --- Hardware Initialization ---
-        shooterMotor = hardwareMap.get(DcMotor.class, "shooterMotor");
+        shooterMotor = hardwareMap.get(DcMotorEx.class, "shooterMotor");
         shooterMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         feedServos = new FeedServoLauncher(this, controller2);
-        intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
+        intakeMotor = hardwareMap.get(DcMotorEx.class, "intakeMotor");
 
         // Initialize the VoltageSensor from the hardware map
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
@@ -108,6 +110,7 @@ public class XDriveDECODE extends OpMode {
         telemetry.addData("Intake Power", intakePower);
         telemetry.addData("Left Servo Pos: ", feedServos.getLeftServoPositions());
         telemetry.addData("Right Servo Pos", feedServos.getRightServoPositions());
+        telemetry.addData("Launch Motor speed (deg/s): ", shooterMotor.getVelocity(AngleUnit.DEGREES) * 3);
     }
     private void computeIntakeMotorDirection(){
         // Set power for intake motor (A/B buttons)
