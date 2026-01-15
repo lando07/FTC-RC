@@ -35,7 +35,6 @@ public class RedStartZoneAuto extends LinearOpMode {
 
         // --- End of Initialization ---
 
-        MecanumDrive.DriveLocalizer dl = (MecanumDrive.DriveLocalizer) drive.localizer;
 
         Action autonomous = drive.actionBuilder(startingPose)
 
@@ -73,7 +72,7 @@ public class RedStartZoneAuto extends LinearOpMode {
                 .build();
 
         while (!opModeIsActive() && !isStopRequested()) {
-            dl.imu.resetYaw();
+
             sleep(50);
         }
 

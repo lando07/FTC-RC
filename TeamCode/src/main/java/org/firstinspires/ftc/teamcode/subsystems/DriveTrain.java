@@ -88,7 +88,7 @@ public class DriveTrain {
         backRight = opMode.hardwareMap.get(DcMotorEx.class, "rightBack");
 
         //Set left motors to reverse, and all to brake mode when power is zero
-       frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         backRight.setDirection(DcMotorSimple.Direction.REVERSE);
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -125,7 +125,7 @@ public class DriveTrain {
 
 
         final double lateral = speedMultiplier * -getProcessedAxisValue(lateralAxis, lateralGain);
-        final double axial = speedMultiplier * -getProcessedAxisValue(axialAxis, axialGain);
+        final double axial = speedMultiplier * getProcessedAxisValue(axialAxis, axialGain);
         final double yaw = yawMultiplier * -getProcessedAxisValue(yawAxis, yawGain);
 
         double heading;
@@ -170,7 +170,7 @@ public class DriveTrain {
         //Just like a drone
         //I decided to limit precision to 4 decimal places to counteract drift
         final double lateral = speedMultiplier * -getProcessedAxisValue(lateralAxis, lateralGain);
-        final double axial = speedMultiplier * -getProcessedAxisValue(axialAxis, axialGain);
+        final double axial = speedMultiplier * getProcessedAxisValue(axialAxis, axialGain);
         final double yaw = yawMultiplier * -getProcessedAxisValue(yawAxis, yawGain);
 
         //these are the magic 4 statements right here

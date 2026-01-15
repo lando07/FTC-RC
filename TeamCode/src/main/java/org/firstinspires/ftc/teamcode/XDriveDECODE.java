@@ -42,14 +42,17 @@ public class XDriveDECODE extends OpMode {
 
     // --- Shooter Power and Voltage Compensation ---
     // 1. SET YOUR SHOOTER POWER HERE (e.g., 0.80 for 80%)
-    public static double SHOOTER_POWER_SETTING = .55;
+    public static double SHOOTER_POWER_SETTING = .60;
 
     private VoltageSensor batteryVoltageSensor;
     public static double NOMINAL_VOLTAGE = 12.5; // The baseline voltage for compensation
 
+    public static double targetVelocity = 400;
+
     private double compensatedShooterPower;
     private double currentVoltage;
     private double intakePower;
+
 
     @Override
     public void init() {
@@ -75,7 +78,7 @@ public class XDriveDECODE extends OpMode {
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
 
         telemetry.addData("Status", "Initialized");
-        telemetry.addData("Shooter Power Set To", "%.0f%%", SHOOTER_POWER_SETTING * 100);
+//        telemetry.addData("Shooter Power Set To", "%.0f%%", SHOOTER_POWER_SETTING * 100);
         telemetry.update();
     }
 
@@ -87,6 +90,9 @@ public class XDriveDECODE extends OpMode {
     @Override
     public void start() {
         driveTrain.setBrakingMode(DcMotor.ZeroPowerBehavior.BRAKE);
+        shooterMotor.setPower(1);
+        shooterMotor.setVelocity(targetVelocity, AngleUnit.DEGREES);
+
     }
     //NOTE: Due to the way this codebase is designed, loop() should only be running subsystems or very primitive motor
     //controls, such as setting power.
@@ -99,7 +105,8 @@ public class XDriveDECODE extends OpMode {
         // Update drivetrain
         driveTrain.updateDriveTrainBehavior();
         computeIntakeMotorDirection();
-        doShooterMotorWithVoltageCompensation();
+        computeShooterMotorVelocity();
+//        doShooterMotorWithVoltageCompensation();
         // Set positions for the four servos based on bumpers
         feedServos.updateFeedServoLauncherBehavior();
 
@@ -110,7 +117,7 @@ public class XDriveDECODE extends OpMode {
         telemetry.addData("Intake Power", intakePower);
         telemetry.addData("Left Servo Pos: ", feedServos.getLeftServoPositions());
         telemetry.addData("Right Servo Pos", feedServos.getRightServoPositions());
-        telemetry.addData("Launch Motor speed (deg/s): ", shooterMotor.getVelocity(AngleUnit.DEGREES) * 3);
+        telemetry.addData("Launch Motor speed (deg/s): ", shooterMotor.getVelocity(AngleUnit.DEGREES));
     }
     private void computeIntakeMotorDirection(){
         // Set power for intake motor (A/B buttons)
@@ -123,6 +130,9 @@ public class XDriveDECODE extends OpMode {
         intakeMotor.setPower(intakePower);
     }
 
+    private void computeShooterMotorVelocity() {
+        shooterMotor.setVelocity(controller2.getAxisValue(launcherAxis)*targetVelocity, AngleUnit.DEGREES);
+    }
     private void doShooterMotorWithVoltageCompensation(){
         // --- Shooter Motor Logic with Fixed Power and Voltage Compensation ---
         double shooterPower = 0.0;
