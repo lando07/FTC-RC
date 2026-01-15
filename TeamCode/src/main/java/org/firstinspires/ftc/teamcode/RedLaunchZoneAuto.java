@@ -33,6 +33,10 @@ public class RedLaunchZoneAuto extends LinearOpMode {
     public static double testXValue= -15;
     public static double testYValue= 52;
     public static double launchTime= 3;
+    private FeedServoLauncher feedServos;
+    private DcMotorEx intakeMotor;
+    private DcMotorEx shooterMotor;
+
     @Override
     public void runOpMode() {
         Pose2d startingPose = new Pose2d( -55.37878321850394, 50.28092031403789,Math.toRadians(129.62027014375383));
@@ -40,34 +44,12 @@ public class RedLaunchZoneAuto extends LinearOpMode {
 
         // --- Initialize Launcher and Servos ---
 
-        DcMotorEx shooterMotor = hardwareMap.get(DcMotorEx.class, "shooterMotor");
+        shooterMotor = hardwareMap.get(DcMotorEx.class, "shooterMotor");
 
-        DcMotorEx intakeMotor = hardwareMap.get(DcMotorEx.class, "intakeMotor");
-        FeedServoLauncher feedServos = new FeedServoLauncher(this);
+        intakeMotor = hardwareMap.get(DcMotorEx.class, "intakeMotor");
+        feedServos = new FeedServoLauncher(this);
         feedServos.stop();
         //This is how you create an action with specific behavior that is not defined anywhere else
-        Action waitUntilSufficientLauncherVelocity = new Action() {
-            private boolean initialized = false;
-
-            @Override
-            public boolean run(@NonNull TelemetryPacket p) {
-                if (!initialized) {
-                    shooterMotor.setPower(1);
-                    shooterMotor.setVelocity(XDriveDECODE.targetVelocity, AngleUnit.DEGREES);
-                    initialized = true;
-                }
-                p.put("launcherVelocity: ", shooterMotor.getVelocity());
-                return shooterMotor.getVelocity(AngleUnit.DEGREES) <= minimumLauncherVelocity;
-            }
-        };
-
-        SequentialAction launchBallsForSetTime = new SequentialAction(
-                waitUntilSufficientLauncherVelocity,
-                new InstantAction(() -> intakeMotor.setPower(1)),
-                feedServos.intakeBallAction(),
-                new SleepAction(launchTime),
-                feedServos.stopIntakeAction(),
-        new InstantAction(() -> shooterMotor.setPower(0)));
 
         shooterMotor.setDirection(DcMotorEx.Direction.REVERSE);
 
@@ -76,7 +58,7 @@ public class RedLaunchZoneAuto extends LinearOpMode {
 
         Action autonomous = drive.actionBuilder(startingPose)
                 // Current Path
-                .stopAndAdd(launchBallsForSetTime)
+                .stopAndAdd(launchBallsForSetTime())
                 .strafeToLinearHeading(new Vector2d(-32.2,23.2), Math.toRadians(90))
               .strafeToConstantHeading(new Vector2d(-15,23.0))
                 .stopAndAdd(feedServos.rejectBallAction())
@@ -86,7 +68,7 @@ public class RedLaunchZoneAuto extends LinearOpMode {
                 .stopAndAdd( feedServos.stopIntakeAction())
                 .strafeToLinearHeading(new Vector2d(-32.2,23.2), Math.toRadians(-232))
                .strafeToConstantHeading(new Vector2d(-55.37878321850394,50.28092031403789))
-                .stopAndAdd(launchBallsForSetTime)
+                .stopAndAdd(launchBallsForSetTime())
                 .strafeToConstantHeading(new Vector2d(-32.2,23.2))
 //
  //                .strafeToLinearHeading(new Vector2d(11.3,23.4), Math.toRadians(90))
@@ -114,6 +96,41 @@ public class RedLaunchZoneAuto extends LinearOpMode {
         if (opModeIsActive()) {
             Actions.runBlocking(autonomous);
         }
+    }
+
+    /**
+     * The reason why this method was created, is because once a sequential action is complete(or any action),
+     * passing it in as an argument in another part of the trajectory will not reset the action to repeat what it has
+     * already completed, since passing in an object only passes its reference, so the state is universal among
+     * all references to that object. By returning a new sequential action every time, we can "reset" the state of the action
+     * by simply creating a new object reference with the exact same behavior
+     * @return SequentialAction which launches the balls for a set time
+     * @see SequentialAction
+     */
+    private SequentialAction launchBallsForSetTime() {
+        //This action implements a condition to wait until the velocity is above a certain threshold
+        Action waitForSufficientLauncherVelocity = new Action() {
+            private boolean initialized = false;
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket p) {
+                if (!initialized) {
+                    shooterMotor.setPower(1);
+                    shooterMotor.setVelocity(XDriveDECODE.targetVelocity, AngleUnit.DEGREES);
+                    initialized = true;
+                }
+                p.put("launcherVelocity: ", shooterMotor.getVelocity());
+                return shooterMotor.getVelocity(AngleUnit.DEGREES) <= minimumLauncherVelocity;
+            }
+        };
+        //This sequential action uses the above action, along with the rest of the launch sequence
+        return new SequentialAction(
+                waitForSufficientLauncherVelocity,
+                new InstantAction(() -> intakeMotor.setPower(1)),
+                feedServos.intakeBallAction(),
+                new SleepAction(launchTime),
+                feedServos.stopIntakeAction(),
+                new InstantAction(() -> shooterMotor.setPower(0)));
     }
 
 }
