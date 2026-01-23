@@ -18,6 +18,7 @@ public class FeedServoLauncher {
      * The controller to use for user input
      */
     private GamepadController gamepad;
+    private int previousBallFeedState = 0;
     /**
      * The duration (in milliseconds) for which the feed servos should run.
      * This can be configured via the FTC Dashboard.
@@ -76,14 +77,20 @@ public class FeedServoLauncher {
     public void updateFeedServoLauncherBehavior() {
         //TODO: Implement touchSensor to stop servos once intake is complete
         int feedState = gamepad.getTristateButtonValue(feedForwardButton);
-        if(feedState == 1) {
-            intakeBall();
-        }
-        else if(feedState == -1){
-            rejectBall();
-        }
-        else{
-            stopIntake();
+        //This extra check is present since the servo motor writes
+        //are time-consuming and we only need to write to the servos
+        //on a change in user input
+        if(feedState != previousBallFeedState) {
+            if (feedState == 1) {
+                intakeBall();
+            }
+            else if (feedState == -1) {
+                rejectBall();
+            }
+            else {
+                stopIntake();
+            }
+            previousBallFeedState = feedState;
         }
     }
 

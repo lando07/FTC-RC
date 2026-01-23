@@ -42,6 +42,12 @@ public class DriveTrain {
     public static double yawMultiplier = 0.5;
     public static double speedMultiplier = 1;
     public static double lowSpeedMultiplier = 0.5;
+    /**
+     * Used to calculate the minimum change on the joystick needed to compute the new stick inputs,
+     * reduces input lag by bypassing the calculations if the change in input is not noticeable to the
+     * driver
+     */
+    public static double minUserInputDelta = 0.01;
 
     // --- Private Subsystem Components ---
     private GoBildaPinpointDriver pinpoint;
@@ -51,6 +57,9 @@ public class DriveTrain {
     private final DcMotor backLeft;
     private final DcMotor backRight;
     private final GamepadController gamepad;
+    private volatile double prevAxialInput;
+    private volatile double prevLateralInput;
+    private volatile double prevYawInput;
 
     // --- State Variables ---
     public static boolean isFieldOrientedMode = false;
@@ -64,8 +73,9 @@ public class DriveTrain {
     public DriveTrain(OpMode opMode, GamepadController controller) {
         gamepad = controller;
         //Branch condition depending on current IMU mode(prefer pinpoint due to drastically higher accuracy)
-        if(usePinpointIMU){
+        if (usePinpointIMU) {
             pinpoint = opMode.hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
+            pinpoint.setErrorDetectionType(GoBildaPinpointDriver.ErrorDetectionType.CRC);
             pinpoint.setOffsets(3.81, 15.765, DistanceUnit.CM);
             pinpoint.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
             pinpoint.setEncoderDirections(xEncoderDirection, yEncoderDirection);
@@ -123,17 +133,21 @@ public class DriveTrain {
      */
     private void doFieldOrientedDrive() {
 
-
+        //Collect joystick inputs
         final double lateral = speedMultiplier * -getProcessedAxisValue(lateralAxis, lateralGain);
         final double axial = speedMultiplier * getProcessedAxisValue(axialAxis, axialGain);
         final double yaw = yawMultiplier * -getProcessedAxisValue(yawAxis, yawGain);
+        //store as previous inputs to be compared on subsequent calls to updateDriveTrainBehavior()
+        prevLateralInput = lateral;
+        prevAxialInput = axial;
+        prevYawInput = yaw;
 
         double heading;
         //Branch condition if using pinpoint imu
-        if(usePinpointIMU){
+        if (usePinpointIMU) {
             heading = pinpoint.getHeading(AngleUnit.RADIANS);
         }
-        else{
+        else {
             heading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
         }
@@ -168,10 +182,13 @@ public class DriveTrain {
     private void doClassicMecanumDrive() {
         // Omni Mode uses right joystick to go forward & strafe, and left joystick to rotate.
         //Just like a drone
-        //I decided to limit precision to 4 decimal places to counteract drift
         final double lateral = speedMultiplier * -getProcessedAxisValue(lateralAxis, lateralGain);
         final double axial = speedMultiplier * getProcessedAxisValue(axialAxis, axialGain);
         final double yaw = yawMultiplier * -getProcessedAxisValue(yawAxis, yawGain);
+        //store as previous inputs to be compared on subsequent calls to updateDriveTrainBehavior()
+        prevLateralInput = lateral;
+        prevAxialInput = axial;
+        prevYawInput = yaw;
 
         //these are the magic 4 statements right here
         // Combine the joystick requests for each axis-motion to determine each wheel's power.
@@ -226,10 +243,10 @@ public class DriveTrain {
      */
     public void updateDriveTrainBehavior() {
         if (!resetIMUButtonDisabled && gamepad.getGamepadButtonValue(resetIMUButton)) {
-            if(usePinpointIMU) {
+            if (usePinpointIMU) {
                 pinpoint.resetPosAndIMU();
             }
-            else{
+            else {
                 imu.resetYaw();
             }
         }
@@ -237,10 +254,15 @@ public class DriveTrain {
         // The TOGGLE button flips its state each press. We use this to switch our drive mode.
         isFieldOrientedMode = toggleDriveModeButtonDisabled || gamepad.getGamepadButtonValue(toggleDriveModeButton);
 
-        if (isFieldOrientedMode) {
-            doFieldOrientedDrive();
-        } else {
-            doClassicMecanumDrive();
+        if(Math.abs(getProcessedAxisValue(lateralAxis, lateralGain) - prevLateralInput) > minUserInputDelta ||
+           Math.abs(getProcessedAxisValue(axialAxis, axialGain) - prevAxialInput) > minUserInputDelta ||
+           Math.abs(getProcessedAxisValue(yawAxis, yawGain) - prevYawInput) > minUserInputDelta)
+        {
+            if (isFieldOrientedMode) {
+                doFieldOrientedDrive();
+            } else {
+                doClassicMecanumDrive();
+            }
         }
     }
 
