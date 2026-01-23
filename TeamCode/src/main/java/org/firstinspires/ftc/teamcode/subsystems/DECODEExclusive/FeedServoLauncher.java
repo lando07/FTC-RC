@@ -74,14 +74,20 @@ public class FeedServoLauncher {
     public void updateFeedServoLauncherBehavior() {
         //TODO: Implement touchSensor to stop servos once intake is complete
         int feedState = gamepad.getTristateButtonValue(feedForwardButton);
-        if(feedState == 1) {
-            intakeBall();
-        }
-        else if(feedState == -1){
-            rejectBall();
-        }
-        else{
-            stopIntake();
+        //This extra check is present since the servo motor writes
+        //are time-consuming and we only need to write to the servos
+        //on a change in user input
+        if(feedState != previousBallFeedState) {
+            if (feedState == 1) {
+                intakeBall();
+            }
+            else if (feedState == -1) {
+                rejectBall();
+            }
+            else {
+                stopIntake();
+            }
+            previousBallFeedState = feedState;
         }
     }
 
