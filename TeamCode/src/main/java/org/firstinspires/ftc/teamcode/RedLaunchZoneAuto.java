@@ -58,30 +58,35 @@ public class RedLaunchZoneAuto extends LinearOpMode {
 
         Action autonomous = drive.actionBuilder(startingPose)
                 // Current Path
+                .strafeToLinearHeading(new Vector2d(-52.8,47.7), Math.toRadians(129.62027014375383))
                 .stopAndAdd(launchBallsForSetTime())
                 .strafeToLinearHeading(new Vector2d(-32.2,23.2), Math.toRadians(90))
               .strafeToConstantHeading(new Vector2d(-15,23.0))
                 .stopAndAdd(feedServos.rejectBallAction())
-                .strafeToConstantHeading(new Vector2d(-15,52))
+                .strafeToConstantHeading(new Vector2d(-15,53.5))
                 .waitSeconds(.5)
                 .stopAndAdd(new InstantAction(() -> intakeMotor.setPower(0)))
                 .stopAndAdd( feedServos.stopIntakeAction())
+
                 .strafeToLinearHeading(new Vector2d(-32.2,23.2), Math.toRadians(-232))
-               .strafeToConstantHeading(new Vector2d(-55.37878321850394,50.28092031403789))
+                .strafeToLinearHeading(new Vector2d(-50,44), Math.toRadians(129.62027014375383))
                 .stopAndAdd(launchBallsForSetTime())
                 .strafeToConstantHeading(new Vector2d(-32.2,23.2))
+                .strafeToLinearHeading(new Vector2d(7.3,23.8), Math.toRadians(90))
+                .waitSeconds(.2)
+                .stopAndAdd(feedServos.rejectBallAction())
+                .strafeToConstantHeading(new Vector2d(11.5,58.6))
+                .waitSeconds(.5)
+                .stopAndAdd(new InstantAction(() -> intakeMotor.setPower(0)))
+                .stopAndAdd( feedServos.stopIntakeAction())
+                .strafeToLinearHeading(new Vector2d(11.5,23.8), Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(-32.2,23.2), Math.toRadians(-232))
+                .strafeToLinearHeading(new Vector2d(-50,44), Math.toRadians(129.62027014375383))
+                .stopAndAdd(launchBallsForSetTime())
+               .strafeToConstantHeading(new Vector2d(-67.8,30.0))
+
+
 //
- //                .strafeToLinearHeading(new Vector2d(11.3,23.4), Math.toRadians(90))
-//
-//                .strafeToConstantHeading(new Vector2d(11.9,50.0))
-//                .strafeToConstantHeading(new Vector2d(11.3,23.4))
-//                .strafeToLinearHeading(new Vector2d(-32.2,23.2), Math.toRadians(90))
-//                .turn(Math.toRadians(38))
-//                .strafeToConstantHeading(new Vector2d(-32.2,23.2))
-//                .strafeToConstantHeading(new Vector2d(-53.1,46.1))
-//                .strafeToLinearHeading(new Vector2d(-32.2,23.2), Math.toRadians(90))
-//
-//                .strafeToConstantHeading(new Vector2d(35.3,23.8))
 
                 // --- End of Launch Sequence ---
 
