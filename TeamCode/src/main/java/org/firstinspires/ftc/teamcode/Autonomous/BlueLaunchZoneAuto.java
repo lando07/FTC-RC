@@ -1,4 +1,8 @@
+<<<<<<<< HEAD:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomous/DECODE/RedStartZoneAuto.java
 package org.firstinspires.ftc.teamcode.Autonomous.DECODE;
+========
+package org.firstinspires.ftc.teamcode.Autonomous;
+>>>>>>>> 5c9a1e5 (Reorganized and fixed logic):TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomous/BlueLaunchZoneAuto.java
 
 import androidx.annotation.NonNull;
 
@@ -16,32 +20,36 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+<<<<<<<< HEAD:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomous/DECODE/RedStartZoneAuto.java
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.DECODEExclusive.FeedServoLauncher;
+========
+import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.TeleOp.XDriveDECODE;
+import org.firstinspires.ftc.teamcode.subsystems.FeedServoLauncher;
+>>>>>>>> 5c9a1e5 (Reorganized and fixed logic):TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomous/BlueLaunchZoneAuto.java
 
 /**
- * Autonomous Program for when the robot starts on the red team,
- * at the start zone.
+ * Autonomous Program for when the robot starts on the blue team,
+ * at the launch zone.
  *
  * @author Thu
  * @author Mentor Landon Smith
  */
 @Config
-@Autonomous(name = "Red Start Zone", group = "autonomous")
-public class RedStartZoneAuto extends LinearOpMode {
-    public static int minimumLauncherVelocity =400;//Degrees per second
+@Autonomous(name = "Blue Launch Zone", group = "autonomous")
+public class BlueLaunchZoneAuto extends LinearOpMode {
+    public static int minimumLauncherVelocity = 400;//Degrees per second
     public static double testXValue= -15;
     public static double testYValue= 52;
     public static double launchTime= 3;
     private FeedServoLauncher feedServos;
     private DcMotorEx intakeMotor;
-
-    private DcMotorEx intakeMotor2;
     private DcMotorEx shooterMotor;
 
     @Override
     public void runOpMode() {
-        Pose2d startingPose = new Pose2d(  59.5701202632874, 26.73845186008243,Math.toRadians( 180));
+        Pose2d startingPose = new Pose2d( -55.37878321850394, -50.28092031403789, Math.toRadians(-129.62027014375383));
         MecanumDrive drive = new MecanumDrive(hardwareMap, startingPose);
 
         // --- Initialize Launcher and Servos ---
@@ -49,7 +57,6 @@ public class RedStartZoneAuto extends LinearOpMode {
         shooterMotor = hardwareMap.get(DcMotorEx.class, "shooterMotor");
 
         intakeMotor = hardwareMap.get(DcMotorEx.class, "intakeMotor");
-        intakeMotor2 = hardwareMap.get(DcMotorEx.class, "intakeMotor2");
         feedServos = new FeedServoLauncher(this);
         feedServos.stop();
         //This is how you create an action with specific behavior that is not defined anywhere else
@@ -61,30 +68,35 @@ public class RedStartZoneAuto extends LinearOpMode {
 
         Action autonomous = drive.actionBuilder(startingPose)
                 // Current Path
-                .strafeToConstantHeading(new Vector2d(59.2,48))
-//                .strafeToConstantHeading(new Vector2d(-31.0,26.6))
-//                .turn(Math.toRadians(-51))
-//                .strafeToConstantHeading(new Vector2d(-50,50))
-//                .stopAndAdd(launchBallsForSetTime())
-//                .strafeToLinearHeading(new Vector2d(-11.6,23.6), Math.toRadians(90))
-//                .waitSeconds(.2)
-//                .stopAndAdd(feedServos.rejectBallAction())
-//                .strafeToConstantHeading(new Vector2d(-11.6,49))
-//                .strafeToLinearHeading(new Vector2d(-54,48.5), Math.toRadians(129.62027014375383))
-//                .stopAndAdd(launchBallsForSetTime())
-//
-//
-//                .strafeToConstantHeading(new Vector2d(11.9,23.8))
-//                .strafeToConstantHeading(new Vector2d(11.9,60))
-//                .waitSeconds(.2)
-//                .stopAndAdd(feedServos.rejectBallAction())
-//                .strafeToConstantHeading(new Vector2d(11.9,33.2))
-//                .strafeToLinearHeading(new Vector2d(-54,48.5), Math.toRadians(129.62027014375383))
-//                .strafeToLinearHeading(new Vector2d(-32.4,24.2), Math.toRadians(130))
-//                .strafeToConstantHeading(new Vector2d(-50,50))
-//                .stopAndAdd(launchBallsForSetTime())
-//                .strafeToLinearHeading(new Vector2d(-47.8,30.0), Math.toRadians(90))
-//                .strafeToConstantHeading(new Vector2d(-64.0,30.0))
+                .strafeToConstantHeading(new Vector2d(-52.8,-47.7))
+                .stopAndAdd(launchBallsForSetTime())
+                .strafeToLinearHeading(new Vector2d(-32.2,-23.2), Math.toRadians(-90))
+                .strafeToConstantHeading(new Vector2d(-15,-23.0))
+                .stopAndAdd(feedServos.rejectBallAction())
+                .strafeToConstantHeading(new Vector2d(-15,-53.3))
+                .waitSeconds(.5)
+                .stopAndAdd(new InstantAction(() -> intakeMotor.setPower(0)))
+                .stopAndAdd( feedServos.stopIntakeAction())
+
+                .strafeToLinearHeading(new Vector2d(-32.2,-23.2), Math.toRadians(232))
+                .strafeToLinearHeading(new Vector2d(-50,-44), Math.toRadians(-129.62027014375383))
+                .stopAndAdd(launchBallsForSetTime())
+
+                .strafeToConstantHeading(new Vector2d(-32.2,-23.2))
+                .strafeToLinearHeading(new Vector2d(11.5,-24.8), Math.toRadians(-90))
+                .waitSeconds(.2)
+                .stopAndAdd(feedServos.rejectBallAction())
+                .strafeToConstantHeading(new Vector2d(11.5,-58.6))
+                .waitSeconds(.5)
+                .stopAndAdd(new InstantAction(() -> intakeMotor.setPower(0)))
+                .stopAndAdd( feedServos.stopIntakeAction())
+                .strafeToLinearHeading(new Vector2d(11.5,-24.8), Math.toRadians(-90))
+                .strafeToLinearHeading(new Vector2d(-32.2,-23.2), Math.toRadians(232))
+                .strafeToLinearHeading(new Vector2d(-50,-44), Math.toRadians(-129.62027014375383))
+                .stopAndAdd(launchBallsForSetTime())
+                .strafeToLinearHeading(new Vector2d(34.8,-25), Math.toRadians(-90))
+
+
 //
 
                 // --- End of Launch Sequence ---
@@ -130,12 +142,37 @@ public class RedStartZoneAuto extends LinearOpMode {
         //This sequential action uses the above action, along with the rest of the launch sequence
         return new SequentialAction(
                 waitForSufficientLauncherVelocity,
-                new InstantAction(() -> intakeMotor.setPower(-1)),
-                new InstantAction(() ->intakeMotor2.setPower(-1)),
+                new InstantAction(() -> intakeMotor.setPower(1)),
                 feedServos.intakeBallAction(),
                 new SleepAction(launchTime),
                 feedServos.stopIntakeAction(),
                 new InstantAction(() -> shooterMotor.setPower(0)));
-        }
     }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -6,14 +6,12 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.FeedServoLauncher;
 import org.firstinspires.ftc.teamcode.subsystems.GamepadController;
 import org.firstinspires.ftc.teamcode.subsystems.enums.AxisBehavior;
-import org.firstinspires.ftc.teamcode.subsystems.enums.BiStateButtonBehavior;
 import org.firstinspires.ftc.teamcode.subsystems.enums.GamepadButton;
 
 /**
@@ -73,8 +71,7 @@ public class XDriveDECODE extends OpMode {
         // Controller 2 Trigger Configuration
         controller2.configureAxis(launcherAxis);
         controller2.configureAxis(reverseLauncherAxis);
-        controller2.configureBiStateButton(feedForwardButton, BiStateButtonBehavior.HOLD);
-        controller2.configureBiStateButton(feedBackwardButton, BiStateButtonBehavior.HOLD);
+        controller2.configureTristateButton(feedForwardButton,feedBackwardButton);
         // --- Hardware Initialization ---
         shooterMotor = hardwareMap.get(DcMotorEx.class, "shooterMotor");
         shooterMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -130,12 +127,7 @@ public class XDriveDECODE extends OpMode {
 
     private void computeIntakeMotorDirection() {
         // Set power for intake motor (A/B buttons)
-        intakePower = 0;
-        if (controller2.getGamepadButtonValue(feedForwardButton)) {
-            intakePower = 1.0;
-        } else if (controller2.getGamepadButtonValue(feedBackwardButton)) {
-            intakePower = -1.0;
-        }
+        intakePower = controller1.getTristateButtonValue(feedForwardButton);
         //Motor writes are time consuming,
         //so this extra check in both cases reduces
         //motor writes(called motor write caching) and thus decreases
@@ -152,28 +144,27 @@ public class XDriveDECODE extends OpMode {
     private void computeShooterMotorVelocity() {
         double forwardTrigger = controller2.getAxisValue(launcherAxis);
         double reverseTrigger = controller2.getAxisValue(reverseLauncherAxis);
-
-        if (forwardTrigger > minimumInputDelta)
-        {
+        double shooterVelocity;
             //Since motor writes like setPower and setVelocity similar
             //can be time-consuming, this extra check in both cases reduces
             //motor writes(called motor write caching) and thus decreases
             //input latency and lag
-            if ((forwardTrigger - prevShooterMotorInput) > minimumInputDelta) {
-                shooterMotor.setVelocity(forwardTrigger * targetVelocity, AngleUnit.DEGREES);
-            }
-            prevShooterMotorInput = forwardTrigger;
-        } else if (reverseTrigger > minimumInputDelta) {
-            //This is the same behavior, just different input axis as above
-            if ((reverseTrigger - prevShooterMotorInput) > minimumInputDelta) {
-                shooterMotor.setVelocity(-(reverseTrigger * targetVelocity), AngleUnit.DEGREES);
-            }
-            prevShooterMotorInput = reverseTrigger;
+        if(forwardTrigger > 0.1){
+            shooterVelocity = forwardTrigger * targetVelocity;
+
         }
-        else {
-            shooterMotor.setVelocity(0, AngleUnit.DEGREES);
-            prevShooterMotorInput = 0;
+        else if(reverseTrigger > 0.1){
+            shooterVelocity = -reverseTrigger * targetVelocity;
         }
+        else{
+            shooterVelocity = 0;
+        }
+
+        if(Math.abs(shooterVelocity - prevShooterMotorInput) > minimumInputDelta){
+            shooterMotor.setVelocity(shooterVelocity);
+            prevShooterMotorInput = shooterVelocity;
+        }
+
     }
 
 //    /**

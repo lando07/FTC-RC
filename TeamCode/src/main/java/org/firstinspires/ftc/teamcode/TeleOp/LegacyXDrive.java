@@ -1,4 +1,8 @@
+<<<<<<<< HEAD:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/TeleOp/IntoTheDeep/LegacyXDriveIntoTheDeep.java
 package org.firstinspires.ftc.teamcode.TeleOp.IntoTheDeep;
+========
+package org.firstinspires.ftc.teamcode.TeleOp;
+>>>>>>>> 5c9a1e5 (Reorganized and fixed logic):TeamCode/src/main/java/org/firstinspires/ftc/teamcode/TeleOp/LegacyXDrive.java
 
 import static org.firstinspires.ftc.teamcode.subsystems.IntoTheDeepExclusive.RaiseArmSlider.clipSpecimenOffsetTeleOp;
 import static org.firstinspires.ftc.teamcode.subsystems.IntoTheDeepExclusive.RaiseArmSlider.highSpecimenLowBasket;
@@ -17,9 +21,15 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+<<<<<<<< HEAD:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/TeleOp/IntoTheDeep/LegacyXDriveIntoTheDeep.java
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.IntoTheDeepExclusive.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.IntoTheDeepExclusive.RaiseArmSlider;
+========
+import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.subsystems.Claw;
+import org.firstinspires.ftc.teamcode.subsystems.RaiseArmSlider;
+>>>>>>>> 5c9a1e5 (Reorganized and fixed logic):TeamCode/src/main/java/org/firstinspires/ftc/teamcode/TeleOp/LegacyXDrive.java
 
 /**
  * Ok, so this is our omega be-all-end-all class.
