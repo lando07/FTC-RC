@@ -219,10 +219,7 @@ public class DriveTrain {
             rightBackPower *= lowSpeedMultiplier;
         }
 
-        frontLeft.setPower(leftFrontPower);
-        frontRight.setPower(rightFrontPower);
-        backLeft.setPower(leftBackPower);
-        backRight.setPower(rightBackPower);
+        setMotorPowers(leftFrontPower, rightFrontPower, leftBackPower, rightBackPower);
     }
 
     /**

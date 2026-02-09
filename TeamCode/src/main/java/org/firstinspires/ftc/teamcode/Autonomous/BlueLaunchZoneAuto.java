@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Autonomous;
 
 import androidx.annotation.NonNull;
 
@@ -14,22 +14,23 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.TeleOp.XDriveDECODE;
 import org.firstinspires.ftc.teamcode.subsystems.FeedServoLauncher;
 
 /**
- * Autonomous Program for when the robot starts on the red team,
+ * Autonomous Program for when the robot starts on the blue team,
  * at the launch zone.
  *
  * @author Thu
  * @author Mentor Landon Smith
  */
 @Config
-@Autonomous(name = "Red Launch Zone", group = "autonomous")
-public class RedLaunchZoneAuto extends LinearOpMode {
-    public static int minimumLauncherVelocity =400;//Degrees per second
+@Autonomous(name = "Blue Launch Zone", group = "autonomous")
+public class BlueLaunchZoneAuto extends LinearOpMode {
+    public static int minimumLauncherVelocity = 400;//Degrees per second
     public static double testXValue= -15;
     public static double testYValue= 52;
     public static double launchTime= 3;
@@ -39,7 +40,7 @@ public class RedLaunchZoneAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        Pose2d startingPose = new Pose2d( -55.37878321850394, 50.28092031403789,Math.toRadians(129.62027014375383));
+        Pose2d startingPose = new Pose2d( -55.37878321850394, -50.28092031403789, Math.toRadians(-129.62027014375383));
         MecanumDrive drive = new MecanumDrive(hardwareMap, startingPose);
 
         // --- Initialize Launcher and Servos ---
@@ -58,32 +59,33 @@ public class RedLaunchZoneAuto extends LinearOpMode {
 
         Action autonomous = drive.actionBuilder(startingPose)
                 // Current Path
-                .strafeToLinearHeading(new Vector2d(-52.8,47.7), Math.toRadians(129.62027014375383))
+                .strafeToConstantHeading(new Vector2d(-52.8,-47.7))
                 .stopAndAdd(launchBallsForSetTime())
-                .strafeToLinearHeading(new Vector2d(-32.2,23.2), Math.toRadians(90))
-              .strafeToConstantHeading(new Vector2d(-15,23.0))
+                .strafeToLinearHeading(new Vector2d(-32.2,-23.2), Math.toRadians(-90))
+                .strafeToConstantHeading(new Vector2d(-15,-23.0))
                 .stopAndAdd(feedServos.rejectBallAction())
-                .strafeToConstantHeading(new Vector2d(-15,53.5))
+                .strafeToConstantHeading(new Vector2d(-15,-53.3))
                 .waitSeconds(.5)
                 .stopAndAdd(new InstantAction(() -> intakeMotor.setPower(0)))
                 .stopAndAdd( feedServos.stopIntakeAction())
 
-                .strafeToLinearHeading(new Vector2d(-32.2,23.2), Math.toRadians(-232))
-                .strafeToLinearHeading(new Vector2d(-50,44), Math.toRadians(129.62027014375383))
+                .strafeToLinearHeading(new Vector2d(-32.2,-23.2), Math.toRadians(232))
+                .strafeToLinearHeading(new Vector2d(-50,-44), Math.toRadians(-129.62027014375383))
                 .stopAndAdd(launchBallsForSetTime())
-                .strafeToConstantHeading(new Vector2d(-32.2,23.2))
-                .strafeToLinearHeading(new Vector2d(7.3,23.8), Math.toRadians(90))
+
+                .strafeToConstantHeading(new Vector2d(-32.2,-23.2))
+                .strafeToLinearHeading(new Vector2d(11.5,-24.8), Math.toRadians(-90))
                 .waitSeconds(.2)
                 .stopAndAdd(feedServos.rejectBallAction())
-                .strafeToConstantHeading(new Vector2d(11.5,58.6))
+                .strafeToConstantHeading(new Vector2d(11.5,-58.6))
                 .waitSeconds(.5)
                 .stopAndAdd(new InstantAction(() -> intakeMotor.setPower(0)))
                 .stopAndAdd( feedServos.stopIntakeAction())
-                .strafeToLinearHeading(new Vector2d(11.5,23.8), Math.toRadians(90))
-                .strafeToLinearHeading(new Vector2d(-32.2,23.2), Math.toRadians(-232))
-                .strafeToLinearHeading(new Vector2d(-50,44), Math.toRadians(129.62027014375383))
+                .strafeToLinearHeading(new Vector2d(11.5,-24.8), Math.toRadians(-90))
+                .strafeToLinearHeading(new Vector2d(-32.2,-23.2), Math.toRadians(232))
+                .strafeToLinearHeading(new Vector2d(-50,-44), Math.toRadians(-129.62027014375383))
                 .stopAndAdd(launchBallsForSetTime())
-               .strafeToConstantHeading(new Vector2d(-67.8,30.0))
+                .strafeToLinearHeading(new Vector2d(34.8,-25), Math.toRadians(-90))
 
 
 //
@@ -139,3 +141,29 @@ public class RedLaunchZoneAuto extends LinearOpMode {
     }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
