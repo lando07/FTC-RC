@@ -1,33 +1,32 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Autonomous;
 
-import static org.firstinspires.ftc.teamcode.XDriveDECODE.NOMINAL_VOLTAGE;
+//import static org.firstinspires.ftc.teamcode.TeleOp.XDriveDECODE.NOMINAL_VOLTAGE;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.InstantAction;
-import com.acmerobotics.roadrunner.InstantFunction;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
 
+import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.PinpointLocalizer;
 import org.firstinspires.ftc.teamcode.subsystems.FeedServoLauncher;
-
+@Deprecated
 @Config
 @Autonomous(name = "Launch Auto", group = "Autonomous")
 public class LaunchAuto extends LinearOpMode {
-    double currentVoltage;
-    double compensatedShooterPower;
-    VoltageSensor vs;
+//    double currentVoltage;
+//    double compensatedShooterPower;
+//    VoltageSensor vs;
 
     @Override
     public void runOpMode() {
         Pose2d startingPose = new Pose2d(-53.1, 46.1, Math.toRadians(-232));
         MecanumDrive drive = new MecanumDrive(hardwareMap, startingPose);
-        vs = hardwareMap.voltageSensor.iterator().next();
+//        vs = hardwareMap.voltageSensor.iterator().next();
 
         DcMotorEx shooterMotor = hardwareMap.get(DcMotorEx.class, "shooterMotor");
         DcMotorEx intakeMotor = hardwareMap.get(DcMotorEx.class, "intakeMotor");
@@ -69,12 +68,12 @@ public class LaunchAuto extends LinearOpMode {
         }
     }
 
-    private void compensateShooterPower() {
-        currentVoltage = vs.getVoltage();
-        if (currentVoltage < 8.0) { // Safety check
-            currentVoltage = NOMINAL_VOLTAGE;
-        }
-        double voltageCompensationFactor = NOMINAL_VOLTAGE / currentVoltage;
-        compensatedShooterPower = 0.55 * voltageCompensationFactor;
-    }
+//    private void compensateShooterPower() {
+//        currentVoltage = vs.getVoltage();
+//        if (currentVoltage < 8.0) { // Safety check
+//            currentVoltage = NOMINAL_VOLTAGE;
+//        }
+//        double voltageCompensationFactor = NOMINAL_VOLTAGE / currentVoltage;
+//        compensatedShooterPower = 0.55 * voltageCompensationFactor;
+//    }
 }
