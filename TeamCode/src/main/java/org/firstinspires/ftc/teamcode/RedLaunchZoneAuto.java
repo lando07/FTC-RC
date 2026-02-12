@@ -58,12 +58,12 @@ public class RedLaunchZoneAuto extends LinearOpMode {
 
         Action autonomous = drive.actionBuilder(startingPose)
                 // Current Path
-                .strafeToLinearHeading(new Vector2d(-52.8,47.7), Math.toRadians(129.62027014375383))
-                .stopAndAdd(launchBallsForSetTime())
-                .strafeToLinearHeading(new Vector2d(-32.2,23.2), Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(-52.8,47.7), Math.toRadians(129.62027014375383))//backs up
+                .stopAndAdd(launchBallsForSetTime())//launches
+                .strafeToLinearHeading(new Vector2d(-32.2,23.2), Math.toRadians(90))//moves to first set of balls
               .strafeToConstantHeading(new Vector2d(-15,23.0))
                 .stopAndAdd(feedServos.rejectBallAction())
-                .strafeToConstantHeading(new Vector2d(-15,53.5))
+                .strafeToConstantHeading(new Vector2d(-15,56))
                 .waitSeconds(.5)
                 .stopAndAdd(new InstantAction(() -> intakeMotor.setPower(0)))
                 .stopAndAdd( feedServos.stopIntakeAction())
@@ -72,10 +72,10 @@ public class RedLaunchZoneAuto extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(-50,44), Math.toRadians(129.62027014375383))
                 .stopAndAdd(launchBallsForSetTime())
                 .strafeToConstantHeading(new Vector2d(-32.2,23.2))
-                .strafeToLinearHeading(new Vector2d(7.3,23.8), Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(12.7,23.8), Math.toRadians(90))
                 .waitSeconds(.2)
-                .stopAndAdd(feedServos.rejectBallAction())
-                .strafeToConstantHeading(new Vector2d(11.5,58.6))
+                    .stopAndAdd(feedServos.rejectBallAction())
+                .strafeToConstantHeading(new Vector2d(12.7,59))
                 .waitSeconds(.5)
                 .stopAndAdd(new InstantAction(() -> intakeMotor.setPower(0)))
                 .stopAndAdd( feedServos.stopIntakeAction())
@@ -83,7 +83,7 @@ public class RedLaunchZoneAuto extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(-32.2,23.2), Math.toRadians(-232))
                 .strafeToLinearHeading(new Vector2d(-50,44), Math.toRadians(129.62027014375383))
                 .stopAndAdd(launchBallsForSetTime())
-               .strafeToConstantHeading(new Vector2d(-67.8,30.0))
+               .strafeToConstantHeading(new Vector2d(-64.0,30.0))
 
 
 //

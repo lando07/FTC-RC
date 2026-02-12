@@ -24,45 +24,23 @@ public class RedLaunchZoneDECODE {
                //Current Path
                 // Launch Sequence
 
-                .strafeToLinearHeading(new Vector2d(-52.8,47.7), Math.toRadians(129.62027014375383))
-                .strafeToLinearHeading(new Vector2d(-32.2,23.2), Math.toRadians(90))
-                .strafeToConstantHeading(new Vector2d(-15,23.0))
-
-                .strafeToConstantHeading(new Vector2d(-15,50))
-                .waitSeconds(.5)
-
-
-               .strafeToLinearHeading(new Vector2d(-32.2,23.2), Math.toRadians(-232))
-                .strafeToLinearHeading(new Vector2d(-52.8,47.7), Math.toRadians(129.62027014375383))
-                .strafeToLinearHeading(new Vector2d(-51.5,46.6), Math.toRadians(129.62027014375383))
-
-               .strafeToConstantHeading(new Vector2d(-32.2,23.2))
-              .strafeToLinearHeading(new Vector2d(12.5,23.8), Math.toRadians(90))
-              .strafeToConstantHeading(new Vector2d(11.5,54.0))
-//                .strafeToLinearHeading(new Vector2d(11.5,23.8), Math.toRadians(90))
-//               .strafeToLinearHeading(new Vector2d(-32.2,23.2), Math.toRadians(-232))
 //                .strafeToLinearHeading(new Vector2d(-52.8,47.7), Math.toRadians(129.62027014375383))
-//                .strafeToLinearHeading(new Vector2d(-32.2,23.2), Math.toRadians(-232))
-//                .strafeToLinearHeading(new Vector2d(35.3,26.8), Math.toRadians(90))
-
-
-
-               // .strafeToLinearHeading(new Vector2d(-32.2,23.2), Math.toRadians(-232))
-               // .strafeToConstantHeading(new Vector2d(-53.1,46.1))
-//
-                // .strafeToConstantHeading(new Vector2d(-32.2,23.2))
-//
- //                .strafeToLinearHeading(new Vector2d(11.3,23.4), Math.toRadians(90))
-//
-//              .strafeToConstantHeading(new Vector2d(11.9,50.0))
-//                .strafeToConstantHeading(new Vector2d(11.3,23.4))
 //                .strafeToLinearHeading(new Vector2d(-32.2,23.2), Math.toRadians(90))
-//                .turn(Math.toRadians(38))
-//               .strafeToConstantHeading(new Vector2d(-32.2,23.2))
-//              .strafeToConstantHeading(new Vector2d(-53.1,46.1))
-//                .strafeToLinearHeading(new Vector2d(-32.2,23.2), Math.toRadians(90))
-//
-//               .strafeToConstantHeading(new Vector2d(35.3,23.8))
+//                .strafeToConstantHeading(new Vector2d(-15,23.0))
+//                .strafeToConstantHeading(new Vector2d(-15,56))
+
+                //.strafeToLinearHeading(new Vector2d(-32.2,23.2), Math.toRadians(-232))
+              //  .strafeToLinearHeading(new Vector2d(-50,44), Math.toRadians(129.62027014375383))
+               // .strafeToConstantHeading(new Vector2d(-32.2,23.2))
+                .strafeToConstantHeading(new Vector2d(-32.2,23.2))
+                  .strafeToLinearHeading(new Vector2d(12.7,23.8), Math.toRadians(90))
+                .strafeToConstantHeading(new Vector2d(12.7,59))
+
+                .strafeToLinearHeading(new Vector2d(11.5,23.8), Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(-32.2,23.2), Math.toRadians(-232))
+                .strafeToLinearHeading(new Vector2d(-50,44), Math.toRadians(129.62027014375383))
+
+                .strafeToConstantHeading(new Vector2d(-64.8,30.0))
 
 
 

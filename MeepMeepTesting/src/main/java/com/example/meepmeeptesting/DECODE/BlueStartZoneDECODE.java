@@ -13,36 +13,32 @@ public class BlueStartZoneDECODE {
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 .setConstraints(90, 70, 55, 60, 14)
                 .build();
-        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(61.8, -12.5, Math.toRadians(180)))
+        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(61.31118413970226, -20.0335849551704, Math.toRadians( 180)))
                 //Put actions here
-                .strafeToConstantHeading(new Vector2d(36.3,-12.7))
-                .turn(Math.toRadians(90))
-
-                .strafeToConstantHeading(new Vector2d(35.0,-56.0))
-                .strafeToConstantHeading(new Vector2d(36.3,-12.7))
-                .turn(Math.toRadians(-90))
-                .strafeToConstantHeading(new Vector2d(-30.8,-15.1))
-                .turn(Math.toRadians(54))
-                .strafeToConstantHeading(new Vector2d(-53.4,-46.1))
-
-                .strafeToConstantHeading(new Vector2d(-30.8,-15.1))
-                .turn(Math.toRadians(127))
-                .strafeToConstantHeading(new Vector2d(10.5,-13.5))
-                .turn(Math.toRadians(-92))
-
-                .strafeToConstantHeading(new Vector2d(11.5,-51.4))
-                .strafeToConstantHeading(new Vector2d(10.5,-13.5))
-                .turn(Math.toRadians(-92))
-                .strafeToConstantHeading(new Vector2d(-30.8,-15.1))
-                .turn(Math.toRadians(54))
-                .strafeToConstantHeading(new Vector2d(-53.4,-46.1))
-                .strafeToConstantHeading(new Vector2d(-30.8,-15.1))
-                .turn(Math.toRadians(127))
-                .strafeToConstantHeading(new Vector2d(-12.5,-14.1))
-                .turn(Math.toRadians(-90))
-                .strafeToConstantHeading(new Vector2d(-12.5,-37.5))
 
 
+
+
+//                .strafeToConstantHeading(new Vector2d(-32.4,-24.2))
+//                .turn(Math.toRadians(49))
+//                .strafeToConstantHeading(new Vector2d(-48.7,-43.1))
+//                .strafeToLinearHeading(new Vector2d(-13,-24.2), Math.toRadians(-90))
+//                .waitSeconds(.2)
+////                .stopAndAdd(feedServos.rejectBallAction())
+//                .strafeToConstantHeading(new Vector2d(-13,-50))
+//                .strafeToLinearHeading(new Vector2d(-32.4,-24.2), Math.toRadians(-130))
+//                .strafeToConstantHeading(new Vector2d(-48.7,-43.1))
+////                .stopAndAdd(launchBallsForSetTime())
+//                .strafeToLinearHeading(new Vector2d(12.1,-23.6), Math.toRadians(-90))
+//                .strafeToLinearHeading(new Vector2d(12.1,-23.6), Math.toRadians(-90))
+//                .waitSeconds(.2)
+////                .stopAndAdd(feedServos.rejectBallAction())
+//                .strafeToLinearHeading(new Vector2d(12.1,-55.2), Math.toRadians(-90))
+//                .strafeToLinearHeading(new Vector2d(12.1,-23.6), Math.toRadians(-90))
+//                .strafeToLinearHeading(new Vector2d(-32.4,-24.2), Math.toRadians(-130))
+//                .strafeToConstantHeading(new Vector2d(-48.7,-43.1))
+////                .stopAndAdd(launchBallsForSetTime())
+//                .strafeToLinearHeading(new Vector2d(35.5,-32.6), Math.toRadians(-90))
 
                 .build());
         meepMeep.setBackground(MeepMeep.Background.FIELD_DECODE_JUICE_DARK)

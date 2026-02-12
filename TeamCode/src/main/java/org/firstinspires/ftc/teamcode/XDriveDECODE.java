@@ -40,6 +40,7 @@ public class XDriveDECODE extends OpMode {
     public static GamepadButton feedForwardButton = GamepadButton.A;
     public static GamepadButton feedBackwardButton = GamepadButton.B;
 
+
     // --- Shooter Power and Voltage Compensation ---
     // 1. SET YOUR SHOOTER POWER HERE (e.g., 0.80 for 80%)
     public static double SHOOTER_POWER_SETTING = .60;
@@ -47,7 +48,7 @@ public class XDriveDECODE extends OpMode {
     private VoltageSensor batteryVoltageSensor;
     public static double NOMINAL_VOLTAGE = 12.5; // The baseline voltage for compensation
 
-    public static double targetVelocity = 400;
+    public static double targetVelocity = 390;
 
     private double compensatedShooterPower;
     private double currentVoltage;
@@ -129,6 +130,7 @@ public class XDriveDECODE extends OpMode {
         }
         intakeMotor.setPower(intakePower);
     }
+
 
     private void computeShooterMotorVelocity() {
         shooterMotor.setVelocity(controller2.getAxisValue(launcherAxis)*targetVelocity, AngleUnit.DEGREES);

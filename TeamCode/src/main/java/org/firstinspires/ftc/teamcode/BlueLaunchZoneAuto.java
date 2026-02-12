@@ -61,9 +61,10 @@ public class BlueLaunchZoneAuto extends LinearOpMode {
                 .strafeToConstantHeading(new Vector2d(-52.8,-47.7))
                 .stopAndAdd(launchBallsForSetTime())
                 .strafeToLinearHeading(new Vector2d(-32.2,-23.2), Math.toRadians(-90))
-                .strafeToConstantHeading(new Vector2d(-15,-23.0))
+                .strafeToConstantHeading(new Vector2d(-11.9,-23.0))
+
                 .stopAndAdd(feedServos.rejectBallAction())
-                .strafeToConstantHeading(new Vector2d(-15,-53.3))
+                .strafeToConstantHeading(new Vector2d(-11.9,-56))
                 .waitSeconds(.5)
                 .stopAndAdd(new InstantAction(() -> intakeMotor.setPower(0)))
                 .stopAndAdd( feedServos.stopIntakeAction())
@@ -76,7 +77,7 @@ public class BlueLaunchZoneAuto extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(11.5,-24.8), Math.toRadians(-90))
                 .waitSeconds(.2)
                 .stopAndAdd(feedServos.rejectBallAction())
-                .strafeToConstantHeading(new Vector2d(11.5,-58.6))
+                .strafeToConstantHeading(new Vector2d(11.5,-60))
                 .waitSeconds(.5)
                 .stopAndAdd(new InstantAction(() -> intakeMotor.setPower(0)))
                 .stopAndAdd( feedServos.stopIntakeAction())
@@ -84,7 +85,7 @@ public class BlueLaunchZoneAuto extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(-32.2,-23.2), Math.toRadians(232))
                 .strafeToLinearHeading(new Vector2d(-50,-44), Math.toRadians(-129.62027014375383))
                 .stopAndAdd(launchBallsForSetTime())
-                .strafeToLinearHeading(new Vector2d(34.8,-25), Math.toRadians(-90))
+                .strafeToLinearHeading(new Vector2d(-67.8,-30), Math.toRadians(-90))
 
 
 //
