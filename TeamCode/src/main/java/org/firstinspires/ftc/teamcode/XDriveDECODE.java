@@ -35,10 +35,13 @@ public class XDriveDECODE extends OpMode {
     private FeedServoLauncher feedServos;
     private DcMotorEx shooterMotor;
     private DcMotorEx intakeMotor;
+    private DcMotorEx intakeMotor2;
     public static AxisBehavior launcherAxis = AxisBehavior.RIGHT_TRIGGER;
     public static AxisBehavior reverseLauncherAxis = AxisBehavior.LEFT_TRIGGER;
-    public static GamepadButton feedForwardButton = GamepadButton.A;
-    public static GamepadButton feedBackwardButton = GamepadButton.B;
+    public static AxisBehavior intereriorIntakeMotorAxis = AxisBehavior.LEFT_STICK_Y;
+    public static AxisBehavior exteriorIntakeMotorAxis = AxisBehavior.RIGHT_STICK_Y;
+    public static double slowSpeedIntakeModifier = 0.5; //50%
+
 
 
     // --- Shooter Power and Voltage Compensation ---
@@ -54,6 +57,8 @@ public class XDriveDECODE extends OpMode {
     private double currentVoltage;
     private double intakePower;
 
+    private double intakePower2;
+
 
     @Override
     public void init() {
@@ -65,11 +70,12 @@ public class XDriveDECODE extends OpMode {
         driveTrain = new DriveTrain(this, controller1);
 
         // Controller 2 Trigger Configuration
-        controller2.configureAxis(launcherAxis);
-        controller2.configureAxis(reverseLauncherAxis);
-        controller2.configureBiStateButton(feedForwardButton, BiStateButtonBehavior.HOLD);
-        controller2.configureBiStateButton(feedBackwardButton, BiStateButtonBehavior.HOLD);
+        controller2.configureAxis(intereriorIntakeMotorAxis);
+        controller2.configureAxis(exteriorIntakeMotorAxis);
+//        controller2.configureBiStateButton(feedForwardButton, BiStateButtonBehavior.HOLD);
+//        controller2.configureBiStateButton(feedBackwardButton, BiStateButtonBehavior.HOLD);
         // --- Hardware Initialization ---
+        intakeMotor2 = hardwareMap.get(DcMotorEx.class, "intakeMotor2");
         shooterMotor = hardwareMap.get(DcMotorEx.class, "shooterMotor");
         shooterMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         feedServos = new FeedServoLauncher(this, controller2);
@@ -106,6 +112,7 @@ public class XDriveDECODE extends OpMode {
         // Update drivetrain
         driveTrain.updateDriveTrainBehavior();
         computeIntakeMotorDirection();
+        computeIntake2MotorDirection();
         computeShooterMotorVelocity();
 //        doShooterMotorWithVoltageCompensation();
         // Set positions for the four servos based on bumpers
@@ -121,16 +128,15 @@ public class XDriveDECODE extends OpMode {
         telemetry.addData("Launch Motor speed (deg/s): ", shooterMotor.getVelocity(AngleUnit.DEGREES));
     }
     private void computeIntakeMotorDirection(){
-        // Set power for intake motor (A/B buttons)
-        intakePower = 0;
-        if (controller2.getGamepadButtonValue(feedForwardButton)) {
-            intakePower = 1.0;
-        } else if (controller2.getGamepadButtonValue(feedBackwardButton)) {
-            intakePower = -1.0;
-        }
+        intakePower = controller2.getAxisValue(intereriorIntakeMotorAxis);
         intakeMotor.setPower(intakePower);
     }
 
+
+    private void computeIntake2MotorDirection(){
+        intakePower2 = controller2.getAxisValue(exteriorIntakeMotorAxis);
+        intakeMotor2.setPower(intakePower2);
+    }
 
     private void computeShooterMotorVelocity() {
         shooterMotor.setVelocity(controller2.getAxisValue(launcherAxis)*targetVelocity, AngleUnit.DEGREES);
