@@ -123,6 +123,7 @@ public class XDriveDECODE extends OpMode {
         telemetry.addData("Compensated Power", "%.2f (Active)", compensatedShooterPower);
         telemetry.addData("Battery Voltage", "%.2f V", currentVoltage);
         telemetry.addData("Intake Power", intakePower);
+        telemetry.addData("Intake Power 2", intakePower2);
         telemetry.addData("Left Servo Pos: ", feedServos.getLeftServoPositions());
         telemetry.addData("Right Servo Pos", feedServos.getRightServoPositions());
         telemetry.addData("Launch Motor speed (deg/s): ", shooterMotor.getVelocity(AngleUnit.DEGREES));
