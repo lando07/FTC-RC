@@ -72,6 +72,7 @@ public class XDriveDECODE extends OpMode {
         // Controller 2 Trigger Configuration
         controller2.configureAxis(intereriorIntakeMotorAxis);
         controller2.configureAxis(exteriorIntakeMotorAxis);
+        controller2.configureAxis(launcherAxis);
 //        controller2.configureBiStateButton(feedForwardButton, BiStateButtonBehavior.HOLD);
 //        controller2.configureBiStateButton(feedBackwardButton, BiStateButtonBehavior.HOLD);
         // --- Hardware Initialization ---
