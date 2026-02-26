@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
-//import static org.firstinspires.ftc.teamcode.TeleOp.XDriveDECODE.NOMINAL_VOLTAGE;
+//import static org.firstinspires.ftc.teamcode.TeleOp.DECODE.XDriveDECODE.NOMINAL_VOLTAGE;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Action;

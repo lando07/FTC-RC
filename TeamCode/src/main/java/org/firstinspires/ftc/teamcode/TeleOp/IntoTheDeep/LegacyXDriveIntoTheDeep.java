@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.TeleOp;
+package org.firstinspires.ftc.teamcode.TeleOp.IntoTheDeep;
 
 import static org.firstinspires.ftc.teamcode.subsystems.RaiseArmSlider.clipSpecimenOffsetTeleOp;
 import static org.firstinspires.ftc.teamcode.subsystems.RaiseArmSlider.highSpecimenLowBasket;
@@ -55,7 +55,7 @@ import org.firstinspires.ftc.teamcode.subsystems.RaiseArmSlider;
 @Disabled
 @Config
 @TeleOp(name = "LegacyXDrive", group = "Robot")
-public class LegacyXDrive extends OpMode {
+public class LegacyXDriveIntoTheDeep extends OpMode {
     /**
      * Stores the initial pitch offset when the game starts. The claw should be sticking outwards
      */

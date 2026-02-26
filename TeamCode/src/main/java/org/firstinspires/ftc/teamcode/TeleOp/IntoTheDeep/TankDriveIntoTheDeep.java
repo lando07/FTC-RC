@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.TeleOp;
+package org.firstinspires.ftc.teamcode.TeleOp.IntoTheDeep;
 
 /* Copyright (c) 2017 FIRST. All rights reserved.
  *
@@ -51,10 +51,9 @@ import com.qualcomm.robotcore.hardware.Servo;
  */
 
 //REMEMBER, CHANGES WILL ***NOT*** TAKE EFFECT UNTIL THE CODE IS PUSHED TO THE PHONE!
-@Deprecated
 @Disabled
 @TeleOp(name = "Tank Drive", group = "Robot")
-public class TankDrive extends OpMode {
+public class TankDriveIntoTheDeep extends OpMode {
     /* Declare OpMode members. */
     /**
      * The left motor

@@ -17,7 +17,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
-import org.firstinspires.ftc.teamcode.TeleOp.XDriveDECODE;
+import org.firstinspires.ftc.teamcode.TeleOp.DECODE.XDriveDECODE;
 import org.firstinspires.ftc.teamcode.subsystems.FeedServoLauncher;
 
 /**
