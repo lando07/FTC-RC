@@ -75,10 +75,12 @@ public class XDriveDECODE extends OpMode {
 //        controller2.configureBiStateButton(feedBackwardButton, BiStateButtonBehavior.HOLD);
         // --- Hardware Initialization ---
         intakeMotor2 = hardwareMap.get(DcMotorEx.class, "intakeMotor2");
+        intakeMotor = hardwareMap.get(DcMotorEx.class, "intakeMotor");
         shooterMotor = hardwareMap.get(DcMotorEx.class, "shooterMotor");
         shooterMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        intakeMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
+        intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         feedServos = new FeedServoLauncher(this, controller2);
-        intakeMotor = hardwareMap.get(DcMotorEx.class, "intakeMotor");
 
         // Initialize the VoltageSensor from the hardware map
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
@@ -121,8 +123,8 @@ public class XDriveDECODE extends OpMode {
         telemetry.addData("Shooter Power Setting", "%.0f%%", SHOOTER_POWER_SETTING * 100);
         telemetry.addData("Compensated Power", "%.2f (Active)", compensatedShooterPower);
         telemetry.addData("Battery Voltage", "%.2f V", currentVoltage);
-        telemetry.addData("Intake Power", intakePower);
-        telemetry.addData("Intake Power 2", intakePower2);
+        telemetry.addData("Intake Power: ", intakePower);
+        telemetry.addData("Intake Power 2: ", intakePower2);
         telemetry.addData("Left Servo Pos: ", feedServos.getLeftServoPower());
         telemetry.addData("Right Servo Pos", feedServos.getRightServoPower());
         telemetry.addData("Launch Motor speed (deg/s): ", shooterMotor.getVelocity(AngleUnit.DEGREES));
@@ -133,9 +135,9 @@ public class XDriveDECODE extends OpMode {
         int feedState = controller2.getTristateButtonValue(FeedServoLauncher.feedForwardButton);
         intakePower = controller2.getAxisValue(intereriorIntakeMotorAxis);
         if (feedState != 0) {
-            intakePower = (double) feedState;
+            intakePower = feedState;
         }
-        intakeMotor.setPower(-intakePower*1.2);
+        intakeMotor.setPower(intakePower*1.2);
     }
 
 
@@ -143,9 +145,9 @@ public class XDriveDECODE extends OpMode {
         int feedState = controller2.getTristateButtonValue(FeedServoLauncher.feedForwardButton);
         intakePower2 = controller2.getAxisValue(exteriorIntakeMotorAxis);
         if (feedState != 0) {
-            intakePower2 = (double) feedState;
+            intakePower2 = feedState;
         }
-        intakeMotor2.setPower(-intakePower2*1.2);
+        intakeMotor2.setPower(intakePower2*1.2);
     }
 
     private void computeShooterMotorVelocity() {
