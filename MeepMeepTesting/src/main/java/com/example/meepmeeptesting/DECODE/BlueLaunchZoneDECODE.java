@@ -14,24 +14,10 @@ public class BlueLaunchZoneDECODE {
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 .setConstraints(90, 70, 55, 60, 14)
                 .build();
-        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(-55.37878321850394,-50.28092031403789, Math.toRadians(-129.62027014375383)))
+        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(0,0, Math.toRadians( 0)))
                 //Put actions here
                 //This strafe the robot to a coordinate with a set heading
-                .strafeToLinearHeading(new Vector2d(-47.9,-40.3), Math.toRadians(-40))
-              //  .strafeToLinearHeading(new Vector2d(-32.2,-23.2), Math.toRadians(-90))
-//                .strafeToConstantHeading(new Vector2d(-11.9,-23.0))
-//
-//                .strafeToConstantHeading(new Vector2d(-11.9,-56))
-//                .strafeToLinearHeading(new Vector2d(-32.2,-23.2), Math.toRadians(232))
-//                .strafeToLinearHeading(new Vector2d(-50,-44), Math.toRadians(-129.62027014375383))
-//
-//                .strafeToConstantHeading(new Vector2d(-32.2,-23.2))
-//                .strafeToLinearHeading(new Vector2d(11.5,-24.8), Math.toRadians(-90))
-//                .strafeToConstantHeading(new Vector2d(11.5,-58.6))
-//                .strafeToLinearHeading(new Vector2d(11.5,-24.8), Math.toRadians(-90))
-//                .strafeToLinearHeading(new Vector2d(-32.2,-23.2), Math.toRadians(232))
-//                .strafeToLinearHeading(new Vector2d(-50,-44), Math.toRadians(-129.62027014375383))
-//                .strafeToLinearHeading(new Vector2d(34.8,-25), Math.toRadians(-90))
+                .strafeToConstantHeading(new Vector2d(24,0))
                 .build());
         meepMeep.setBackground(MeepMeep.Background.FIELD_DECODE_JUICE_DARK)
                 .setDarkMode(true)

@@ -38,7 +38,7 @@ public class StraightStartZoneAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        Pose2d startingPose = new Pose2d( 0, 0,Math.toRadians( 180));
+        Pose2d startingPose = new Pose2d( 0, 0,Math.toRadians( 0));
         MecanumDrive drive = new MecanumDrive(hardwareMap, startingPose);
 
         // --- Initialize Launcher and Servos ---
@@ -57,7 +57,9 @@ public class StraightStartZoneAuto extends LinearOpMode {
 
         Action autonomous = drive.actionBuilder(startingPose)
                 // Current Path
-                .strafeToConstantHeading(new Vector2d(-20,0))
+                //.strafeToConstantHeading(new Vector2d(-20,0))
+                .turn(Math.toRadians(90))
+
 
 
 //

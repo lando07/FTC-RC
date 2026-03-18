@@ -13,8 +13,6 @@ import org.firstinspires.ftc.teamcode.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.FeedServoLauncher;
 import org.firstinspires.ftc.teamcode.subsystems.GamepadController;
 import org.firstinspires.ftc.teamcode.subsystems.enums.AxisBehavior;
-import org.firstinspires.ftc.teamcode.subsystems.enums.BiStateButtonBehavior;
-import org.firstinspires.ftc.teamcode.subsystems.enums.GamepadButton;
 
 /**
  * This year's TeleOp for the robot
@@ -36,22 +34,21 @@ public class XDriveDECODE extends OpMode {
     private DcMotorEx shooterMotor;
     private DcMotorEx intakeMotor;
     private DcMotorEx intakeMotor2;
-    public static AxisBehavior launcherAxis = AxisBehavior.RIGHT_TRIGGER;
-    public static AxisBehavior reverseLauncherAxis = AxisBehavior.LEFT_TRIGGER;
-    public static AxisBehavior intereriorIntakeMotorAxis = AxisBehavior.LEFT_STICK_Y;
-    public static AxisBehavior exteriorIntakeMotorAxis = AxisBehavior.RIGHT_STICK_Y;
-    public static double slowSpeedIntakeModifier = 0.5; //50%
+    public static AxisBehavior launcherAxis = AxisBehavior.LEFT_TRIGGER;
+    public static AxisBehavior reverseLauncherAxis = AxisBehavior.RIGHT_TRIGGER;
+    public static AxisBehavior intereriorIntakeMotorAxis = AxisBehavior.RIGHT_STICK_Y;
+    public static AxisBehavior exteriorIntakeMotorAxis = AxisBehavior.LEFT_STICK_Y;
 
 
 
     // --- Shooter Power and Voltage Compensation ---
     // 1. SET YOUR SHOOTER POWER HERE (e.g., 0.80 for 80%)
-    public static double SHOOTER_POWER_SETTING = .60;
+    public static double SHOOTER_POWER_SETTING = 1;
 
     private VoltageSensor batteryVoltageSensor;
     public static double NOMINAL_VOLTAGE = 12.5; // The baseline voltage for compensation
 
-    public static double targetVelocity = 390;
+    public static double targetVelocity = -450;
 
     private double compensatedShooterPower;
     private double currentVoltage;
@@ -73,12 +70,13 @@ public class XDriveDECODE extends OpMode {
         controller2.configureAxis(intereriorIntakeMotorAxis);
         controller2.configureAxis(exteriorIntakeMotorAxis);
         controller2.configureAxis(launcherAxis);
+        controller2.configureAxis(reverseLauncherAxis);
 //        controller2.configureBiStateButton(feedForwardButton, BiStateButtonBehavior.HOLD);
 //        controller2.configureBiStateButton(feedBackwardButton, BiStateButtonBehavior.HOLD);
         // --- Hardware Initialization ---
         intakeMotor2 = hardwareMap.get(DcMotorEx.class, "intakeMotor2");
         shooterMotor = hardwareMap.get(DcMotorEx.class, "shooterMotor");
-        shooterMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        shooterMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         feedServos = new FeedServoLauncher(this, controller2);
         intakeMotor = hardwareMap.get(DcMotorEx.class, "intakeMotor");
 
@@ -125,23 +123,41 @@ public class XDriveDECODE extends OpMode {
         telemetry.addData("Battery Voltage", "%.2f V", currentVoltage);
         telemetry.addData("Intake Power", intakePower);
         telemetry.addData("Intake Power 2", intakePower2);
-        telemetry.addData("Left Servo Pos: ", feedServos.getLeftServoPositions());
-        telemetry.addData("Right Servo Pos", feedServos.getRightServoPositions());
+        telemetry.addData("Left Servo Pos: ", feedServos.getLeftServoPower());
+        telemetry.addData("Right Servo Pos", feedServos.getRightServoPower());
         telemetry.addData("Launch Motor speed (deg/s): ", shooterMotor.getVelocity(AngleUnit.DEGREES));
+        telemetry.addData("ForwardLauncherAxis", controller2.getAxisValue(launcherAxis));
+        telemetry.addData("ReverseLauncherAxis: ", controller2.getAxisValue(reverseLauncherAxis));
     }
     private void computeIntakeMotorDirection(){
+        int feedState = controller2.getTristateButtonValue(FeedServoLauncher.feedForwardButton);
         intakePower = controller2.getAxisValue(intereriorIntakeMotorAxis);
-        intakeMotor.setPower(intakePower);
+        if (feedState != 0) {
+            intakePower = (double) feedState;
+        }
+        intakeMotor.setPower(-intakePower*1.2);
     }
 
 
     private void computeIntake2MotorDirection(){
+        int feedState = controller2.getTristateButtonValue(FeedServoLauncher.feedForwardButton);
         intakePower2 = controller2.getAxisValue(exteriorIntakeMotorAxis);
-        intakeMotor2.setPower(intakePower2);
+        if (feedState != 0) {
+            intakePower2 = (double) feedState;
+        }
+        intakeMotor2.setPower(-intakePower2*1.2);
     }
 
     private void computeShooterMotorVelocity() {
-        shooterMotor.setVelocity(controller2.getAxisValue(launcherAxis)*targetVelocity, AngleUnit.DEGREES);
+        if(controller2.getAxisValue(launcherAxis) > 0.1) {
+            shooterMotor.setVelocity(controller2.getAxisValue(launcherAxis) * targetVelocity, AngleUnit.DEGREES);
+        }
+        else if(controller2.getAxisValue(reverseLauncherAxis) > 0.1){
+            shooterMotor.setVelocity(-controller2.getAxisValue(reverseLauncherAxis) * targetVelocity, AngleUnit.DEGREES);
+        }
+        else{
+            shooterMotor.setVelocity(0);
+        }
     }
     private void doShooterMotorWithVoltageCompensation(){
         // --- Shooter Motor Logic with Fixed Power and Voltage Compensation ---
