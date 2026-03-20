@@ -18,26 +18,28 @@ public class RedStartZoneDECODE {
                 //Put actions here
                 // Current Path
                 .strafeToConstantHeading(new Vector2d(59.2,48))
-                .strafeToConstantHeading(new Vector2d(-31.0,26.6))
-                .turn(Math.toRadians(-51))
-                .strafeToConstantHeading(new Vector2d(-50,50))
-                .strafeToLinearHeading(new Vector2d(-11.6,23.6), Math.toRadians(90))
-                .waitSeconds(.2)
-                .strafeToConstantHeading(new Vector2d(-11.6,49))
-                .strafeToLinearHeading(new Vector2d(-54,48.5), Math.toRadians(129.62027014375383))
 
-
-
-                .strafeToConstantHeading(new Vector2d(11.9,23.8))
-                .strafeToConstantHeading(new Vector2d(11.9,60))
-                .waitSeconds(.2)
-                .strafeToConstantHeading(new Vector2d(11.9,33.2))
-                .strafeToLinearHeading(new Vector2d(-54,48.5), Math.toRadians(129.62027014375383))
-                .strafeToLinearHeading(new Vector2d(-32.4,24.2), Math.toRadians(130))
-                .strafeToConstantHeading(new Vector2d(-50,50))
-
-                .strafeToLinearHeading(new Vector2d(-47.8,30.0), Math.toRadians(90))
-                .strafeToConstantHeading(new Vector2d(-64.0,30.0))
+//                .strafeToConstantHeading(new Vector2d(59.2,48))
+//                .strafeToConstantHeading(new Vector2d(-31.0,26.6))
+//                .turn(Math.toRadians(-51))
+//                .strafeToConstantHeading(new Vector2d(-50,50))
+//                .strafeToLinearHeading(new Vector2d(-11.6,23.6), Math.toRadians(90))
+//                .waitSeconds(.2)
+//                .strafeToConstantHeading(new Vector2d(-11.6,49))
+//                .strafeToLinearHeading(new Vector2d(-54,48.5), Math.toRadians(129.62027014375383))
+//
+//
+//
+//                .strafeToConstantHeading(new Vector2d(11.9,23.8))
+//                .strafeToConstantHeading(new Vector2d(11.9,60))
+//                .waitSeconds(.2)
+//                .strafeToConstantHeading(new Vector2d(11.9,33.2))
+//                .strafeToLinearHeading(new Vector2d(-54,48.5), Math.toRadians(129.62027014375383))
+//                .strafeToLinearHeading(new Vector2d(-32.4,24.2), Math.toRadians(130))
+//                .strafeToConstantHeading(new Vector2d(-50,50))
+//
+//                .strafeToLinearHeading(new Vector2d(-47.8,30.0), Math.toRadians(90))
+//                .strafeToConstantHeading(new Vector2d(-64.0,30.0))
 
 
 

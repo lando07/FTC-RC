@@ -10,7 +10,7 @@ import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 
 public class RedLaunchZoneDECODE {
-    public static Pose2d startingPose = new Pose2d( -54.056680033526085, 49.3279942790354,Math.toRadians(138.09018282781153));
+    public static Pose2d startingPose = new Pose2d( -49.76891705370325, 55.758796751968504,Math.toRadians(122.27541255940227));
 //TODO : fix rotation
 
     public static void main(String[] args) {
@@ -26,28 +26,56 @@ public class RedLaunchZoneDECODE {
 
 //                 // Current Path
 
-                .strafeToConstantHeading(new Vector2d(-39.964469849593996,38.952098455954726))
-                //.stopAndAdd(launchBallsForSetTime())//launches
-                .strafeToLinearHeading(new Vector2d(-12.81065260519193,22.70081767885704), Math.toRadians(90))//moves to first set of balls
-                //.stopAndAdd(feedServos.rejectBallAction())
-                .strafeToConstantHeading(new Vector2d(-12.81065260519193,55.66481702909695))
-                .waitSeconds(.5)
-                //.stopAndAdd(new InstantAction(() -> intakeMotor.setPower(0)))
-                //.stopAndAdd(new InstantAction(() -> intakeMotor2.setPower(0)))
-               // .stopAndAdd(feedServos.stopIntakeAction())
-                .strafeToLinearHeading(new Vector2d(-39.964469849593996,38.952098455954726), Math.toRadians(138.09018282781153))
-                //.stopAndAdd(launchBallsForSetTime())
-                .strafeToLinearHeading(new Vector2d(8.555011178564838,22.70081767885704), Math.toRadians(90))//moves to second set of balls
-                .waitSeconds(.5)
-                //.stopAndAdd(new InstantAction(() -> intakeMotor.setPower(0)))
-                //.stopAndAdd(new InstantAction(() -> intakeMotor2.setPower(0)))
-               // .stopAndAdd(feedServos.stopIntakeAction())
-                .strafeToConstantHeading(new Vector2d(8.555011178564838,60.74348605899361))
-                .strafeToConstantHeading(new Vector2d(8.555011178564838,22.70081767885704))
+                .strafeToConstantHeading(new Vector2d(-32.4,33.6))
 
-                .strafeToLinearHeading(new Vector2d(-39.964469849593996,38.952098455954726), Math.toRadians(138.09018282781153))
-                //.stopAndAdd(launchBallsForSetTime())
-                .strafeToLinearHeading(new Vector2d(-51.82927169199065,18.91646858275406), Math.toRadians(180))
+                .strafeToLinearHeading(new Vector2d(-12.1,27.3), Math.toRadians(90))//moves to first set of balls
+
+                .strafeToConstantHeading(new Vector2d(-12.1,58))
+
+                .strafeToLinearHeading(new Vector2d(-32.6,33.6), Math.toRadians(129.3629632573411))
+
+                .strafeToLinearHeading(new Vector2d(9.5,27.3), Math.toRadians(90))
+
+                .strafeToConstantHeading(new Vector2d(9.5, 63))
+
+                .strafeToConstantHeading(new Vector2d(9.5, 33.5))
+                .strafeToLinearHeading(new Vector2d(-32.6,33.6), Math.toRadians(129.3629632573411))
+                .strafeToLinearHeading(new Vector2d(-47.3,28.3), Math.toRadians(360))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//                .strafeToConstantHeading(new Vector2d(-39.964469849593996,38.952098455954726))
+//
+//                .strafeToLinearHeading(new Vector2d(-12.81065260519193,22.70081767885704), Math.toRadians(90))//moves to first set of balls
+//
+//                .strafeToConstantHeading(new Vector2d(-12.81065260519193,55.66481702909695))
+//                .waitSeconds(.5)
+//
+//                .strafeToLinearHeading(new Vector2d(-39.964469849593996,38.952098455954726), Math.toRadians(138.09018282781153))
+//
+//                .strafeToLinearHeading(new Vector2d(8.555011178564838,22.70081767885704), Math.toRadians(90))//moves to second set of balls
+//                .waitSeconds(.5)
+//
+//                .strafeToConstantHeading(new Vector2d(8.555011178564838,60.74348605899361))
+//                .strafeToConstantHeading(new Vector2d(8.555011178564838,22.70081767885704))
+//
+//                .strafeToLinearHeading(new Vector2d(-39.964469849593996,38.952098455954726), Math.toRadians(138.09018282781153))
+//
+//                .strafeToLinearHeading(new Vector2d(-51.82927169199065,18.91646858275406), Math.toRadians(180))
 
 
 
