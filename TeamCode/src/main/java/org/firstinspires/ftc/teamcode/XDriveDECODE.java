@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -39,7 +40,13 @@ public class XDriveDECODE extends OpMode {
     public static AxisBehavior intereriorIntakeMotorAxis = AxisBehavior.RIGHT_STICK_Y;
     public static AxisBehavior exteriorIntakeMotorAxis = AxisBehavior.LEFT_STICK_Y;
 
-
+    // --- Shooter PIDF Tuning ---
+    // Increase F to reach speed more accurately without oscillation.
+    // Decrease P if the motor "hunts" (oscillates speed).
+    public static double SHOOTER_P = 12.0;
+    public static double SHOOTER_I = 0.1;
+    public static double SHOOTER_D = 0.0;
+    public static double SHOOTER_F = 12.5;
 
     // --- Shooter Power and Voltage Compensation ---
     // 1. SET YOUR SHOOTER POWER HERE (e.g., 0.80 for 80%)
@@ -48,7 +55,7 @@ public class XDriveDECODE extends OpMode {
     private VoltageSensor batteryVoltageSensor;
     public static double NOMINAL_VOLTAGE = 12.5; // The baseline voltage for compensation
 
-    public static double targetVelocity = -450;
+    public static double targetVelocity = -470;
 
     private double compensatedShooterPower;
     private double currentVoltage;
@@ -80,6 +87,11 @@ public class XDriveDECODE extends OpMode {
         shooterMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         intakeMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
         intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        // Apply PIDF Coefficients
+        shooterMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        shooterMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(SHOOTER_P, SHOOTER_I, SHOOTER_D, SHOOTER_F));
+
         feedServos = new FeedServoLauncher(this, controller2);
 
         // Initialize the VoltageSensor from the hardware map
@@ -92,13 +104,14 @@ public class XDriveDECODE extends OpMode {
 
     @Override
     public void init_loop() {
-        //Not needed
+        // Allow live tuning of PIDF while in init_loop
+        shooterMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(SHOOTER_P, SHOOTER_I, SHOOTER_D, SHOOTER_F));
     }
 
     @Override
     public void start() {
         driveTrain.setBrakingMode(DcMotor.ZeroPowerBehavior.BRAKE);
-        shooterMotor.setPower(1);
+        // Removed setPower(1) to let setVelocity handle control entirely
         shooterMotor.setVelocity(targetVelocity, AngleUnit.DEGREES);
 
     }
@@ -128,8 +141,8 @@ public class XDriveDECODE extends OpMode {
         telemetry.addData("Left Servo Pos: ", feedServos.getLeftServoPower());
         telemetry.addData("Right Servo Pos", feedServos.getRightServoPower());
         telemetry.addData("Launch Motor speed (deg/s): ", shooterMotor.getVelocity(AngleUnit.DEGREES));
-        telemetry.addData("ForwardLauncherAxis", controller2.getAxisValue(launcherAxis));
-        telemetry.addData("ReverseLauncherAxis: ", controller2.getAxisValue(reverseLauncherAxis));
+        telemetry.addData("Forward Launcher Axis", controller2.getAxisValue(launcherAxis));
+        telemetry.addData("Reverse Launcher Axis: ", controller2.getAxisValue(reverseLauncherAxis));
     }
     private void computeIntakeMotorDirection(){
         int feedState = controller2.getTristateButtonValue(FeedServoLauncher.feedForwardButton);
