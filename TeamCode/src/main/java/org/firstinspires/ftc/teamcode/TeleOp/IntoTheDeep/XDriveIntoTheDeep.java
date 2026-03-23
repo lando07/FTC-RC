@@ -9,10 +9,10 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
-import org.firstinspires.ftc.teamcode.subsystems.Claw;
-import org.firstinspires.ftc.teamcode.subsystems.DriveTrain;
-import org.firstinspires.ftc.teamcode.subsystems.GamepadController;
-import org.firstinspires.ftc.teamcode.subsystems.RaiseArmSlider;
+import org.firstinspires.ftc.teamcode.subsystems.IntoTheDeepExclusive.Claw;
+import org.firstinspires.ftc.teamcode.subsystems.Universal.DriveTrain;
+import org.firstinspires.ftc.teamcode.subsystems.Universal.GamepadController;
+import org.firstinspires.ftc.teamcode.subsystems.IntoTheDeepExclusive.RaiseArmSlider;
 import org.firstinspires.ftc.teamcode.subsystems.enums.AxisBehavior;
 import org.firstinspires.ftc.teamcode.subsystems.enums.BiStateButtonBehavior;
 import org.firstinspires.ftc.teamcode.subsystems.enums.GamepadButton;

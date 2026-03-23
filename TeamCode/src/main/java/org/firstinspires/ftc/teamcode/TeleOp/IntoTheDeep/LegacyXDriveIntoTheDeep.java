@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.TeleOp.IntoTheDeep;
 
-import static org.firstinspires.ftc.teamcode.subsystems.RaiseArmSlider.clipSpecimenOffsetTeleOp;
-import static org.firstinspires.ftc.teamcode.subsystems.RaiseArmSlider.highSpecimenLowBasket;
+import static org.firstinspires.ftc.teamcode.subsystems.IntoTheDeepExclusive.RaiseArmSlider.clipSpecimenOffsetTeleOp;
+import static org.firstinspires.ftc.teamcode.subsystems.IntoTheDeepExclusive.RaiseArmSlider.highSpecimenLowBasket;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.bosch.BHI260IMU;
@@ -17,9 +17,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.MecanumDrive;
-import org.firstinspires.ftc.teamcode.subsystems.Claw;
-import org.firstinspires.ftc.teamcode.subsystems.RaiseArmSlider;
+import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
+import org.firstinspires.ftc.teamcode.subsystems.IntoTheDeepExclusive.Claw;
+import org.firstinspires.ftc.teamcode.subsystems.IntoTheDeepExclusive.RaiseArmSlider;
 
 /**
  * Ok, so this is our omega be-all-end-all class.

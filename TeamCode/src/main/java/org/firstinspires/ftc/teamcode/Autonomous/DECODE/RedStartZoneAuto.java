@@ -14,12 +14,10 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.MecanumDrive;
-import org.firstinspires.ftc.teamcode.TeleOp.DECODE.XDriveDECODE;
-import org.firstinspires.ftc.teamcode.subsystems.FeedServoLauncher;
+import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
+import org.firstinspires.ftc.teamcode.subsystems.DECODEExclusive.FeedServoLauncher;
 
 /**
  * Autonomous Program for when the robot starts on the red team,
@@ -122,7 +120,7 @@ public class RedStartZoneAuto extends LinearOpMode {
             public boolean run(@NonNull TelemetryPacket p) {
                 if (!initialized) {
                     shooterMotor.setPower(1);
-                    shooterMotor.setVelocity(XDriveDECODE.targetVelocity, AngleUnit.DEGREES);
+                    shooterMotor.setVelocity(minimumLauncherVelocity, AngleUnit.DEGREES);
                     initialized = true;
                 }
                 p.put("launcherVelocity: ", shooterMotor.getVelocity());

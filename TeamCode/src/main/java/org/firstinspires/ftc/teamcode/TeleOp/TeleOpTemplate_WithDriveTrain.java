@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.subsystems.DriveTrain;
-import org.firstinspires.ftc.teamcode.subsystems.GamepadController;
+import org.firstinspires.ftc.teamcode.subsystems.Universal.DriveTrain;
+import org.firstinspires.ftc.teamcode.subsystems.Universal.GamepadController;
 
 /**
  * This file contains a minimal example of a Linear "OpMode". An OpMode is a 'program' that runs in
