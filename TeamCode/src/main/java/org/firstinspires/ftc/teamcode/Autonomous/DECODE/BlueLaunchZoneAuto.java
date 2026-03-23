@@ -1,8 +1,4 @@
-<<<<<<<< HEAD:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomous/DECODE/RedStartZoneAuto.java
 package org.firstinspires.ftc.teamcode.Autonomous.DECODE;
-========
-package org.firstinspires.ftc.teamcode.Autonomous;
->>>>>>>> 5c9a1e5 (Reorganized and fixed logic):TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomous/BlueLaunchZoneAuto.java
 
 import androidx.annotation.NonNull;
 
@@ -20,14 +16,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-<<<<<<<< HEAD:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomous/DECODE/RedStartZoneAuto.java
-import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
-import org.firstinspires.ftc.teamcode.subsystems.DECODEExclusive.FeedServoLauncher;
-========
 import org.firstinspires.ftc.teamcode.MecanumDrive;
-import org.firstinspires.ftc.teamcode.TeleOp.XDriveDECODE;
+import org.firstinspires.ftc.teamcode.TeleOp.DECODE.XDriveDECODE;
 import org.firstinspires.ftc.teamcode.subsystems.FeedServoLauncher;
->>>>>>>> 5c9a1e5 (Reorganized and fixed logic):TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomous/BlueLaunchZoneAuto.java
 
 /**
  * Autonomous Program for when the robot starts on the blue team,
@@ -132,7 +123,7 @@ public class BlueLaunchZoneAuto extends LinearOpMode {
             public boolean run(@NonNull TelemetryPacket p) {
                 if (!initialized) {
                     shooterMotor.setPower(1);
-                    shooterMotor.setVelocity(minimumLauncherVelocity, AngleUnit.DEGREES);
+                    shooterMotor.setVelocity(XDriveDECODE.targetVelocity, AngleUnit.DEGREES);
                     initialized = true;
                 }
                 p.put("launcherVelocity: ", shooterMotor.getVelocity());

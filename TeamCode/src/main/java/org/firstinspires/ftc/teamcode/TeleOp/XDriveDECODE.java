@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.TeleOp;
+package org.firstinspires.ftc.teamcode.TeleOp.DECODE;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -12,7 +12,6 @@ import org.firstinspires.ftc.teamcode.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.FeedServoLauncher;
 import org.firstinspires.ftc.teamcode.subsystems.GamepadController;
 import org.firstinspires.ftc.teamcode.subsystems.enums.AxisBehavior;
-import org.firstinspires.ftc.teamcode.subsystems.enums.GamepadButton;
 
 /**
  * This year's TeleOp for the robot
@@ -34,29 +33,27 @@ public class XDriveDECODE extends OpMode {
     private FeedServoLauncher feedServos;
     private DcMotorEx shooterMotor;
     private DcMotorEx intakeMotor;
-    public static AxisBehavior launcherAxis = AxisBehavior.RIGHT_TRIGGER;
-    public static AxisBehavior reverseLauncherAxis = AxisBehavior.LEFT_TRIGGER;
-    public static GamepadButton feedForwardButton = GamepadButton.A;
-    public static GamepadButton feedBackwardButton = GamepadButton.B;
+    private DcMotorEx intakeMotor2;
+    public static AxisBehavior launcherAxis = AxisBehavior.LEFT_TRIGGER;
+    public static AxisBehavior reverseLauncherAxis = AxisBehavior.RIGHT_TRIGGER;
+    public static AxisBehavior intereriorIntakeMotorAxis = AxisBehavior.RIGHT_STICK_Y;
+    public static AxisBehavior exteriorIntakeMotorAxis = AxisBehavior.LEFT_STICK_Y;
+
+
 
     // --- Shooter Power and Voltage Compensation ---
     // 1. SET YOUR SHOOTER POWER HERE (e.g., 0.80 for 80%)
-//    public static double SHOOTER_POWER_SETTING = .60;
+    public static double SHOOTER_POWER_SETTING = 1;
 
-//    private VoltageSensor batteryVoltageSensor;
-//    public static double NOMINAL_VOLTAGE = 12.5; // The baseline voltage for compensation
+    public static double NOMINAL_VOLTAGE = 12.5; // The baseline voltage for compensation
 
-    public static double targetVelocity = 400;
+    public static double targetVelocity = -450;
 
-//    private double compensatedShooterPower;
-//    private double currentVoltage;
-    private double intakePower = 0;
-    private double prevShooterMotorInput = 0;
-    /**
-     * Minimum change in user input on the triggers before motor speed on the launcher
-     * motor is updated
-     */
-    public static double minimumInputDelta = 0.01;
+    private double compensatedShooterPower;
+    private double currentVoltage;
+    private double intakePower;
+
+    private double intakePower2;
 
 
     @Override
@@ -69,28 +66,33 @@ public class XDriveDECODE extends OpMode {
         driveTrain = new DriveTrain(this, controller1);
 
         // Controller 2 Trigger Configuration
+        controller2.configureAxis(intereriorIntakeMotorAxis);
+        controller2.configureAxis(exteriorIntakeMotorAxis);
         controller2.configureAxis(launcherAxis);
-        controller2.configureAxis(reverseLauncherAxis);
-        controller2.configureTristateButton(feedForwardButton,feedBackwardButton);
+//        controller2.configureBiStateButton(feedForwardButton, BiStateButtonBehavior.HOLD);
+//        controller2.configureBiStateButton(feedBackwardButton, BiStateButtonBehavior.HOLD);
         // --- Hardware Initialization ---
+        intakeMotor2 = hardwareMap.get(DcMotorEx.class, "intakeMotor2");
         shooterMotor = hardwareMap.get(DcMotorEx.class, "shooterMotor");
         shooterMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         feedServos = new FeedServoLauncher(this, controller2);
         intakeMotor = hardwareMap.get(DcMotorEx.class, "intakeMotor");
-
-        // Initialize the VoltageSensor from the hardware map
-//        batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
-
         telemetry.addData("Status", "Initialized");
-//        telemetry.addData("Shooter Power Set To", "%.0f%%", SHOOTER_POWER_SETTING * 100);
         telemetry.update();
     }
 
+    /**
+     * Not needed, but used to continuously run code before the user presses play
+     */
     @Override
     public void init_loop() {
         //Not needed
     }
 
+    /**
+     * Code to run once when the user presses play. Typically just sets certain subsystem states
+     * that can't be set during initialization
+     */
     @Override
     public void start() {
         driveTrain.setBrakingMode(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -98,7 +100,6 @@ public class XDriveDECODE extends OpMode {
         shooterMotor.setVelocity(targetVelocity, AngleUnit.DEGREES);
 
     }
-
     //NOTE: Due to the way this codebase is designed, loop() should only be running subsystems or very primitive motor
     //controls, such as setting power.
     @Override
@@ -110,91 +111,52 @@ public class XDriveDECODE extends OpMode {
         // Update drivetrain
         driveTrain.updateDriveTrainBehavior();
         computeIntakeMotorDirection();
+        computeIntake2MotorDirection();
         computeShooterMotorVelocity();
-//        doShooterMotorWithVoltageCompensation();
-        // Set positions for the four servos based on bumpers
         feedServos.updateFeedServoLauncherBehavior();
 
         // --- Update Telemetry ---
-//        telemetry.addData("Shooter Power Setting", "%.0f%%", SHOOTER_POWER_SETTING * 100);
-//        telemetry.addData("Compensated Power", "%.2f (Active)", compensatedShooterPower);
-//        telemetry.addData("Battery Voltage", "%.2f V", currentVoltage);
-        telemetry.addData("Intake Power", intakePower);
-        telemetry.addData("Left Servo Pos: ", feedServos.getLeftServoPositions());
-        telemetry.addData("Right Servo Pos", feedServos.getRightServoPositions());
+        telemetry.addData("Shooter Power Setting", "%.0f%%", SHOOTER_POWER_SETTING * 100);
+        telemetry.addData("Compensated Power", "%.2f (Active)", compensatedShooterPower);
+        telemetry.addData("Battery Voltage", "%.2f V", currentVoltage);
+        telemetry.addData("Intake Power: ", intakePower);
+        telemetry.addData("Intake Power 2: ", intakePower2);
+        telemetry.addData("Left Servo Pos: ", feedServos.getLeftServoPower());
+        telemetry.addData("Right Servo Pos", feedServos.getRightServoPower());
         telemetry.addData("Launch Motor speed (deg/s): ", shooterMotor.getVelocity(AngleUnit.DEGREES));
+        telemetry.addData("ForwardLauncherAxis", controller2.getAxisValue(launcherAxis));
+        telemetry.addData("ReverseLauncherAxis: ", controller2.getAxisValue(reverseLauncherAxis));
     }
-
-    private void computeIntakeMotorDirection() {
-        // Set power for intake motor (A/B buttons)
-        intakePower = controller1.getTristateButtonValue(feedForwardButton);
-        //Motor writes are time consuming,
-        //so this extra check in both cases reduces
-        //motor writes(called motor write caching) and thus decreases
-        //input latency and lag
-        if(intakeMotor.getPower() != intakePower) {
-            intakeMotor.setPower(intakePower);
+    private void computeIntakeMotorDirection(){
+        int feedState = controller2.getTristateButtonValue(FeedServoLauncher.feedForwardButton);
+        intakePower = controller2.getAxisValue(intereriorIntakeMotorAxis);
+        if (feedState != 0) {
+            intakePower = feedState;
         }
+        intakeMotor.setPower(intakePower*1.2);
     }
 
-    /**
-     * Computes the target velocity of the shooter motor relative to the maximum target velocity,
-     * since the axis range from 0 to 1. This also includes an additional check
-     */
+
+    private void computeIntake2MotorDirection(){
+        int feedState = controller2.getTristateButtonValue(FeedServoLauncher.feedForwardButton);
+        intakePower2 = controller2.getAxisValue(exteriorIntakeMotorAxis);
+        if (feedState != 0) {
+            intakePower2 = feedState;
+        }
+        intakeMotor2.setPower(intakePower2*1.2);
+    }
+
     private void computeShooterMotorVelocity() {
-        double forwardTrigger = controller2.getAxisValue(launcherAxis);
-        double reverseTrigger = controller2.getAxisValue(reverseLauncherAxis);
-        double shooterVelocity;
-            //Since motor writes like setPower and setVelocity similar
-            //can be time-consuming, this extra check in both cases reduces
-            //motor writes(called motor write caching) and thus decreases
-            //input latency and lag
-        if(forwardTrigger > 0.1){
-            shooterVelocity = forwardTrigger * targetVelocity;
-
+        if(controller2.getAxisValue(launcherAxis) > 0.1) {
+            shooterMotor.setVelocity(controller2.getAxisValue(launcherAxis) * targetVelocity, AngleUnit.DEGREES);
         }
-        else if(reverseTrigger > 0.1){
-            shooterVelocity = -reverseTrigger * targetVelocity;
+        else if(controller2.getAxisValue(reverseLauncherAxis) > 0.1){
+            shooterMotor.setVelocity(-controller2.getAxisValue(reverseLauncherAxis) * targetVelocity, AngleUnit.DEGREES);
         }
         else{
-            shooterVelocity = 0;
+            shooterMotor.setVelocity(0);
         }
-
-        if(Math.abs(shooterVelocity - prevShooterMotorInput) > minimumInputDelta){
-            shooterMotor.setVelocity(shooterVelocity);
-            prevShooterMotorInput = shooterVelocity;
-        }
-
     }
-
-//    /**
-//     * No longer needed due to enforcing motor speed with DcMotorEx.setVelocity()
-//     */
-//    @Deprecated
-//    private void doShooterMotorWithVoltageCompensation() {
-//        // --- Shooter Motor Logic with Fixed Power and Voltage Compensation ---
-//        double shooterPower = 0.0;
-//
-//        // 2. Triggers now act as on/off buttons for the fixed power setting
-//        if (controller2.getAxisValue(launcherAxis) > 0.1) { // Fire forward
-//            shooterPower = SHOOTER_POWER_SETTING;
-//        } else if (controller2.getAxisValue(reverseLauncherAxis) > 0.1) { // Fire reverse
-//            shooterPower = -SHOOTER_POWER_SETTING;
-//        }
-//
-//        // 3. Apply voltage compensation
-//        currentVoltage = batteryVoltageSensor.getVoltage();
-//        if (currentVoltage < 8.0) { // Safety check
-//            currentVoltage = NOMINAL_VOLTAGE;
-//        }
-//        double voltageCompensationFactor = NOMINAL_VOLTAGE / currentVoltage;
-//        compensatedShooterPower = shooterPower * voltageCompensationFactor;
-//
-//        // Clip the final power to the valid range [-1.0, 1.0]
-//        compensatedShooterPower = Math.max(-1.0, Math.min(1.0, compensatedShooterPower));
-//
-//        shooterMotor.setPower(compensatedShooterPower);
-//    }
 
     @Override
     public void stop() {

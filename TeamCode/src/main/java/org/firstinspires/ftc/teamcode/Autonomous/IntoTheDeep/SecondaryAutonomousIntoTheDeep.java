@@ -1,8 +1,4 @@
-<<<<<<<< HEAD:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomous/IntoTheDeep/SecondaryAutonomousIntoTheDeep.java
 package org.firstinspires.ftc.teamcode.Autonomous.IntoTheDeep;
-========
-package org.firstinspires.ftc.teamcode.Autonomous;
->>>>>>>> 5c9a1e5 (Reorganized and fixed logic):TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomous/SecondaryAutonomousIntoTheDeep.java
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Pose2d;
@@ -13,15 +9,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-<<<<<<<< HEAD:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomous/IntoTheDeep/SecondaryAutonomousIntoTheDeep.java
-import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
-import org.firstinspires.ftc.teamcode.subsystems.IntoTheDeepExclusive.Claw;
-import org.firstinspires.ftc.teamcode.subsystems.IntoTheDeepExclusive.RaiseArmSlider;
-========
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.RaiseArmSlider;
->>>>>>>> 5c9a1e5 (Reorganized and fixed logic):TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomous/SecondaryAutonomousIntoTheDeep.java
 /**
  * The UIL State Semi-Finalist Autonomous,
  * it made use of many test values that needed to change
