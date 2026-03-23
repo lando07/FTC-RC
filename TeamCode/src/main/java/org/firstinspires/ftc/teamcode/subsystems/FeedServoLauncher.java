@@ -4,7 +4,8 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.InstantAction;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.subsystems.enums.GamepadButton;
 
@@ -33,18 +34,17 @@ public class FeedServoLauncher {
     public static GamepadButton feedReverseButton = GamepadButton.RIGHT_BUMPER;
 
 
-    private final Servo feedServoFrontLeft, feedServoFrontRight, feedServoBackLeft, feedServoBackRight;
+    private final CRServo feedServoFrontLeft, feedServoFrontRight;
     // Servos
     // Servo Positions
-    public static double SERVO_FORWARD_POS = 1.0;
-    public static double SERVO_REVERSE_POS = 0.0;
-    public static double SERVO_NEUTRAL_POS = 0.5;
+    public static double SERVO_FORWARD_POW = 1.0;
+    public static double SERVO_REVERSE_POW = -1.0;
+    public static double SERVO_NEUTRAL_POW = 0;
     public FeedServoLauncher(OpMode opMode){
 
-        feedServoFrontLeft = opMode.hardwareMap.get(Servo.class, "servo1");
-        feedServoFrontRight = opMode.hardwareMap.get(Servo.class, "servo2");
-        feedServoBackLeft = opMode.hardwareMap.get(Servo.class, "servo3");
-        feedServoBackRight = opMode.hardwareMap.get(Servo.class, "servo4");
+        feedServoFrontLeft = opMode.hardwareMap.get(CRServo.class, "servo1");
+        feedServoFrontRight = opMode.hardwareMap.get(CRServo.class, "servo2");
+        feedServoFrontRight.setDirection(CRServo.Direction.REVERSE);
     }
     /**
      * Creates a FeedServoLauncher object and initializes the feed servos
@@ -55,19 +55,16 @@ public class FeedServoLauncher {
     public FeedServoLauncher(OpMode opMode, GamepadController controller) {
         gamepad = controller;
         //TODO: wire servos according to their initialization below
-        feedServoFrontLeft = opMode.hardwareMap.get(Servo.class, "servo1");
-        feedServoFrontRight = opMode.hardwareMap.get(Servo.class, "servo2");
-        feedServoBackLeft = opMode.hardwareMap.get(Servo.class, "servo3");
-        feedServoBackRight = opMode.hardwareMap.get(Servo.class, "servo4");
+        feedServoFrontLeft = opMode.hardwareMap.get(CRServo.class, "servo1");
+        feedServoFrontRight = opMode.hardwareMap.get(CRServo.class, "servo2");
+        feedServoFrontRight.setDirection(CRServo.Direction.REVERSE);
         gamepad.configureTristateButton(feedForwardButton, feedReverseButton);
 
     }
 
     public void stop() {
-        feedServoFrontLeft.setPosition(SERVO_NEUTRAL_POS);
-        feedServoBackLeft.setPosition(SERVO_NEUTRAL_POS);
-        feedServoBackRight.setPosition(SERVO_NEUTRAL_POS);
-        feedServoFrontRight.setPosition(SERVO_NEUTRAL_POS);
+        feedServoFrontLeft.setPower(SERVO_NEUTRAL_POW);
+        feedServoFrontRight.setPower(SERVO_NEUTRAL_POW);
     }
 
     /**
@@ -77,20 +74,14 @@ public class FeedServoLauncher {
     public void updateFeedServoLauncherBehavior() {
         //TODO: Implement touchSensor to stop servos once intake is complete
         int feedState = gamepad.getTristateButtonValue(feedForwardButton);
-        //This extra check is present since the servo motor writes
-        //are time-consuming and we only need to write to the servos
-        //on a change in user input
-        if(feedState != previousBallFeedState) {
-            if (feedState == 1) {
-                intakeBall();
-            }
-            else if (feedState == -1) {
-                rejectBall();
-            }
-            else {
-                stopIntake();
-            }
-            previousBallFeedState = feedState;
+        if(feedState == 1) {
+            intakeBall();
+        }
+        else if(feedState == -1){
+            rejectBall();
+        }
+        else{
+            stopIntake();
         }
     }
 
@@ -98,16 +89,16 @@ public class FeedServoLauncher {
      * Gets feedServoPositions for left servos, both act as the same so only one needs to be read
      * @return the position of the left servos
      */
-    public double getLeftServoPositions(){
-        return feedServoFrontLeft.getPosition();
+    public double getLeftServoPower(){
+        return feedServoFrontLeft.getPower();
     }
 
     /**
      * Gets feedServoPositions for right servos, both act as the same so only one needs to be read
      * @return the position of the right servos
      */
-    public double getRightServoPositions(){
-        return feedServoFrontRight.getPosition();
+    public double getRightServoPower(){
+        return feedServoFrontRight.getPower();
     }
 
     /**
@@ -119,30 +110,24 @@ public class FeedServoLauncher {
     }
     private void intakeBall() {
         //TODO: Fix Servo directions
-        feedServoFrontRight.setPosition(SERVO_FORWARD_POS);
-        feedServoBackRight.setPosition(SERVO_REVERSE_POS);
-        feedServoFrontLeft.setPosition(SERVO_FORWARD_POS);
-        feedServoBackLeft.setPosition(SERVO_REVERSE_POS);
+        feedServoFrontRight.setPower(SERVO_FORWARD_POW);
+        feedServoFrontLeft.setPower(SERVO_FORWARD_POW);
     }
     public Action rejectBallAction(){
         return new InstantAction(this::rejectBall);
     }
     private void rejectBall(){
         //TODO: Fix Servo directions
-        feedServoFrontRight.setPosition(SERVO_REVERSE_POS);
-        feedServoBackRight.setPosition(SERVO_FORWARD_POS);
-        feedServoFrontLeft.setPosition(SERVO_REVERSE_POS);
-        feedServoBackLeft.setPosition(SERVO_FORWARD_POS);
+        feedServoFrontRight.setPower(SERVO_REVERSE_POW);
+        feedServoFrontLeft.setPower(SERVO_REVERSE_POW);
     }
     public Action stopIntakeAction(){
         return new InstantAction(this::stopIntake);
     }
     private void stopIntake(){
         //TODO: Fix Servo directions
-        feedServoFrontLeft.setPosition(SERVO_NEUTRAL_POS);
-        feedServoBackLeft.setPosition(SERVO_NEUTRAL_POS);
-        feedServoBackRight.setPosition(SERVO_NEUTRAL_POS);
-        feedServoFrontRight.setPosition(SERVO_NEUTRAL_POS);
+        feedServoFrontLeft.setPower(SERVO_NEUTRAL_POW);
+        feedServoFrontRight.setPower(SERVO_NEUTRAL_POW);
     }
 
 

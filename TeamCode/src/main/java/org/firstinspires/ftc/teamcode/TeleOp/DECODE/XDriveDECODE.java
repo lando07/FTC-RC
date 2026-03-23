@@ -34,44 +34,28 @@ public class XDriveDECODE extends OpMode {
     private DcMotorEx shooterMotor;
     private DcMotorEx intakeMotor;
     private DcMotorEx intakeMotor2;
-    public static AxisBehavior launcherAxis = AxisBehavior.RIGHT_TRIGGER;
-    public static AxisBehavior reverseLauncherAxis = AxisBehavior.LEFT_TRIGGER;
-    public static AxisBehavior intereriorIntakeMotorAxis = AxisBehavior.LEFT_STICK_Y;
-    public static AxisBehavior exteriorIntakeMotorAxis = AxisBehavior.RIGHT_STICK_Y;
-    public static double slowSpeedIntakeModifier = 0.5; //50%, unused for now
-    /**
-     * Target velocity in degrees per second on the motor output shaft, not the shooter flywheel
-     */
-    public static double targetVelocity = 400;
-    /**
-     * Stores the current power of the exterior intake motors
-     */
-    private double intakePower = 0;
-    /**
-     * Stores the previous power of the interior intake motor, only updated when the {@code minimumInputDelta} has been reached
-     */
-    private double prevIntakePower = 0;
-    /**
-     * Stores the current power of the exterior intake motor
-     */
-    private double intakePower2 = 0;
-    /**
-     * Stores the previous power of the exterior intake motor, only updated when the {@code minimumInputDelta} has been reached
-     */
-    private double prevIntakePower2 = 0;
-    /**
-     * Stores the previous state of the shooter motor input given by the user, only updated when the {@code minimumInputDelta} has been reached
-     */
-    private double prevShooterMotorInput = 0;
-    /**
-     * Minimum change in user input on the triggers before motor speed on the launcher
-     * motor is updated
-     */
-    public static double minimumInputDelta = 0.01;
+    public static AxisBehavior launcherAxis = AxisBehavior.LEFT_TRIGGER;
+    public static AxisBehavior reverseLauncherAxis = AxisBehavior.RIGHT_TRIGGER;
+    public static AxisBehavior intereriorIntakeMotorAxis = AxisBehavior.RIGHT_STICK_Y;
+    public static AxisBehavior exteriorIntakeMotorAxis = AxisBehavior.LEFT_STICK_Y;
 
-    /**
-     * Initialization method, called once when the opmode is started, before pressing play
-     */
+
+
+    // --- Shooter Power and Voltage Compensation ---
+    // 1. SET YOUR SHOOTER POWER HERE (e.g., 0.80 for 80%)
+    public static double SHOOTER_POWER_SETTING = 1;
+
+    public static double NOMINAL_VOLTAGE = 12.5; // The baseline voltage for compensation
+
+    public static double targetVelocity = -450;
+
+    private double compensatedShooterPower;
+    private double currentVoltage;
+    private double intakePower;
+
+    private double intakePower2;
+
+
     @Override
     public void init() {
         //Initialize subsystems and controllers here
@@ -132,53 +116,46 @@ public class XDriveDECODE extends OpMode {
         feedServos.updateFeedServoLauncherBehavior();
 
         // --- Update Telemetry ---
-        telemetry.addData("Intake Power", intakePower);
-        telemetry.addData("Intake Power 2", intakePower2);
-        telemetry.addData("Left Servo Pos: ", feedServos.getLeftServoPositions());
-        telemetry.addData("Right Servo Pos", feedServos.getRightServoPositions());
+        telemetry.addData("Shooter Power Setting", "%.0f%%", SHOOTER_POWER_SETTING * 100);
+        telemetry.addData("Compensated Power", "%.2f (Active)", compensatedShooterPower);
+        telemetry.addData("Battery Voltage", "%.2f V", currentVoltage);
+        telemetry.addData("Intake Power: ", intakePower);
+        telemetry.addData("Intake Power 2: ", intakePower2);
+        telemetry.addData("Left Servo Pos: ", feedServos.getLeftServoPower());
+        telemetry.addData("Right Servo Pos", feedServos.getRightServoPower());
         telemetry.addData("Launch Motor speed (deg/s): ", shooterMotor.getVelocity(AngleUnit.DEGREES));
+        telemetry.addData("ForwardLauncherAxis", controller2.getAxisValue(launcherAxis));
+        telemetry.addData("ReverseLauncherAxis: ", controller2.getAxisValue(reverseLauncherAxis));
     }
     private void computeIntakeMotorDirection(){
+        int feedState = controller2.getTristateButtonValue(FeedServoLauncher.feedForwardButton);
         intakePower = controller2.getAxisValue(intereriorIntakeMotorAxis);
-        if(Math.abs(intakePower - prevIntakePower) > minimumInputDelta){
-            intakeMotor.setPower(intakePower);
-            prevIntakePower = intakePower;
+        if (feedState != 0) {
+            intakePower = feedState;
         }
+        intakeMotor.setPower(intakePower*1.2);
     }
 
 
     private void computeIntake2MotorDirection(){
+        int feedState = controller2.getTristateButtonValue(FeedServoLauncher.feedForwardButton);
         intakePower2 = controller2.getAxisValue(exteriorIntakeMotorAxis);
-        if(Math.abs(intakePower2 - prevIntakePower2) > minimumInputDelta) {
-            intakeMotor2.setPower(intakePower2);
-            prevIntakePower2 = intakePower2;
+        if (feedState != 0) {
+            intakePower2 = feedState;
         }
+        intakeMotor2.setPower(intakePower2*1.2);
     }
 
     private void computeShooterMotorVelocity() {
-        double forwardTrigger = controller2.getAxisValue(launcherAxis);
-        double reverseTrigger = controller2.getAxisValue(reverseLauncherAxis);
-        double shooterVelocity;
-            //Since motor writes like setPower and setVelocity similar
-            //can be time-consuming, this extra check in both cases reduces
-            //motor writes(called motor write caching) and thus decreases
-            //input latency and lag
-        if(forwardTrigger > 0.1){
-            shooterVelocity = forwardTrigger * targetVelocity;
-
+        if(controller2.getAxisValue(launcherAxis) > 0.1) {
+            shooterMotor.setVelocity(controller2.getAxisValue(launcherAxis) * targetVelocity, AngleUnit.DEGREES);
         }
-        else if(reverseTrigger > 0.1){
-            shooterVelocity = -reverseTrigger * targetVelocity;
+        else if(controller2.getAxisValue(reverseLauncherAxis) > 0.1){
+            shooterMotor.setVelocity(-controller2.getAxisValue(reverseLauncherAxis) * targetVelocity, AngleUnit.DEGREES);
         }
         else{
-            shooterVelocity = 0;
+            shooterMotor.setVelocity(0);
         }
-
-        if(Math.abs(shooterVelocity - prevShooterMotorInput) > minimumInputDelta){
-            shooterMotor.setVelocity(shooterVelocity);
-            prevShooterMotorInput = shooterVelocity;
-        }
-
     }
 
     @Override
