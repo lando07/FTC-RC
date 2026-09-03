@@ -14,12 +14,10 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.MecanumDrive;
-import org.firstinspires.ftc.teamcode.TeleOp.DECODE.XDriveDECODE;
-import org.firstinspires.ftc.teamcode.subsystems.FeedServoLauncher;
+import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
+import org.firstinspires.ftc.teamcode.subsystems.DECODEExclusive.FeedServoLauncher;
 
 /**
  * Autonomous Program for when the robot starts on the red team,
@@ -82,10 +80,10 @@ public class RedStartZoneAuto extends LinearOpMode {
 //                .stopAndAdd(feedServos.rejectBallAction())
 //                .strafeToConstantHeading(new Vector2d(11.9,33.2))
 //                .strafeToLinearHeading(new Vector2d(-54,48.5), Math.toRadians(129.62027014375383))
-//                .strafeToLinearHeading(new Vector2d(-32.4,24.2), Math.toRadians(130))
-//                .strafeToConstantHeading(new Vector2d(-50,50))
+////                .strafeToLinearHeading(new Vector2d(-32.4,24.2), Math.toRadians(130))
+////                .strafeToConstantHeading(new Vector2d(-50,50))
 //                .stopAndAdd(launchBallsForSetTime())
-//                .strafeToLinearHeading(new Vector2d(-47.8,30.0), Math.toRadians(90))
+////                .strafeToLinearHeading(new Vector2d(-47.8,30.0), Math.toRadians(90))
 //                .strafeToConstantHeading(new Vector2d(-64.0,30.0))
 //
 
@@ -122,7 +120,7 @@ public class RedStartZoneAuto extends LinearOpMode {
             public boolean run(@NonNull TelemetryPacket p) {
                 if (!initialized) {
                     shooterMotor.setPower(1);
-                    shooterMotor.setVelocity(XDriveDECODE.targetVelocity, AngleUnit.DEGREES);
+                    shooterMotor.setVelocity(minimumLauncherVelocity, AngleUnit.DEGREES);
                     initialized = true;
                 }
                 p.put("launcherVelocity: ", shooterMotor.getVelocity());

@@ -8,9 +8,9 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.subsystems.DriveTrain;
-import org.firstinspires.ftc.teamcode.subsystems.FeedServoLauncher;
-import org.firstinspires.ftc.teamcode.subsystems.GamepadController;
+import org.firstinspires.ftc.teamcode.subsystems.Universal.DriveTrain;
+import org.firstinspires.ftc.teamcode.subsystems.DECODEExclusive.FeedServoLauncher;
+import org.firstinspires.ftc.teamcode.subsystems.Universal.GamepadController;
 import org.firstinspires.ftc.teamcode.subsystems.enums.AxisBehavior;
 
 /**
@@ -45,12 +45,8 @@ public class XDriveDECODE extends OpMode {
     // 1. SET YOUR SHOOTER POWER HERE (e.g., 0.80 for 80%)
     public static double SHOOTER_POWER_SETTING = 1;
 
-    public static double NOMINAL_VOLTAGE = 12.5; // The baseline voltage for compensation
-
     public static double targetVelocity = -450;
 
-    private double compensatedShooterPower;
-    private double currentVoltage;
     private double intakePower;
 
     private double intakePower2;
@@ -117,8 +113,6 @@ public class XDriveDECODE extends OpMode {
 
         // --- Update Telemetry ---
         telemetry.addData("Shooter Power Setting", "%.0f%%", SHOOTER_POWER_SETTING * 100);
-        telemetry.addData("Compensated Power", "%.2f (Active)", compensatedShooterPower);
-        telemetry.addData("Battery Voltage", "%.2f V", currentVoltage);
         telemetry.addData("Intake Power: ", intakePower);
         telemetry.addData("Intake Power 2: ", intakePower2);
         telemetry.addData("Left Servo Pos: ", feedServos.getLeftServoPower());

@@ -14,34 +14,36 @@ public class RedStartZoneDECODE {
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 .setConstraints(90, 70, 55, 60, 14)
                 .build();
-        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(59.5701202632874,26.73845186008243, Math.toRadians(180)))
+        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(57.8,12.7, Math.toRadians(180)))
                 //Put actions here
                 // Current Path
-                .strafeToConstantHeading(new Vector2d(59.2,48))
+                .strafeToConstantHeading(new Vector2d(36.3,12.7))
+                .turn(Math.toRadians(-90))
 
-//                .strafeToConstantHeading(new Vector2d(59.2,48))
-//                .strafeToConstantHeading(new Vector2d(-31.0,26.6))
-//                .turn(Math.toRadians(-51))
-//                .strafeToConstantHeading(new Vector2d(-50,50))
-//                .strafeToLinearHeading(new Vector2d(-11.6,23.6), Math.toRadians(90))
-//                .waitSeconds(.2)
-//                .strafeToConstantHeading(new Vector2d(-11.6,49))
-//                .strafeToLinearHeading(new Vector2d(-54,48.5), Math.toRadians(129.62027014375383))
-//
-//
-//
-//                .strafeToConstantHeading(new Vector2d(11.9,23.8))
-//                .strafeToConstantHeading(new Vector2d(11.9,60))
-//                .waitSeconds(.2)
-//                .strafeToConstantHeading(new Vector2d(11.9,33.2))
-//                .strafeToLinearHeading(new Vector2d(-54,48.5), Math.toRadians(129.62027014375383))
-//                .strafeToLinearHeading(new Vector2d(-32.4,24.2), Math.toRadians(130))
-//                .strafeToConstantHeading(new Vector2d(-50,50))
-//
-//                .strafeToLinearHeading(new Vector2d(-47.8,30.0), Math.toRadians(90))
-//                .strafeToConstantHeading(new Vector2d(-64.0,30.0))
+                .strafeToConstantHeading(new Vector2d(34.8,56.2))
+                .strafeToConstantHeading(new Vector2d(35.9,24.4))
+
+                .strafeToLinearHeading(new Vector2d(-32.2,23.2), Math.toRadians(90))
+
+                .turn(Math.toRadians(40))
+                .strafeToConstantHeading(new Vector2d(-51.2,48.9))
+
+                .strafeToLinearHeading(new Vector2d(-32.2,23.2), Math.toRadians(90))
 
 
+                .strafeToConstantHeading(new Vector2d(12.7,24.2))
+
+                .strafeToConstantHeading(new Vector2d(11.7,54.6))
+                .strafeToConstantHeading(new Vector2d(12.7,24.2))
+                .strafeToLinearHeading(new Vector2d(-32.2,23.2), Math.toRadians(90))
+
+
+                .turn(Math.toRadians(40))
+                .strafeToConstantHeading(new Vector2d(-51.2,48.9))
+
+                .strafeToLinearHeading(new Vector2d(-32.2,23.2), Math.toRadians(90))
+
+                .strafeToConstantHeading(new Vector2d(6.9,24.0))
 
 
                 .build());

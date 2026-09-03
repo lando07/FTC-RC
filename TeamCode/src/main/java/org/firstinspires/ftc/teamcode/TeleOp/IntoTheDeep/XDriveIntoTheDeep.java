@@ -1,8 +1,4 @@
-<<<<<<<< HEAD:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/TeleOp/IntoTheDeep/XDriveIntoTheDeep.java
 package org.firstinspires.ftc.teamcode.TeleOp.IntoTheDeep;
-========
-package org.firstinspires.ftc.teamcode.TeleOp;
->>>>>>>> 5c9a1e5 (Reorganized and fixed logic):TeamCode/src/main/java/org/firstinspires/ftc/teamcode/TeleOp/XDriveIntoTheDeep.java
 
 
 import com.acmerobotics.dashboard.config.Config;
