@@ -82,10 +82,10 @@ public class RedStartZoneAuto extends LinearOpMode {
 //                .stopAndAdd(feedServos.rejectBallAction())
 //                .strafeToConstantHeading(new Vector2d(11.9,33.2))
 //                .strafeToLinearHeading(new Vector2d(-54,48.5), Math.toRadians(129.62027014375383))
-////                .strafeToLinearHeading(new Vector2d(-32.4,24.2), Math.toRadians(130))
-////                .strafeToConstantHeading(new Vector2d(-50,50))
+//                .strafeToLinearHeading(new Vector2d(-32.4,24.2), Math.toRadians(130))
+//                .strafeToConstantHeading(new Vector2d(-50,50))
 //                .stopAndAdd(launchBallsForSetTime())
-////                .strafeToLinearHeading(new Vector2d(-47.8,30.0), Math.toRadians(90))
+//                .strafeToLinearHeading(new Vector2d(-47.8,30.0), Math.toRadians(90))
 //                .strafeToConstantHeading(new Vector2d(-64.0,30.0))
 //
 

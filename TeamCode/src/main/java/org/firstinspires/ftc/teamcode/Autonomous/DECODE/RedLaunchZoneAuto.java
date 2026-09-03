@@ -46,7 +46,7 @@ public class RedLaunchZoneAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        Pose2d startingPose = new Pose2d(  -69.28594153697097, 64.36886764886812,Math.toRadians(130.3782025755718));
+        Pose2d startingPose = new Pose2d(  -49.76891705370325, 55.758796751968504,Math.toRadians(129.3629632573411));
         MecanumDrive drive = new MecanumDrive(hardwareMap, startingPose);
 
         // --- Initialize Launcher and Servos ---
@@ -65,37 +65,72 @@ public class RedLaunchZoneAuto extends LinearOpMode {
 
 
         Action autonomous = drive.actionBuilder(startingPose)
-                // Current Path
-                .strafeToConstantHeading(new Vector2d( -47.30055441067913,49.183412086306596)) //moves to position one
+
+                .strafeToConstantHeading(new Vector2d(-32.4,33.6))
                 .stopAndAdd(launchBallsForSetTime())//launches
-                .strafeToLinearHeading(new Vector2d(-16.664379450279895,36.74443763072097), Math.toRadians(90))//moves to position two
-                
+                .strafeToLinearHeading(new Vector2d(-9.5,27.3), Math.toRadians(90))//moves to first set of balls
                 // Start both motors
                 .stopAndAdd(new InstantAction(() -> {
                     intakeMotor.setPower(-1);
-
-
                 }))
-                .waitSeconds(0.8)
-                .strafeToConstantHeading(new Vector2d( -16.664379450279895, 63.8651565191314))//moves to position three
+                .waitSeconds(0.4)
 
+                .strafeToConstantHeading(new Vector2d(-9.5,61))
                 .stopAndAdd(new InstantAction(() -> intakeMotor.setPower(0)))
-                .strafeToLinearHeading(new Vector2d(-47.30055441067913,49.183412086306596), Math.toRadians(130.3782025755718))//moves to position one
-
+                .strafeToLinearHeading(new Vector2d(-30.2,36.7), Math.toRadians(129.3629632573411))
                 .stopAndAdd(launchBallsForSetTime())
-                .strafeToLinearHeading(new Vector2d(14.0328655092735, 39.49721689299336), Math.toRadians(90))//moves to position four
+                .strafeToLinearHeading(new Vector2d(14,27.3), Math.toRadians(90))
                 .stopAndAdd(new InstantAction(() -> {
                     intakeMotor.setPower(-1);
                 }))
-                .waitSeconds(0.8)
-                .strafeToConstantHeading(new Vector2d(14.0328655092735,76.9694305179626))//moves to position five
+                .waitSeconds(0.4)
+                .strafeToConstantHeading(new Vector2d(14, 65.3))
                 .stopAndAdd(new InstantAction(() -> intakeMotor.setPower(0)))
-                .strafeToConstantHeading(new Vector2d(14.0328655092735,39.49721689299336))//moves back to four
-//
-                .strafeToLinearHeading(new Vector2d(-47.30055441067913,49.183412086306596), Math.toRadians(130.3782025755718))//moves back to one
-                .waitSeconds(.225)
+                .strafeToConstantHeading(new Vector2d(14, 33.5))
+                .strafeToLinearHeading(new Vector2d(-30.2,36.7), Math.toRadians(129.3629632573411))
                 .stopAndAdd(launchBallsForSetTime())
-                .strafeToLinearHeading(new Vector2d(-51.82927169199065,18.91646858275406), Math.toRadians(360))//moves to position six
+                .strafeToLinearHeading(new Vector2d(-47.3,28.3), Math.toRadians(360))
+//                // Current Path
+
+
+
+
+
+
+
+
+
+
+//                .strafeToConstantHeading(new Vector2d( -47.30055441067913,49.183412086306596)) //moves to position one
+//                .stopAndAdd(launchBallsForSetTime())//launches
+//                .strafeToLinearHeading(new Vector2d(-16.664379450279895,36.74443763072097), Math.toRadians(90))//moves to position two
+//
+//                // Start both motors
+//                .stopAndAdd(new InstantAction(() -> {
+//                    intakeMotor.setPower(-1);
+//
+//
+//                }))
+//                .waitSeconds(0.8)
+//                .strafeToConstantHeading(new Vector2d( -16.664379450279895, 63.8651565191314))//moves to position three
+//
+//                .stopAndAdd(new InstantAction(() -> intakeMotor.setPower(0)))
+//                .strafeToLinearHeading(new Vector2d(-47.30055441067913,49.183412086306596), Math.toRadians(130.3782025755718))//moves to position one
+//
+//                .stopAndAdd(launchBallsForSetTime())
+//                .strafeToLinearHeading(new Vector2d(14.0328655092735, 39.49721689299336), Math.toRadians(90))//moves to position four
+//                .stopAndAdd(new InstantAction(() -> {
+//                    intakeMotor.setPower(-1);
+//                }))
+//                .waitSeconds(0.8)
+//                .strafeToConstantHeading(new Vector2d(14.0328655092735,76.9694305179626))//moves to position five
+//                .stopAndAdd(new InstantAction(() -> intakeMotor.setPower(0)))
+//                .strafeToConstantHeading(new Vector2d(14.0328655092735,39.49721689299336))//moves back to four
+////
+//                .strafeToLinearHeading(new Vector2d(-47.30055441067913,49.183412086306596), Math.toRadians(130.3782025755718))//moves back to one
+//                .waitSeconds(.225)
+//                .stopAndAdd(launchBallsForSetTime())
+//                .strafeToLinearHeading(new Vector2d(-51.82927169199065,18.91646858275406), Math.toRadians(360))//moves to position six
 
                 // --- End of Launch Sequence ---
 
