@@ -69,8 +69,11 @@ public class RedLaunchZoneAuto extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(-16.664379450279895,36.74443763072097), Math.toRadians(90))//moves to position two
                 
                 // Start both motors
-                .stopAndAdd(new InstantAction(() ->
-                    intakeMotor.setPower(-1)))
+                .stopAndAdd(new InstantAction(() -> {
+                    intakeMotor.setPower(-1);
+
+
+                }))
                 .waitSeconds(0.8)
                 .strafeToConstantHeading(new Vector2d( -16.664379450279895, 63.8651565191314))//moves to position three
 
@@ -79,8 +82,9 @@ public class RedLaunchZoneAuto extends LinearOpMode {
 
                 .stopAndAdd(launchBallsForSetTime())
                 .strafeToLinearHeading(new Vector2d(14.0328655092735, 39.49721689299336), Math.toRadians(90))//moves to position four
-                .stopAndAdd(new InstantAction(() ->
-                    intakeMotor.setPower(-1)))
+                .stopAndAdd(new InstantAction(() -> {
+                    intakeMotor.setPower(-1);
+                }))
                 .waitSeconds(0.8)
                 .strafeToConstantHeading(new Vector2d(14.0328655092735,76.9694305179626))//moves to position five
                 .stopAndAdd(new InstantAction(() -> intakeMotor.setPower(0)))

@@ -70,8 +70,11 @@ public class BlueLaunchZoneAuto extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(-13.550299697034943,-31.265789742981054), Math.toRadians(-90))//moves to position two
 
                 // Start both motors
-                .stopAndAdd(new InstantAction(() ->
-                    intakeMotor.setPower(-1)))
+                .stopAndAdd(new InstantAction(() -> {
+                    intakeMotor.setPower(-1);
+
+
+                }))
                 .waitSeconds(0.8)
                 .strafeToConstantHeading(new Vector2d( -13.550299697034943, -66.708993986835621))//moves to position three
 
@@ -80,8 +83,9 @@ public class BlueLaunchZoneAuto extends LinearOpMode {
 
                 .stopAndAdd(launchBallsForSetTime())
                 .strafeToLinearHeading(new Vector2d(19.879103532926305, -29.568652055394935), Math.toRadians(-90))//moves to position four
-                .stopAndAdd(new InstantAction(() ->
-                    intakeMotor.setPower(-1)))
+                .stopAndAdd(new InstantAction(() -> {
+                    intakeMotor.setPower(-1);
+                }))
                 .waitSeconds(0.8)
                 .strafeToConstantHeading(new Vector2d(19.879103532926305,-75.35826194943407))//moves to position five
                 .stopAndAdd(new InstantAction(() -> intakeMotor.setPower(0)))

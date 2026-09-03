@@ -28,7 +28,7 @@ in both forward and reverse due to a much lower center of gravity and much large
 to intake the giant whiffle balls. The team unfortunately could not make it out of Semi-Area
 this year, despite being seeded 5th in the Semi-Area Central Texas Tournament, and 8th overall.
 This year's competition was fierce, and we hope to use the lessons and knowledge gained from this year
-to make waves next year and advance further than ever before. As of writing this, the results/invitation to
-UIL FTC State and Buc Days have not yet been received.
+to make waves next year and advance further than ever before. Unfortunately, despite being invited UIL
+State Championships for Division 5A, we were unable to qualify for the tournament and win any placements.
 
 Have Fun!
