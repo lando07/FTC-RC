@@ -33,7 +33,9 @@ public class DriveTrain {
     public static GamepadButton toggleDriveModeButton = GamepadButton.Y;
     public static GoBildaPinpointDriver.EncoderDirection xEncoderDirection = GoBildaPinpointDriver.EncoderDirection.FORWARD;
     public static GoBildaPinpointDriver.EncoderDirection yEncoderDirection = GoBildaPinpointDriver.EncoderDirection.FORWARD;
-    public static boolean usePinpointIMU = false;
+    //The accuracy of the goBilda Pinpoint module is far, far better than even the BNO55 IMU, and blows
+    // the BHI260 IMU out of the water, so we use it now.
+    public static boolean usePinpointIMU = true;
     public static boolean toggleDriveModeButtonDisabled = false;
     public static boolean resetIMUButtonDisabled = false;
     public static double lateralGain = 1.0;
@@ -123,13 +125,15 @@ public class DriveTrain {
     /**
      * This method is how the robot knows where it is at all times, by knowing where it isn't.
      * <p>
-     * By taking the magnitude of the lateral(x-axis) and axial(y-axis) movement, and adding the
+     * By taking the inverse tangent of the lateral(x-axis) and axial(y-axis) movement, and adding the
      * IMU heading, we can calculate the compensation in radians needed to always keep the robot moving
-     * forward regardless of heading. Then by calculating the magnitude of the stick inputs, we now
-     * have the polar coordinates of how the robot should move.
-     * Then, we can convert these polar coordinates back to rectangular coordinates using the
-     * pythagorean theorem which allows us to calculate the power required to move the motors
-     * in relation to our stick inputs.
+     * forward regardless of heading. By then calculating the magnitude of the stick inputs, we can
+     * calculate the velocity of the robot in said direction.
+     * Then, we can convert the polar vector into 4 motor powers by taking the sine and cosine of our
+     * speed(magnitude) and our direction for each axis(cos for x, sin for y) and add or subtract
+     * our yaw input(yaw only needs left motors to move at a different velocity than the right motors)
+     * to calculate the power to send to each motor so the stick inputs given match the requested movement.
+     * </p>
      */
     private void doFieldOrientedDrive() {
 
@@ -158,11 +162,12 @@ public class DriveTrain {
         final double vCos = speed * Math.cos(direction + Math.PI / 4.0);//convert back to rectangular coordinates(x-axis)
         final double vSin = speed * Math.sin(direction + Math.PI / 4.0);//convert back to rectangular coordinates(y-axis)
         //These 4 lines calculate the motor powers
+        //Add yaw to the left half, subtract from the right half
         double lf = vCos + yaw;
         double rf = vSin - yaw;
         double lr = vSin + yaw;
         double rr = vCos - yaw;
-
+        //Now we check to cut speed by our configure multiplier
         if (gamepad.getGamepadButtonValue(lowSpeedButton)) {
             lf *= lowSpeedMultiplier;
             rf *= lowSpeedMultiplier;
@@ -170,14 +175,16 @@ public class DriveTrain {
             rr *= lowSpeedMultiplier;
 
         }
-        //Actually what makes the robot moves
+        //This is what actually sends the final motor powers to the motors
         setMotorPowers(lf, rf, lr, rr);
     }
 
 
     /**
-     * This method keeps the heading constant with the front of the drivetrain, rather than the field
-     * Because of this, no trig is needed
+     * This method keeps the robot heading aligned with the front of the drivetrain, rather than the field.
+     * It's still holonomic motion(robot can freely strafe without steering),
+     * but a forward stick input moves the front of the robot forward, not the robot
+     * forward relative to the field, or last-set zero-position
      */
     private void doClassicMecanumDrive() {
         // Omni Mode uses right joystick to go forward & strafe, and left joystick to rotate.
@@ -241,7 +248,7 @@ public class DriveTrain {
     public void updateDriveTrainBehavior() {
         if (!resetIMUButtonDisabled && gamepad.getGamepadButtonValue(resetIMUButton)) {
             if (usePinpointIMU) {
-                pinpoint.resetPosAndIMU();
+                pinpoint.setHeading(0,AngleUnit.DEGREES);
             }
             else {
                 imu.resetYaw();
@@ -250,7 +257,7 @@ public class DriveTrain {
 
         // The TOGGLE button flips its state each press. We use this to switch our drive mode.
         isFieldOrientedMode = toggleDriveModeButtonDisabled || gamepad.getGamepadButtonValue(toggleDriveModeButton);
-
+        //We check here for non-negligable stick input change, and only then do we run line 259 or 261 to change the dt state
         if(Math.abs(getProcessedAxisValue(lateralAxis, lateralGain) - prevLateralInput) > minUserInputDelta ||
            Math.abs(getProcessedAxisValue(axialAxis, axialGain) - prevAxialInput) > minUserInputDelta ||
            Math.abs(getProcessedAxisValue(yawAxis, yawGain) - prevYawInput) > minUserInputDelta)
