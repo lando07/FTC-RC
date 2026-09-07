@@ -12,6 +12,7 @@ import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
@@ -26,6 +27,7 @@ import org.firstinspires.ftc.teamcode.subsystems.DECODEExclusive.FeedServoLaunch
  * @author Thu
  * @author Mentor Landon Smith
  */
+@Disabled
 @Config
 @Autonomous(name = "Red Start Zone", group = "autonomous")
 public class RedStartZoneAuto extends LinearOpMode {

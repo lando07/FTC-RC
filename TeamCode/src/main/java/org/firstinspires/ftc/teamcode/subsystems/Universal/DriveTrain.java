@@ -25,31 +25,102 @@ import org.firstinspires.ftc.teamcode.subsystems.enums.GamepadButton;
 @Config
 public class DriveTrain {
     // --- Public Configuration Variables ---
+    /**
+     * Axis to strafe left and right
+     */
     public static AxisBehavior lateralAxis = AxisBehavior.LEFT_STICK_X;
+    /**
+     * Axis to move forwards and backwards
+     */
     public static AxisBehavior axialAxis = AxisBehavior.LEFT_STICK_Y;
+    /**
+     * Axis to rotate clockwise or counterclockwise
+     */
     public static AxisBehavior yawAxis = AxisBehavior.RIGHT_STICK_X;
+    /**
+     * Button to reset heading of robot(only applies to field-centric mode)
+     */
     public static GamepadButton resetIMUButton = GamepadButton.X;
+    /**
+     * Button to limit top speed of robot for greater precision
+     */
     public static GamepadButton lowSpeedButton = GamepadButton.RIGHT_BUMPER;
+    /**
+     * Button to switch between field and robot-centric mode
+     */
     public static GamepadButton toggleDriveModeButton = GamepadButton.Y;
+    /**
+     * DO NOT CHANGE, Unless odometry pod location has changed
+     */
     public static GoBildaPinpointDriver.EncoderDirection xEncoderDirection = GoBildaPinpointDriver.EncoderDirection.FORWARD;
+    /**
+     * DO NOT CHANGE, Unless odometry pod location has changed
+     */
     public static GoBildaPinpointDriver.EncoderDirection yEncoderDirection = GoBildaPinpointDriver.EncoderDirection.FORWARD;
     //The accuracy of the goBilda Pinpoint module is far, far better than even the BNO55 IMU, and blows
     // the BHI260 IMU out of the water, so we use it now.
+    /**
+     * DO NOT CHANGE, ask Landon first before modifying
+     */
     public static boolean usePinpointIMU = true;
+    /**
+     * Set to true to lock a specific drive mode, either field or robot centric
+     */
     public static boolean toggleDriveModeButtonDisabled = false;
+    /**
+     * Set to true if resetIMUButton is being erroneously pressed(only applies to field-centric mode)
+     */
     public static boolean resetIMUButtonDisabled = false;
+    /**
+     * Higher odd numbers make the stick respond little at first, then ramp to max increasingly fast.
+     * In other words, changes response curve of left-right movement, NUMBER MUST BE ODD
+     */
     public static double lateralGain = 1.0;
+    /**
+     * Higher odd numbers make the stick respond little at first, then ramp to max increasingly fast.
+     * In other words, changes response curve of forward-backward movement, NUMBER MUST BE ODD
+     */
     public static double axialGain = 1.0;
+    /**
+     * Higher odd numbers make the stick respond little at first, then ramp to max increasingly fast.
+     * In other words, changes response curve of clockwise-counterclockwise movement, NUMBER MUST BE ODD
+     */
     public static double yawGain = 3.0;
+    /**
+     * Maximum speed when lowSpeedButton is pressed for clockwise-counterclockwise rotation
+     */
     public static double yawMultiplier = 0.5;
+    /**
+     * Maximum speed for non-rotational movement on field, when lowSpeedButton is not pressed
+     */
     public static double speedMultiplier = 1;
+    /**
+     * Maximum speed when lowSpeedButton is pressed for non-rotational movement
+     */
     public static double lowSpeedMultiplier = 0.5;
     /**
      * Used to calculate the minimum change on the joystick needed to compute the new stick inputs,
      * reduces input lag by bypassing the calculations if the change in input is not noticeable to the
-     * driver
+     * driver.
+     * DO NOT CHANGE, consult Landon first
      */
-    public static double minUserInputDelta = 0.01;
+    public static double minUserInputDelta = 0.001;
+    /**
+     * Name for the left front motor, MUST BE LEFT FRONT MOTOR
+     */
+    private final String leftFront = "leftFront";
+    /**
+     * Name for the right front motor, MUST BE RIGHT FRONT MOTOR
+     */
+    private final String rightFront = "rightFront";
+    /**
+     * Name for the right front motor, MUST BE LEFT BACK MOTOR
+     */
+    private final String leftBack = "leftBack";
+    /**
+     * Name for the right front motor, MUST BE RIGHT BACK MOTOR
+     */
+    private final String rightBack = "rightBack";
 
     // --- Private Subsystem Components ---
     private GoBildaPinpointDriver pinpoint;
@@ -64,6 +135,10 @@ public class DriveTrain {
     private volatile double prevYawInput;
 
     // --- State Variables ---
+    /**
+     * Change this for the default mode when starting an TeleOp OpMode.
+     * false is default robot-oriented, true is default field-oriented
+     */
     public static boolean isFieldOrientedMode = false;
 
     /**
@@ -94,10 +169,10 @@ public class DriveTrain {
         }
 
         // Retrieve and initialize the motors
-        frontLeft = opMode.hardwareMap.get(DcMotorEx.class, "leftFront");
-        frontRight = opMode.hardwareMap.get(DcMotorEx.class, "rightFront");
-        backLeft = opMode.hardwareMap.get(DcMotorEx.class, "leftBack");
-        backRight = opMode.hardwareMap.get(DcMotorEx.class, "rightBack");
+        frontLeft = opMode.hardwareMap.get(DcMotorEx.class, leftFront);
+        frontRight = opMode.hardwareMap.get(DcMotorEx.class, rightFront);
+        backLeft = opMode.hardwareMap.get(DcMotorEx.class, leftBack);
+        backRight = opMode.hardwareMap.get(DcMotorEx.class, rightBack);
 
         //Set left motors to reverse, and all to brake mode when power is zero
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -256,7 +331,9 @@ public class DriveTrain {
         }
 
         // The TOGGLE button flips its state each press. We use this to switch our drive mode.
-        isFieldOrientedMode = toggleDriveModeButtonDisabled || gamepad.getGamepadButtonValue(toggleDriveModeButton);
+        if(!toggleDriveModeButtonDisabled){
+            isFieldOrientedMode = gamepad.getGamepadButtonValue(toggleDriveModeButton);
+        }
         //We check here for non-negligable stick input change, and only then do we run line 259 or 261 to change the dt state
         if(Math.abs(getProcessedAxisValue(lateralAxis, lateralGain) - prevLateralInput) > minUserInputDelta ||
            Math.abs(getProcessedAxisValue(axialAxis, axialGain) - prevAxialInput) > minUserInputDelta ||

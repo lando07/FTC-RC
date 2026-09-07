@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.TeleOp.DECODE;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -19,6 +20,7 @@ import org.firstinspires.ftc.teamcode.subsystems.enums.AxisBehavior;
  * @author Thu
  * @author Mentor Landon Smith
  */
+@Disabled
 @Config
 @TeleOp(name = "XDriveDECODE", group = "Robot")
 public class XDriveDECODE extends OpMode {
