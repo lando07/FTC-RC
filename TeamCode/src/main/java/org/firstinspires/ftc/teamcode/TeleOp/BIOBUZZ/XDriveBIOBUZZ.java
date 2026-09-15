@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Universal.GamepadController;
  * OpMode that runs everything
  * @author Mentor Landon Smith
  */
-@Disabled
+
 @Config
 @TeleOp(name="XDriveBIOBUZZ", group="TeleOp")
 public class XDriveBIOBUZZ extends OpMode {
