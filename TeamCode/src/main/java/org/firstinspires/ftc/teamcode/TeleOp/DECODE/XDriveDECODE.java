@@ -20,7 +20,6 @@ import org.firstinspires.ftc.teamcode.subsystems.enums.AxisBehavior;
  * @author Thu
  * @author Mentor Landon Smith
  */
-@Disabled
 @Config
 @TeleOp(name = "XDriveDECODE", group = "Robot")
 public class XDriveDECODE extends OpMode {

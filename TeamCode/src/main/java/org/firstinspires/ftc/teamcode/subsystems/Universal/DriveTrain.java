@@ -108,19 +108,19 @@ public class DriveTrain {
     /**
      * Name for the left front motor, MUST BE LEFT FRONT MOTOR
      */
-    private final String leftFront = "leftFront";
+    private final String leftFront = "front_left";
     /**
      * Name for the right front motor, MUST BE RIGHT FRONT MOTOR
      */
-    private final String rightFront = "rightFront";
+    private final String rightFront = "front_right";
     /**
      * Name for the right front motor, MUST BE LEFT BACK MOTOR
      */
-    private final String leftBack = "leftBack";
+    private final String leftBack = "back_left";
     /**
      * Name for the right front motor, MUST BE RIGHT BACK MOTOR
      */
-    private final String rightBack = "rightBack";
+    private final String rightBack = "back_right";
 
     // --- Private Subsystem Components ---
     private GoBildaPinpointDriver pinpoint;
